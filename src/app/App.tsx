@@ -5,6 +5,7 @@ import svgLogin from "@/imports/Notes-2/svg-bix1q8uy1z";
 import svgAdmin from "@/imports/Notes-3/svg-5vzq3h17ph";
 import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 type Block =
   | { type: "para"; text: string }
@@ -1023,6 +1024,7 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
 }
 
 const STORAGE_KEY = "hyyung-ux-notes-v3";
+const SUPABASE_TABLE = "notes";
 
 function navigateTo(path: string, setPath: (value: string) => void) {
   const nextPath = path === "/" ? "/" : path;
@@ -1040,6 +1042,7 @@ export default function App() {
     } catch {}
     return INITIAL_NOTES;
   });
+  const [isHydrated, setIsHydrated] = useState(false);
   const [activeNoteId, setActiveNoteId] = useState<string>("dt");
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -1050,6 +1053,29 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); } catch {}
   }, [notes]);
+
+  useEffect(() => {
+    const loadNotes = async () => {
+      if (!isSupabaseConfigured || !supabase) {
+        setIsHydrated(true);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.from(SUPABASE_TABLE).select("payload").order("created_at", { ascending: true });
+        if (!error && data && data.length > 0) {
+          const remoteNotes = data.map((row: { payload: EditableNote }) => row.payload).filter(Boolean);
+          if (remoteNotes.length) {
+            setNotes(remoteNotes);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteNotes)); } catch {}
+          }
+        }
+      } catch {}
+      setIsHydrated(true);
+    };
+
+    loadNotes();
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1095,6 +1121,28 @@ const sectionCount = activeNote.sections.length;
   function switchNote(id: string) { setActiveNoteId(id); setActiveSectionIdx(0); setSidebarOpen(false); }
   function goToNotes() { navigateTo("/", setCurrentPath); }
   const isAdminRoute = currentPath === "/admin" || currentPath.startsWith("/admin/");
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const persistNotes = async () => {
+      if (!isSupabaseConfigured || !supabase) return;
+
+      try {
+        const { error } = await supabase.from(SUPABASE_TABLE).upsert(
+          [{ id: "app-notes", payload: notes, created_at: new Date().toISOString() }],
+          { onConflict: "id" }
+        );
+        if (error) {
+          console.error("Supabase save failed", error);
+        }
+      } catch (error) {
+        console.error("Supabase save failed", error);
+      }
+    };
+
+    persistNotes();
+  }, [notes, isHydrated]);
 
   const sidebarContent = (
     <>
