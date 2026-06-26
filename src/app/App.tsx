@@ -939,6 +939,14 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
 
 const STORAGE_KEY = "hyyung-ux-notes-v3";
 
+function navigateTo(path: string, setPath: (value: string) => void) {
+  const nextPath = path === "/" ? "/" : path;
+  if (typeof window !== "undefined") {
+    window.history.pushState({}, "", nextPath);
+  }
+  setPath(nextPath);
+}
+
 export default function App() {
   const [notes, setNotes] = useState<EditableNote[]>(() => {
     try {
@@ -950,14 +958,24 @@ export default function App() {
   const [activeNoteId, setActiveNoteId] = useState<string>("dt");
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
   const [adminAuthed, setAdminAuthed] = useState(false);
+  const [currentPath, setCurrentPath] = useState<string>(() => (typeof window !== "undefined" ? window.location.pathname : "/"));
 
   // Persist every change to localStorage so edits survive re-renders and refreshes
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); } catch {}
   }, [notes]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
 const firstNote = notes[0] ?? INITIAL_NOTES[0];
 const activeNote = notes.find(n => n.id === activeNoteId) ?? firstNote;
@@ -989,7 +1007,8 @@ const sectionCount = activeNote.sections.length;
   }, [activeSectionIdx, activeNoteId]);
 
   function switchNote(id: string) { setActiveNoteId(id); setActiveSectionIdx(0); setSidebarOpen(false); }
-  function openAdmin() { if (adminAuthed) setAdminOpen(true); else setLoginOpen(true); }
+  function goToNotes() { navigateTo("/", setCurrentPath); }
+  const isAdminRoute = currentPath === "/admin" || currentPath.startsWith("/admin/");
 
   const sidebarContent = (
     <>
@@ -1099,18 +1118,33 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         </div>
       </div>
 
-      {/* Admin button pinned */}
-      <div className="px-3 py-3 shrink-0" style={{ borderTop: "1px solid #e2e8f0" }}>
-        <button onClick={openAdmin}
-          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-[10px] transition-all hover:bg-[#1e293b] group"
-          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6.5" width="10" height="7" rx="1.5" stroke="#64748b" strokeWidth="1.16667" /><path d="M4.5 6.5V4.5a2.5 2.5 0 0 1 5 0v2" stroke="#64748b" strokeWidth="1.16667" strokeLinecap="round" /></svg>
-          <span className="text-[11.5px] font-semibold text-[#475569] group-hover:text-white transition-colors" style={{ fontFamily: "'Inter',sans-serif" }}>Admin Panel</span>
-          <span className="ml-auto text-[9px] font-bold tracking-wider uppercase text-[#cbd5e1] group-hover:text-[#94a3b8] transition-colors">CMS</span>
-        </button>
-      </div>
     </>
   );
+
+  if (isAdminRoute) {
+    return (
+      <>
+        {adminAuthed ? (
+          <AdminPanel
+            notes={notes}
+            onSave={setNotes}
+            onClose={goToNotes}
+            onLogout={() => { setAdminAuthed(false); goToNotes(); }}
+            onSaved={(noteId) => {
+              setActiveNoteId(noteId);
+              setActiveSectionIdx(0);
+              goToNotes();
+            }}
+          />
+        ) : (
+          <AdminLogin
+            onSuccess={() => setAdminAuthed(true)}
+            onClose={goToNotes}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <>
@@ -1231,30 +1265,13 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             <div className="flex-1 flex items-center justify-center px-6 py-12">
               <div className="text-center">
                 <InfoCircle24 />
-                <p className="text-[14px] text-[#94a3b8] mt-3">No sections yet. Open Admin Panel to add one.</p>
-                <button onClick={openAdmin} className="mt-4 px-5 py-2.5 rounded-[10px] text-[13px] font-semibold text-white" style={{ background: "#2563EB" }}>Open Admin</button>
+                <p className="text-[14px] text-[#94a3b8] mt-3">No sections yet. Add content through the admin workspace.</p>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {loginOpen && (
-        <AdminLogin onSuccess={() => { setLoginOpen(false); setAdminAuthed(true); setAdminOpen(true); }} onClose={() => setLoginOpen(false)} />
-      )}
-      {adminOpen && (
-        <AdminPanel
-          notes={notes}
-          onSave={setNotes}
-          onClose={() => setAdminOpen(false)}
-          onLogout={() => { setAdminAuthed(false); setAdminOpen(false); }}
-          onSaved={(noteId) => {
-            setAdminOpen(false);
-            setActiveNoteId(noteId);
-            setActiveSectionIdx(0);
-          }}
-        />
-      )}
     </>
   );
 }
