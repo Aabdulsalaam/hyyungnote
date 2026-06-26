@@ -6,6 +6,7 @@ import svgAdmin from "@/imports/Notes-3/svg-5vzq3h17ph";
 import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import LandingPage from "@/app/components/LandingPage";
 
 type Block =
   | { type: "para"; text: string }
@@ -1047,6 +1048,7 @@ export default function App() {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminAuthed, setAdminAuthed] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
   const [currentPath, setCurrentPath] = useState<string>(() => (typeof window !== "undefined" ? window.location.pathname : "/"));
 
   // Persist every change to localStorage so edits survive re-renders and refreshes
@@ -1278,6 +1280,19 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         )}
       </>
     );
+  }
+
+  function handleSignup(name: string, email: string) {
+    setHasAccess(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("hyyung-landing-signup", JSON.stringify({ name, email, joinedAt: new Date().toISOString() }));
+      } catch {}
+    }
+  }
+
+  if (!hasAccess) {
+    return <LandingPage onSignup={handleSignup} />;
   }
 
   return (
