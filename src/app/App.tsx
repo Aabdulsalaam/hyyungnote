@@ -1239,7 +1239,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
   </div>
 </div>
         {/* Tags */}
-        <div className="px-4 pt-3 pb-2" style={{ borderTop: "1px solid #f1f5f9" }}>
+        <div className="px-4 pt-3 pb-2 mt-auto sticky bottom-0 z-10 bg-white" style={{ borderTop: "1px solid #f1f5f9" }}>
           <p className="text-[9.6px] font-bold tracking-[0.96px] uppercase text-[#94a3b8] mb-2">Tags</p>
           <div className="flex flex-wrap gap-1.5">
             {activeNote.tags.map(tag => (
