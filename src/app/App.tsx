@@ -20,6 +20,7 @@ interface EditableSection {
   label: string;
   icon: string;
   badge: string | null;
+  color?: string | null;
   content: string;
   blocks?: Block[];
   isHtml?: boolean;
@@ -70,6 +71,34 @@ const THEMES: Record<string, NoteTheme> = {
     accentLight: "rgba(124,58,237,0.07)", accentBorder: "rgba(124,58,237,0.19)",
     accentMuted: "rgba(124,58,237,0.09)", accentPill: { bg: "#f5f3ff", text: "#6d28d9" },
     dividerFrom: "rgba(124,58,237,0.31)", noteCardActiveBg: "#f5f3ff", noteCardActiveBorder: "#ddd6fe",
+  },
+  rose: {
+    heroGradient: "linear-gradient(177.398deg, #fdf2f8 8%, #fff7ed 58%, #fafafa 91%)",
+    iconBg: "#ec4899", accentColor: "#ec4899", accentDark: "#be185d",
+    accentLight: "rgba(236,72,153,0.08)", accentBorder: "rgba(236,72,153,0.2)",
+    accentMuted: "rgba(236,72,153,0.1)", accentPill: { bg: "#fdf2f8", text: "#be185d" },
+    dividerFrom: "rgba(236,72,153,0.3)", noteCardActiveBg: "#fdf2f8", noteCardActiveBorder: "#fbcfe8",
+  },
+  emerald: {
+    heroGradient: "linear-gradient(177.398deg, #ecfdf5 8%, #f0fdf4 58%, #fafafa 91%)",
+    iconBg: "#10b981", accentColor: "#10b981", accentDark: "#047857",
+    accentLight: "rgba(16,185,129,0.08)", accentBorder: "rgba(16,185,129,0.2)",
+    accentMuted: "rgba(16,185,129,0.1)", accentPill: { bg: "#ecfdf5", text: "#047857" },
+    dividerFrom: "rgba(16,185,129,0.3)", noteCardActiveBg: "#ecfdf5", noteCardActiveBorder: "#a7f3d0",
+  },
+  cyan: {
+    heroGradient: "linear-gradient(177.398deg, #ecfeff 8%, #f0f9ff 58%, #fafafa 91%)",
+    iconBg: "#0891b2", accentColor: "#0891b2", accentDark: "#0e7490",
+    accentLight: "rgba(8,145,178,0.08)", accentBorder: "rgba(8,145,178,0.2)",
+    accentMuted: "rgba(8,145,178,0.1)", accentPill: { bg: "#ecfeff", text: "#0e7490" },
+    dividerFrom: "rgba(8,145,178,0.3)", noteCardActiveBg: "#ecfeff", noteCardActiveBorder: "#a5f3fc",
+  },
+  indigo: {
+    heroGradient: "linear-gradient(177.398deg, #eef2ff 8%, #f5f3ff 58%, #fafafa 91%)",
+    iconBg: "#4f46e5", accentColor: "#4f46e5", accentDark: "#4338ca",
+    accentLight: "rgba(79,70,229,0.08)", accentBorder: "rgba(79,70,229,0.2)",
+    accentMuted: "rgba(79,70,229,0.1)", accentPill: { bg: "#eef2ff", text: "#4338ca" },
+    dividerFrom: "rgba(79,70,229,0.3)", noteCardActiveBg: "#eef2ff", noteCardActiveBorder: "#c7d2fe",
   },
 };
 
@@ -645,13 +674,33 @@ function AdminLogin({ onSuccess, onClose }: { onSuccess: () => void; onClose: ()
   );
 }
 
-const THEME_OPTIONS = [{ id: "dt", label: "Blue", color: "#2563EB" }, { id: "pdlc", label: "Amber", color: "#F59E0B" }, { id: "teal", label: "Teal", color: "#0d9488" }, { id: "violet", label: "Violet", color: "#7c3aed" }];
+const THEME_OPTIONS = [
+  { id: "dt", label: "Blue", color: "#2563EB" },
+  { id: "pdlc", label: "Amber", color: "#F59E0B" },
+  { id: "teal", label: "Teal", color: "#0d9488" },
+  { id: "violet", label: "Violet", color: "#7c3aed" },
+  { id: "rose", label: "Rose", color: "#ec4899" },
+  { id: "emerald", label: "Emerald", color: "#10b981" },
+  { id: "cyan", label: "Cyan", color: "#0891b2" },
+  { id: "indigo", label: "Indigo", color: "#4f46e5" },
+];
+const SECTION_COLOR_OPTIONS = [
+  { label: "Blue", color: "#2563EB" },
+  { label: "Amber", color: "#F59E0B" },
+  { label: "Teal", color: "#0d9488" },
+  { label: "Violet", color: "#7c3aed" },
+  { label: "Rose", color: "#ec4899" },
+  { label: "Emerald", color: "#10b981" },
+  { label: "Cyan", color: "#0891b2" },
+  { label: "Indigo", color: "#4f46e5" },
+];
 const ICON_OPTIONS = ["plus", "search", "target", "lightbulb", "lightbulb-amber", "tool", "check", "refresh", "box-amber", "pencil-amber", "flask-amber", "rocket-amber"];
 
 function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: EditableNote[]; onSave: (n: EditableNote[]) => void; onClose: () => void; onLogout: () => void; onSaved: (noteId: string) => void }) {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [isNewNote, setIsNewNote] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [tagInput, setTagInput] = useState("");
 
   const blankNote = (): EditableNote => ({ id: `note-${Date.now()}`, themeId: "teal", title: "", subtitle: "", wordCount: "", tags: [], sections: [] });
   const [draft, setDraft] = useState<EditableNote>(blankNote());
@@ -684,8 +733,12 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
     pushDraft({ ...draft, ...patch });
   }
 
+  useEffect(() => {
+    setTagInput(draft.tags.join(", "));
+  }, [draft.id, draft.tags.join(",")]);
+
   function addSection() {
-    const sec: EditableSection = { id: `sec-${Date.now()}`, label: "New Section", icon: "plus", badge: null, content: "" };
+    const sec: EditableSection = { id: `sec-${Date.now()}`, label: "New Section", icon: "plus", badge: null, color: null, content: "" };
     pushDraft({ ...draft, sections: [...draft.sections, sec] });
   }
 
@@ -695,6 +748,17 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
 
   function updateSection(idx: number, patch: Partial<EditableSection>) {
     pushDraft({ ...draft, sections: draft.sections.map((s, i) => i === idx ? { ...s, ...patch } : s) });
+  }
+
+  function addTagsFromInput() {
+    const nextTags = tagInput.split(",").map(tag => tag.trim()).filter(Boolean);
+    if (!nextTags.length) return;
+    updateDraft({ tags: Array.from(new Set([...draft.tags, ...nextTags])) });
+    setTagInput("");
+  }
+
+  function removeTag(tag: string) {
+    updateDraft({ tags: draft.tags.filter(existing => existing !== tag) });
   }
 
   // For new notes: add to parent. For existing notes: already saved via pushDraft.
@@ -816,7 +880,25 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
                     </div>
                     {field("Word Count", draft.wordCount, v => updateDraft({ wordCount: v }), "e.g., ~2,800")}
                   </div>
-                  {field("Tags (comma-separated)", draft.tags.join(", "), v => updateDraft({ tags: v.split(",").map(t => t.trim()).filter(Boolean) }), "e.g., UX, Design, Innovation")}
+                  <div className="flex flex-col gap-2">
+                    <label className="font-semibold text-[12.8px] text-[#475569]" style={{ fontFamily: "'Inter',sans-serif" }}>Tags</label>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <input value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addTagsFromInput(); } }} placeholder="Type a tag and press Enter"
+                        className="flex-1 px-[13px] py-[9px] rounded-[8px] text-[14px] outline-none"
+                        style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 39, color: "#0f1729" }}
+                        onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+                      <button type="button" onClick={addTagsFromInput} className="px-3 py-2 rounded-[8px] text-[12px] font-semibold text-white" style={{ background: "#2563EB", fontFamily: "'Inter',sans-serif" }}>Add Tag</button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {draft.tags.map(tag => (
+                        <button key={tag} type="button" onClick={() => removeTag(tag)} className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: "#eff6ff", color: "#1d4ed8" }}>
+                          <span>{tag}</span>
+                          <span className="text-[10px]">×</span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-[#64748b]" style={{ fontFamily: "'Inter',sans-serif" }}>Add as many tags as you want. Separate them with commas or press Enter.</p>
+                  </div>
 
                   {/* Sections */}
                   <div className="mt-2">
@@ -858,9 +940,12 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
                               <div>
                                 <label className="font-semibold text-[12px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>Color</label>
                                 <div className="flex gap-2 flex-wrap">
-                                  {THEME_OPTIONS.map(t => (
-                                    <button key={t.id} onClick={() => updateSection(idx, { icon: sec.icon.replace("-amber", "").replace("-amber", "") })}
-                                      className="w-6 h-6 rounded-full transition-all" style={{ background: t.color, outline: "none", boxShadow: "none" }} title={t.label} />
+                                  <button type="button" onClick={() => updateSection(idx, { color: null })} className="px-2 py-1 rounded-full text-[11px] font-semibold transition-all" style={{ background: sec.color ? "#f1f5f9" : "#eff6ff", color: sec.color ? "#64748b" : "#1d4ed8", border: `1px solid ${sec.color ? "#e2e8f0" : "#bfdbfe"}` }}>
+                                    Auto
+                                  </button>
+                                  {SECTION_COLOR_OPTIONS.map(option => (
+                                    <button key={option.color} type="button" onClick={() => updateSection(idx, { color: option.color })}
+                                      className="w-6 h-6 rounded-full transition-all" style={{ background: option.color, outline: "none", boxShadow: sec.color === option.color ? `0 0 0 2px #fff, 0 0 0 4px ${option.color}` : "none" }} title={option.label} />
                                   ))}
                                 </div>
                               </div>
@@ -986,6 +1071,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 const sectionCount = activeNote.sections.length;
   const sectionIndex = Math.max(0, Math.min(activeSectionIdx, sectionCount - 1));
   const section = activeNote.sections[sectionIndex];
+  const sectionAccent = section?.color ? section.color : theme.accentColor;
   const hasSection = sectionCount > 0;
   const isFirst = !hasSection || sectionIndex === 0;
   const isLast = !hasSection || sectionIndex === sectionCount - 1;
@@ -1238,7 +1324,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               <div className="rounded-[16px] px-4 sm:px-[29px] py-5 sm:py-[25px]" style={{ background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0px 1px 4px rgba(0,0,0,0.04)" }}>
                 {section.blocks && section.blocks.length > 0 ? (
                   // Blocks always take priority — the block renderer owns the design.
-                  <RichContent blocks={section.blocks as Block[]} accent={theme.accentColor} />
+                  <RichContent blocks={section.blocks as Block[]} accent={sectionAccent} />
                 ) : section.isHtml && section.content ? (
                   <div className="html-content" style={{ fontFamily: "'Inter',sans-serif" }} dangerouslySetInnerHTML={{ __html: section.content }} />
                 ) : (
@@ -1256,7 +1342,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
                 <span className="text-[10.72px] text-[#94a3b8]">{activeSectionIdx + 1} of {activeNote.sections.length}</span>
                 <button onClick={() => setActiveSectionIdx(p => Math.min(activeNote.sections.length - 1, p + 1))} disabled={isLast}
                   className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-white"
-                  style={{ background: isLast ? `${theme.accentColor}80` : theme.accentColor, cursor: isLast ? "default" : "pointer" }}>
+                  style={{ background: isLast ? `${sectionAccent}80` : sectionAccent, cursor: isLast ? "default" : "pointer" }}>
                   Next →
                 </button>
               </div>
