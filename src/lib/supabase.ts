@@ -9,12 +9,14 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-export async function signUpWithEmail(email: string, password: string, name: string) {
+export async function signUpWithEmail(email: string, password: string, name: string, phone?: string) {
   if (!supabase) throw new Error("Supabase not configured");
+  const metadata: Record<string, string> = { name };
+  if (phone) metadata.phone = phone;
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { name } },
+    options: { data: metadata },
   });
   if (error) throw error;
   return data;

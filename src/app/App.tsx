@@ -423,6 +423,7 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
   const [isNewNote, setIsNewNote] = useState(false);
   const [saved, setSaved] = useState(false);
   const [tagInput, setTagInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const blankNote = (): EditableNote => ({ id: `note-${Date.now()}`, themeId: "teal", title: "", subtitle: "", wordCount: "", tags: [], sections: [] });
   const [draft, setDraft] = useState<EditableNote>(blankNote());
@@ -547,11 +548,15 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
           {/* Left: existing notes */}
           <div className="w-full lg:w-[352px] shrink-0">
             <div className="rounded-[16px] p-[21px]" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
-              <h2 className="font-bold text-[15.2px] text-[#1e293b] mb-0" style={{ fontFamily: "'Montserrat',sans-serif" }}>
+              <h2 className="font-bold text-[15.2px] text-[#1e293b] mb-3" style={{ fontFamily: "'Montserrat',sans-serif" }}>
                 Existing Notes ({notes.length})
               </h2>
-              <div className="flex flex-col gap-2 mt-4">
-                {notes.map(n => {
+              <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search notes..."
+                className="w-full px-[13px] py-[9px] rounded-[8px] text-[13px] outline-none mb-3"
+                style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 36, color: "#0f1729" }}
+                onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+              <div className="flex flex-col gap-2 mt-4 max-h-[60vh] overflow-y-auto">
+                {notes.filter(n => !searchQuery || n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))).map(n => {
                   const t = noteTheme(n);
                   return (
                     <div key={n.id} className="rounded-[12px] p-[13px]" style={{ background: "#f8fafc", border: "1px solid #f1f5f9" }}>
@@ -559,12 +564,15 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
                         <div className="mt-0.5 shrink-0">{n.themeId === "pdlc" ? LightningIcon14(t.accentColor) : BookIcon(t.accentColor)}</div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-[12.8px] text-[#1e293b] truncate" style={{ fontFamily: "'Inter',sans-serif" }}>{n.title || "Untitled"}</p>
-                          <p className="text-[11.2px] text-[#64748b]" style={{ fontFamily: "'Inter',sans-serif" }}>{n.sections.length} sections</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: `${t.accentColor}15`, color: t.accentColor }}>{n.sections.length} sections</span>
+                            {n.wordCount && <span className="text-[10px] text-[#94a3b8]">{n.wordCount}</span>}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex gap-1 h-[24px]">
-                        <button onClick={() => startEdit(n)} className="flex-1 rounded-[8px] text-[12px] text-center transition-colors" style={{ background: `${t.accentColor}14`, color: t.accentColor, fontFamily: "'Inter',sans-serif" }}>Edit</button>
-                        <button onClick={() => deleteNote(n.id)} className="px-2 rounded-[8px]" style={{ background: "#fee2e2" }}><TrashIcon12 /></button>
+                      <div className="flex items-center gap-1 h-[28px]">
+                        <button onClick={() => startEdit(n)} className="flex-1 h-full rounded-[8px] text-[11.5px] font-semibold text-center transition-colors" style={{ background: `${t.accentColor}14`, color: t.accentColor, fontFamily: "'Inter',sans-serif" }}>Edit</button>
+                        <button onClick={() => deleteNote(n.id)} className="w-[32px] h-full rounded-[8px] flex items-center justify-center" style={{ background: "#fee2e2" }}><TrashIcon12 /></button>
                       </div>
                     </div>
                   );
@@ -683,17 +691,13 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
                             </div>
 
                             {/* Badge row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-                              {[["Badge (optional)", "badge", "Foundation"], ["Badge BG", "badgeBg", "#fef3c7"], ["Badge Text", "badgeText", "#b45309"]].map(([label, key, ph]) => (
-                                <div key={key}>
-                                  <label className="font-semibold text-[11.2px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>{label}</label>
-                                  <input value={key === "badge" ? (sec.badge ?? "") : ""} onChange={e => key === "badge" && updateSection(idx, { badge: e.target.value || null })}
-                                    placeholder={ph}
-                                    className="w-full px-[9px] py-[5px] rounded-[4px] text-[12px] outline-none"
-                                    style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 26 }}
-                                    onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
-                                </div>
-                              ))}
+                            <div className="mb-3">
+                              <label className="font-semibold text-[11.2px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>Badge (optional)</label>
+                              <input value={sec.badge ?? ""} onChange={e => updateSection(idx, { badge: e.target.value || null })}
+                                placeholder="e.g., Foundation"
+                                className="w-full px-[9px] py-[5px] rounded-[4px] text-[12px] outline-none"
+                                style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 26 }}
+                                onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
                             </div>
 
                             {/* Content / React Quill */}
@@ -776,11 +780,25 @@ export default function App() {
   const [adminAuthed, setAdminAuthed] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
   const [currentPath, setCurrentPath] = useState<string>(() => (typeof window !== "undefined" ? window.location.pathname : "/"));
+  const [viewedSections, setViewedSections] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem("hyyung-viewed-sections");
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
 
   // Persist every change to localStorage so edits survive re-renders and refreshes
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: NOTES_VERSION, notes })); } catch {}
   }, [notes]);
+
+  // Persist viewed sections
+  useEffect(() => {
+    try { localStorage.setItem("hyyung-viewed-sections", JSON.stringify(Array.from(viewedSections))); } catch {}
+  }, [viewedSections]);
+
+  const completedNotes = notes.filter(n => n.sections.every(s => viewedSections.has(s.id)));
+  const allCompleted = notes.length > 0 && completedNotes.length === notes.length;
 
   useEffect(() => {
     const loadNotes = async () => {
@@ -841,6 +859,13 @@ const sectionCount = activeNote.sections.length;
       setActiveSectionIdx(sectionCount - 1);
     }
   }, [activeNoteId, sectionCount, activeSectionIdx, hasSection]);
+
+  // Mark current section as viewed
+  useEffect(() => {
+    if (section && !viewedSections.has(section.id)) {
+      setViewedSections(prev => new Set(prev).add(section.id));
+    }
+  }, [section?.id]);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -877,111 +902,74 @@ const sectionCount = activeNote.sections.length;
   const sidebarContent = (
     <>
       {/* Header */}
-      <div className="flex flex-col px-5 pt-6 pb-[17px] shrink-0" style={{ borderBottom: "1px solid #f1f5f9" }}>
+      <div className="flex flex-col px-5 pt-5 pb-3 shrink-0" style={{ borderBottom: "1px solid #f1f5f9" }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d={svgDT.p28a13700} stroke="#2563EB" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" /><path d={svgDT.p19d1d100} stroke="#2563EB" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" /></svg>
             <span className="font-bold text-[13.6px] text-[#1e293b]" style={{ fontFamily: "'Montserrat',sans-serif" }}>Hyyung's UX Notes</span>
           </div>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d={svgDT.p1eaef80} stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16667" /><path d={svgDT.p4c1f200} stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16667" /></svg>
         </div>
-        <p className="text-[10.88px] text-[#94a3b8] mt-1">{notes.length} notes · Product &amp; Design</p>
+        <p className="text-[10.88px] text-[#94a3b8] mt-0.5">{notes.length} notes · Product &amp; Design</p>
       </div>
 
-      {/* Scrollable area */}
-      <div className="flex flex-col flex-1 overflow-y-auto min-h-0">
-        {/* Note cards */}
-        <div className="flex flex-col gap-2 pt-3 px-3 shrink-0">
+      {/* Note cards — scrollable */}
+      <div className="flex-1 overflow-y-auto min-h-0 px-3 pt-2 pb-1">
+        <div className="flex flex-col gap-1.5">
           {notes.map(n => {
             const t = THEMES[n.themeId] ?? THEMES.teal;
             const isActive = n.id === activeNoteId;
             return (
-              <button key={n.id} onClick={() => switchNote(n.id)} className="rounded-[12px] p-[13px] text-left w-full transition-all"
+              <button key={n.id} onClick={() => switchNote(n.id)} className="rounded-[10px] p-[10px] text-left w-full transition-all"
                 style={{ background: isActive ? t.noteCardActiveBg : "#f8fafc", border: `1px solid ${isActive ? t.noteCardActiveBorder : "#f1f5f9"}` }}>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full shrink-0" style={{ background: isActive ? t.accentDark : "#94A3B8" }} />
-                  <span className="font-bold text-[11.68px] truncate" style={{ color: isActive ? t.accentDark : "#475569", fontFamily: "'Inter',sans-serif" }}>{n.title}</span>
+                  <span className="font-semibold text-[11.68px] truncate" style={{ color: isActive ? t.accentDark : "#475569", fontFamily: "'Inter',sans-serif" }}>{n.title}</span>
+                  {n.sections.length > 0 && n.sections.every(s => viewedSections?.has(s.id)) && (
+                    <svg className="shrink-0" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 5L4.5 7L7.5 3" stroke={t.accentColor} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  )}
                 </div>
-                <p className="text-[9.92px] text-[#94a3b8] mt-1 truncate">{n.subtitle}</p>
-                <div className="flex items-center gap-1 mt-1.5">
-                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d={svgDT.p352d0d00} stroke="#CBD5E1" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.75" /><path d="M4.5 2.25V4.5L6 5.25" stroke="#CBD5E1" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.75" /></svg>
-                  <span className="text-[9.6px] text-[#cbd5e1]">Just now</span>
-                </div>
+                <p className="text-[9.92px] text-[#94a3b8] mt-0.5 truncate">{n.subtitle}</p>
               </button>
             );
           })}
         </div>
+      </div>
 
-        {/* Sections */}
-<div className="flex flex-col pt-4 px-3 pb-2">
-  <p className="text-[9.6px] font-bold tracking-[0.96px] uppercase text-[#94a3b8] px-1 mb-2">
-    Sections
-  </p>
-
-  <div className="flex flex-col gap-0.5">
-    {activeNote.sections.map((s, i) => {
-const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
-       const isActive = i === activeSectionIdx;
-  const iconColor = isActive ? theme.accentColor : "#94A3B8";
-
-      return (
-        <button
-          key={s.id}
-          onClick={() => {
-            setActiveSectionIdx(i);
-            setSidebarOpen(false);
-          }}
-          className="flex items-center gap-[10px] px-[13px] py-[9px] rounded-[8px] text-left w-full transition-all"
-          style={{
-            background: isActive ? theme.accentLight : "transparent",
-            border: `1px solid ${
-              isActive ? theme.accentBorder : "transparent"
-            }`,
-          }}
-        >
-          <SectionIcon type={s.icon} color={iconColor} />
-
-          <span
-            className="flex-1 text-[11.2px] truncate"
-            style={{
-              fontWeight: isActive ? 600 : 400,
-              color: isActive ? theme.accentColor : "#64748b",
-              fontFamily: "'Inter', sans-serif",
-            }}
-          >
-            {s.label}
-          </span>
-
-          {isActive && (
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path
-                d="M3.75 7.5L6.25 5L3.75 2.5"
-                stroke={theme.accentColor}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="0.833333"
-              />
-            </svg>
-          )}
-        </button>
-      );
-    })}
-  </div>
-</div>
-        {/* Tags */}
-        <div className="px-4 pt-3 pb-2 mt-auto sticky bottom-0 z-10 bg-white" style={{ borderTop: "1px solid #f1f5f9" }}>
-          <p className="text-[9.6px] font-bold tracking-[0.96px] uppercase text-[#94a3b8] mb-2">Tags</p>
-          <div className="flex flex-wrap gap-1.5">
-            {activeNote.tags.map(tag => (
-              <div key={tag} className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "#f1f5f9" }}>
-                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d={svgDT.p31d9b5f0} stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.583333" /><path d={svgDT.p2c6ba400} fill="#94A3B8" stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.583333" /></svg>
-                <span className="text-[9.28px] font-medium text-[#475569]">{tag}</span>
-              </div>
-            ))}
-          </div>
+      {/* Sections — always visible above tags */}
+      <div className="px-3 pt-2 pb-1 shrink-0" style={{ borderTop: "1px solid #f1f5f9" }}>
+        <p className="text-[9.6px] font-bold tracking-[0.96px] uppercase text-[#94a3b8] px-1 mb-1.5">Sections</p>
+        <div className="flex flex-col gap-0.5 max-h-[180px] overflow-y-auto">
+          {activeNote.sections.map((s, i) => {
+            const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
+            const isActive = i === activeSectionIdx;
+            const iconColor = isActive ? theme.accentColor : "#94A3B8";
+            return (
+              <button key={s.id} onClick={() => { setActiveSectionIdx(i); setSidebarOpen(false); }}
+                className="flex items-center gap-[10px] px-[10px] py-[7px] rounded-[8px] text-left w-full transition-all"
+                style={{ background: isActive ? theme.accentLight : "transparent", border: `1px solid ${isActive ? theme.accentBorder : "transparent"}` }}>
+                <SectionIcon type={s.icon} color={iconColor} />
+                <span className="flex-1 text-[11.2px] truncate" style={{ fontWeight: isActive ? 600 : 400, color: isActive ? theme.accentColor : "#64748b", fontFamily: "'Inter', sans-serif" }}>{s.label}</span>
+                {isActive && (
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3.75 7.5L6.25 5L3.75 2.5" stroke={theme.accentColor} strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.833333" /></svg>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
+      {/* Tags */}
+      <div className="px-3 pt-2 pb-3 shrink-0" style={{ borderTop: "1px solid #f1f5f9" }}>
+        <p className="text-[9.6px] font-bold tracking-[0.96px] uppercase text-[#94a3b8] px-1 mb-1.5">Tags</p>
+        <div className="flex flex-wrap gap-1.5">
+          {activeNote.tags.map(tag => (
+            <div key={tag} className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "#f1f5f9" }}>
+              <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d={svgDT.p31d9b5f0} stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.583333" /><path d={svgDT.p2c6ba400} fill="#94A3B8" stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.583333" /></svg>
+              <span className="text-[9.28px] font-medium text-[#475569]">{tag}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 
@@ -1064,7 +1052,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div className="lg:hidden fixed inset-0 z-30 flex">
-            <div className="w-64 flex flex-col shrink-0 overflow-hidden" style={{ background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
+            <div className="w-72 flex flex-col shrink-0 overflow-hidden" style={{ background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
               {sidebarContent}
             </div>
             <div className="flex-1 bg-black/40" onClick={() => setSidebarOpen(false)} />
@@ -1073,7 +1061,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
         {/* Desktop sticky sidebar */}
         <aside className="hidden lg:flex flex-col shrink-0"
-          style={{ width: 256, height: "100vh", position: "sticky", top: 0, background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
+          style={{ width: 288, height: "100vh", position: "sticky", top: 0, background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
           {sidebarContent}
         </aside>
 
@@ -1121,6 +1109,26 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
                   <span className="text-[11.2px] text-[#cbd5e1]">·</span>
                   <span className="text-[10.72px] text-[#94a3b8]">{activeNote.sections.length} sections · {activeNote.wordCount}</span>
                 </div>
+                {/* Section progress bar */}
+                {sectionCount > 0 && (
+                  <div className="mt-3 flex items-center gap-3">
+                    <div className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.round((completedNotes.find(n => n.id === activeNoteId)?.sections.filter(s => viewedSections.has(s.id)).length ?? 0) / sectionCount * 100)}%`, background: theme.accentColor }} />
+                    </div>
+                    <span className="text-[10.5px] font-medium" style={{ color: theme.accentColor }}>
+                      {completedNotes.find(n => n.id === activeNoteId)?.sections.filter(s => viewedSections.has(s.id)).length ?? 0}/{sectionCount}
+                    </span>
+                  </div>
+                )}
+                {/* Achievement: overall note completion */}
+                {allCompleted && (
+                  <div className="mt-3 flex items-center gap-2 rounded-[8px] px-3 py-1.5" style={{ background: `${theme.accentColor}10`, border: `1px solid ${theme.accentColor}25` }}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M7 1.75L8.6475 5.0575L12.25 5.5975L9.625 8.155L10.295 11.75L7 9.97L3.705 11.75L4.375 8.155L1.75 5.5975L5.3525 5.0575L7 1.75Z" fill={theme.accentColor} />
+                    </svg>
+                    <span className="text-[11px] font-semibold" style={{ color: theme.accentColor }}>All {notes.length} notes completed! ★</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

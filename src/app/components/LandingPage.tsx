@@ -236,7 +236,7 @@ export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
                 </p>
                 <div className="mt-8 flex items-center justify-center gap-6">
                   <a
-                    href="https://linkedin.com/in/hyyung"
+                    href="https://linkedin.com/in/abdulsalamibrahim"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-600 hover:shadow-md"
@@ -247,7 +247,7 @@ export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
                     LinkedIn
                   </a>
                   <a
-                    href="https://wa.me/2348034118873"
+                    href="https://wa.me/2349090718281"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-green-200 hover:text-green-600 hover:shadow-md"

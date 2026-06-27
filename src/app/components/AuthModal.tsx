@@ -25,6 +25,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
   const [signUpName, setSignUpName] = useState("");
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpPhone, setSignUpPhone] = useState("");
 
   function reset() {
     setError("");
@@ -33,6 +34,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
     setSignUpName("");
     setSignUpEmail("");
     setSignUpPassword("");
+    setSignUpPhone("");
   }
 
   async function handleSignIn(e: React.FormEvent) {
@@ -58,7 +60,8 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
     try {
       const trimmedName = signUpName.trim();
       if (!trimmedName) throw new Error("Name is required");
-      const data = await signUpWithEmail(signUpEmail, signUpPassword, trimmedName);
+      const trimmedPhone = signUpPhone.trim();
+      const data = await signUpWithEmail(signUpEmail, signUpPassword, trimmedName, trimmedPhone || undefined);
       const name = data.user?.user_metadata?.name || trimmedName;
       onAuthSuccess(signUpEmail, name);
       reset();
@@ -142,6 +145,16 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
                   value={signUpEmail}
                   onChange={(e) => { setSignUpEmail(e.target.value); setError(""); }}
                   required
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="signup-phone">Phone (optional)</Label>
+                <Input
+                  id="signup-phone"
+                  type="tel"
+                  placeholder="+234 909 071 8281"
+                  value={signUpPhone}
+                  onChange={(e) => { setSignUpPhone(e.target.value); setError(""); }}
                 />
               </div>
               <div className="flex flex-col gap-2">
