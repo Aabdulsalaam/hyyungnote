@@ -744,8 +744,9 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
   );
 }
 
-const STORAGE_KEY = "hyyung-ux-notes-v3";
+const STORAGE_KEY = "hyyung-ux-notes-v4";
 const SUPABASE_TABLE = "notes";
+const NOTES_VERSION = "v4";
 
 function navigateTo(path: string, setPath: (value: string) => void) {
   const nextPath = path === "/" ? "/" : path;
@@ -759,12 +760,17 @@ export default function App() {
   const [notes, setNotes] = useState<EditableNote[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) return JSON.parse(stored) as EditableNote[];
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.version === NOTES_VERSION && Array.isArray(parsed.notes)) {
+          return parsed.notes as EditableNote[];
+        }
+      }
     } catch {}
     return INITIAL_NOTES;
   });
   const [isHydrated, setIsHydrated] = useState(false);
-  const [activeNoteId, setActiveNoteId] = useState<string>("dt");
+  const [activeNoteId, setActiveNoteId] = useState<string>(INITIAL_NOTES[0]?.id ?? "basics-ux");
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminAuthed, setAdminAuthed] = useState(false);
@@ -773,7 +779,7 @@ export default function App() {
 
   // Persist every change to localStorage so edits survive re-renders and refreshes
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: NOTES_VERSION, notes })); } catch {}
   }, [notes]);
 
   useEffect(() => {
@@ -786,10 +792,11 @@ export default function App() {
       try {
         const { data, error } = await supabase.from(SUPABASE_TABLE).select("payload").order("created_at", { ascending: true });
         if (!error && data && data.length > 0) {
-          const remoteNotes = data.map((row: { payload: EditableNote }) => row.payload).filter(Boolean);
-          if (remoteNotes.length) {
-            setNotes(remoteNotes);
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteNotes)); } catch {}
+          const remoteNotes = data.map((row: { payload: { version: string; notes: EditableNote[] } }) => row.payload).filter(Boolean) as { version: string; notes: EditableNote[] }[];
+          const valid = remoteNotes.find(r => r.version === NOTES_VERSION);
+          if (valid?.notes?.length) {
+            setNotes(valid.notes);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: NOTES_VERSION, notes: valid.notes })); } catch {}
           }
         }
       } catch {}
@@ -853,7 +860,7 @@ const sectionCount = activeNote.sections.length;
 
       try {
         const { error } = await supabase.from(SUPABASE_TABLE).upsert(
-          [{ id: "app-notes", payload: notes, created_at: new Date().toISOString() }],
+          [{ id: "app-notes", payload: { version: NOTES_VERSION, notes }, created_at: new Date().toISOString() }],
           { onConflict: "id" }
         );
         if (error) {
