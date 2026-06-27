@@ -6,8 +6,9 @@ import svgAdmin from "@/imports/Notes-3/svg-5vzq3h17ph";
 import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
-import LandingPage from "@/app/components/LandingPage";
 import { signInWithEmail, signOutUser, getCurrentSession } from "@/lib/supabase";
+import { INITIAL_NOTES } from "@/lib/notes-data";
+import LandingPage from "@/app/components/LandingPage";
 
 type Block =
   | { type: "para"; text: string }
@@ -182,293 +183,7 @@ function RichContent({ blocks, accent }: { blocks: Block[]; accent: string }) {
   );
 }
 
-const INITIAL_NOTES: EditableNote[] = [
-  {
-    id: "dt", themeId: "dt", title: "Design Thinking", subtitle: "A Human-Centered Approach to Innovation",
-    wordCount: "~2,800 words", tags: ["Design Thinking", "UX", "Innovation", "Human-Centered", "IDEO", "Stanford"],
-    sections: [
-      {
-        id: "overview", label: "What is Design Thinking?", icon: "plus", badge: null, content: "", 
-        blocks: [
-          { type: "para", text: "Design Thinking is a human-centered, iterative problem-solving methodology originally developed at Stanford University's d.school and popularized globally by design firm IDEO. It is not merely a design process, it is a mindset and a structured framework that enables teams to approach complex, ambiguous problems by centering the human experience at every stage of the solution process." },
-          { type: "para", text: "At its core, Design Thinking reframes problems from a user's perspective rather than a business or technology perspective. It encourages divergent thinking (generating many possibilities) followed by convergent thinking (selecting the best path forward), cycling through this rhythm repeatedly until a solution is both validated and refined." },
-          { type: "callout", label: "Why it matters", text: "Design Thinking is widely adopted across industries, from healthcare and education to financial services, government policy, and software product development, because it dramatically reduces the risk of building solutions that no one wants or needs." },
-        ] as Block[],
-      },
-      {
-        id: "empathize", label: "Empathize", icon: "search", badge: null, content: "",
-        blocks: [
-          { type: "para", text: "Empathy is the cornerstone of Design Thinking. This stage requires practitioners to set aside their own assumptions and immerse themselves in the lived experience of the people they are designing for." },
-          { type: "subheading", text: "Key Activities" },
-          { type: "bullets", items: [
-            { term: "Contextual interviews", desc: "Open-ended conversations conducted in the user's natural environment, not a lab or conference room." },
-            { term: "Shadowing & observation", desc: "Watching users perform tasks without intervening, capturing behavior that contradicts what people say they do." },
-            { term: "Experience mapping", desc: "Documenting the emotional journey of a user across a process or service." },
-            { term: "Empathy maps", desc: "2×2 grids capturing what users Say, Think, Do, and Feel." },
-            { term: "Diary studies", desc: "Longitudinal self-reporting by users over days or weeks." },
-          ]},
-          { type: "callout", label: "Critical Principle", text: "Seek to understand the difference between stated needs (\"I want a faster horse\") and latent needs (\"I need to arrive at my destination more quickly\"). The goal is not to gather data-it is to build genuine understanding of human motivations, frustrations, workarounds, and aspirations." },
-          { type: "subheading", text: "Common Pitfalls" },
-          { type: "bullets", items: [
-            { desc: "Interviewing too few people or only people who are already satisfied." },
-            { desc: "Asking leading questions that confirm existing assumptions." },
-            { desc: "Substituting surveys for direct observation." },
-          ]},
-        ] as Block[],
-      },
-      {
-        id: "define", label: "Define", icon: "target", badge: null, content: "",
-        blocks: [
-          { type: "para", text: "The Define stage transforms raw empathy research into a sharp, actionable problem statement. This is often the most undervalued step, teams rush from research to ideation and skip the crucial synthesis work that makes ideation productive." },
-          { type: "callout", label: "Primary Output: Point of View Statement", text: "[User] needs [need] because [insight], a single human-centered sentence that anchors every decision that follows." },
-          { type: "subheading", text: "Supporting Tools" },
-          { type: "bullets", items: [
-            { term: "Affinity mapping", desc: "Clustering observations into themes using sticky notes or digital boards." },
-            { term: "How Might We questions", desc: "Reframing problems as opportunities (\"How might we make pickup time more informative?\")." },
-            { term: "Journey maps", desc: "Visualizing pain points across the end-to-end user experience." },
-            { term: "Job-to-be-Done framing", desc: "Articulating the underlying job the user is trying to accomplish." },
-          ]},
-          { type: "quote", text: "A poorly defined problem leads to brilliant solutions for the wrong challenge. A well-crafted point of view narrows focus without narrowing possibility." },
-        ] as Block[],
-      },
-      {
-        id: "ideate", label: "Ideate", icon: "lightbulb", badge: null, content: "",
-        blocks: [
-          { type: "para", text: "Ideation is the generative phase, the goal is quantity over quality. Teams defer judgment and produce as many ideas as possible before evaluating any of them. This counters the natural human tendency to anchor on the first reasonable idea and stop exploring." },
-          { type: "subheading", text: "Core Ideation Techniques" },
-          { type: "bullets", items: [
-            { term: "Brainstorming", desc: "Rapid-fire idea generation with strict \"yes, and\" rules; no criticism allowed." },
-            { term: "Brainwriting", desc: "Silent written ideation, then sharing, which surfaces ideas from quieter team members." },
-            { term: "Crazy 8s", desc: "Each person sketches 8 ideas in 8 minutes, forcing rapid divergence." },
-            { term: "Analogous inspiration", desc: "Borrowing solutions from unrelated domains." },
-            { term: "Worst possible idea", desc: "Intentionally generating terrible ideas to break creative blocks." },
-          ]},
-          { type: "stat", value: "50–200+", label: "Ideas before filtering", footnote: "After generating ideas, teams use dot-voting, effort/impact matrices, or structured scoring to converge on 2–5 concepts worth prototyping. The evaluation criteria should always trace back to the Point of View statement from the Define stage." },
-        ] as Block[],
-      },
-      {
-        id: "prototype", label: "Prototype", icon: "tool", badge: null, content: "",
-        blocks: [
-          { type: "para", text: "Prototyping is the practice of making ideas tangible for the purpose of learning, not delivery. A prototype is any artifact, paper sketch, cardboard model, clickable wireframe, roleplay scenario, that allows a team to test an assumption cheaply and quickly." },
-          { type: "subheading", text: "Fidelity Spectrum" },
-          { type: "bullets", items: [
-            { term: "Lo-fi", desc: "Paper sketches, storyboards, foam models. Fast and cheap; ideal for testing core concepts before committing resources." },
-            { term: "Mid-fi", desc: "Digital wireframes (Figma, Balsamiq), clickable prototypes. Test navigation flows and interaction patterns." },
-            { term: "Hi-fi", desc: "Polished visual mockups or functional code. Use only when you need to test specific visual or technical behaviors." },
-          ]},
-          { type: "callout", label: "IDEO's Mantra", text: "\"Fail early, fail often, fail forward.\" The cost of a failed prototype is learning. The cost of a failed product launch is catastrophic." },
-          { type: "output", text: "A testable artifact tied to one specific assumption, cheap enough to discard, clear enough to generate real feedback." },
-        ] as Block[],
-      },
-      {
-        id: "test", label: "Test", icon: "check", badge: null, content: "",
-        blocks: [
-          { type: "para", text: "Testing in Design Thinking is not quality assurance, it is learning. The goal is to observe how real users interact with your prototype, surface unexpected behaviors, and collect insights that feed directly back into the problem definition or solution concept." },
-          { type: "subheading", text: "Principles of Effective Testing" },
-          { type: "bullets", items: [
-            { term: "Show, don't tell", desc: "Place the prototype in front of the user and observe; resist the urge to explain." },
-            { term: "Think-aloud protocol", desc: "Ask users to narrate their experience: \"What are you thinking right now?\"" },
-            { term: "Test with extreme users", desc: "People at the edges of your target audience reveal hidden problems." },
-            { term: "5-user rule", desc: "Nielsen Norman research shows 5 participants uncover ~85% of usability issues." },
-            { term: "Capture observations, not interpretations", desc: "Note what users do and say verbatim before drawing conclusions." },
-          ]},
-          { type: "callout", label: "After Each Round", text: "Synthesize findings into: what worked, what didn't, and what surprised us. These insights then flow back into Empathize, Define, or Ideate." },
-          { type: "quote", text: "Testing is not the final step, it is the gateway back into the process." },
-        ] as Block[],
-      },
-      {
-        id: "iteration", label: "The Iteration Principle", icon: "refresh", badge: null, content: "",
-        blocks: [
-          { type: "para", text: "The most misunderstood aspect of Design Thinking is its non-linearity. The five stages are not a waterfall. they are a set of lenses that teams apply in whatever order the problem demands." },
-          { type: "subheading", text: "Common Iteration Patterns" },
-          { type: "bullets", items: [
-            { term: "Empathize → Define → Empathize", desc: "New research reveals the initial framing was wrong." },
-            { term: "Prototype → Define", desc: "Building reveals the team misunderstood the core problem." },
-            { term: "Test → Ideate", desc: "User feedback invalidates the chosen solution direction." },
-            { term: "Test → Empathize", desc: "Test results raise new questions requiring fresh field research." },
-          ]},
-          { type: "subheading", text: "The Dual Diamond Model" },
-          { type: "para", text: "Design Thinking can be visualized as two diamonds. The first diamond opens wide (Empathize) and closes (Define). The second opens wide (Ideate + Prototype) and closes (Test). The output of the second diamond feeds into the first diamond of the next cycle." },
-          { type: "callout", label: "Organizational Implications", text: "Design Thinking requires psychological safety, teams must feel comfortable abandoning ideas they've invested in, sharing half-formed concepts, and embracing failure as evidence. The most critical success factor is not methodology training, it is leadership modeling of learning behavior." },
-        ] as Block[],
-      },
-    ],
-  },
-  {
-    id: "pdlc", themeId: "pdlc", title: "Product Development Life Cycle", subtitle: "Rapid Ideation to Launch Framework",
-    wordCount: "~2,600 words", tags: ["PDLC", "Innovation", "Sprint", "Rapid", "Ideation", "MVP", "Launch"],
-    sections: [
-      {
-        id: "brainstorm", label: "Brainstorm", icon: "lightbulb-amber", badge: "Ideate", content: "",
-        blocks: [
-          { type: "para", text: "Brainstorming is the creative engine of product innovation, the phase where quantity trumps quality, wild ideas are welcomed, and conventional thinking is deliberately suspended. The purpose is not to find the perfect solution immediately, but to explore the full solution space before narrowing to a specific direction." },
-          { type: "callout", label: "Foundation: Psychological Safety", text: "Team members must feel that no idea will be criticized, dismissed, or judged during the generative phase. This requires explicit norms: \"Yes, and...\" responses replace \"No, but...\" reflexes. Critique comes later, first, we fill the canvas." },
-          { type: "subheading", text: "Techniques for Productive Brainstorming" },
-          { type: "bullets", items: [
-            { term: "Timeboxing", desc: "Set a strict time limit (20–30 minutes) to create urgency and prevent premature convergence." },
-            { term: "Individual generation first", desc: "Ask participants to silently write down 5–10 ideas before sharing; this prevents groupthink and surfaces ideas from quieter voices." },
-            { term: "Build on others", desc: "Explicitly encourage participants to take someone else's idea and extend it; the best solutions often emerge from combining fragments." },
-            { term: "Separate divergence from convergence", desc: "Run two distinct sessions: one for generating ideas, one for evaluating; mixing them kills creative flow." },
-            { term: "Capture everything", desc: "Record all ideas verbatim without editing or interpretation; what seems irrelevant now may spark insight later." },
-          ]},
-          { type: "stat", value: "50–150", label: "Ideas per session", footnote: "High-performing teams target 50–150 ideas in a single brainstorming session. The math is simple: if only 2% of ideas are worth pursuing, generating 100 ideas produces two viable candidates; generating 10 ideas produces zero." },
-          { type: "subheading", text: "Common Brainstorming Failures" },
-          { type: "bullets", items: [
-            { term: "Starting with constraints", desc: "\"It must be buildable in two weeks\" shuts down creative thinking before it starts." },
-            { term: "Allowing senior voices to dominate", desc: "Hierarchy kills candor; consider anonymous submission or round-robin formats." },
-            { term: "Rushing to solutions", desc: "Solving the symptom instead of the root problem; spend equal time defining what problem you're brainstorming for." },
-            { term: "Perfectionism", desc: "Waiting for the \"right\" idea instead of externalizing messy, half-formed concepts that others can build upon." },
-          ]},
-          { type: "output", text: "A long list of ideas, some brilliant, some impossible, many half-baked, ready for structured evaluation in the next phase." },
-        ] as Block[],
-      },
-      {
-        id: "define", label: "Define", icon: "box-amber", badge: "Converge", content: "",
-        blocks: [
-          { type: "para", text: "The Define phase transforms brainstorming output into a sharp, executable direction. Where brainstorming expands possibilities, definition collapses them into a single coherent bet. This is the discipline of saying \"no\" to good ideas in service of a great one." },
-          { type: "callout", label: "Primary Artifact: Problem-Solution Fit Statement", text: "WHO is the user we are solving for? (specific segment, not \"everyone\") · WHAT is the core problem they experience? (validated, not assumed) · WHY does this problem matter? (emotional or economic intensity) · HOW will our solution address it? (mechanism, not feature list) · WHY now? (market timing, technology enablers, competitive landscape)" },
-          { type: "subheading", text: "Structured Evaluation Frameworks" },
-          { type: "bullets", items: [
-            { term: "Effort vs. Impact Matrix", desc: "Plot ideas on two axes: estimated effort (low to high) and expected impact (low to high); prioritize high-impact, low-effort \"quick wins\" and high-impact, high-effort \"strategic bets\"." },
-            { term: "Weighted Scoring", desc: "Define 4–6 evaluation criteria (e.g., user value, technical feasibility, strategic alignment, market size), assign weights, score each idea, select the highest-scoring concepts." },
-            { term: "Assumptions Testing", desc: "For each idea, list the assumptions that must be true for it to succeed; ideas with fewer high-risk assumptions rank higher." },
-            { term: "Persona Fit", desc: "Map each idea to target user personas; ideas that solve acute problems for clearly defined users outrank ideas that vaguely help \"most people\"." },
-          ]},
-          { type: "subheading", text: "The Output Must Answer" },
-          { type: "bullets", items: [
-            { term: "What are we building?", desc: "One-sentence description." },
-            { term: "What are we NOT building?", desc: "Explicit scope boundaries." },
-            { term: "What is the success metric?", desc: "How will we know if this works?" },
-            { term: "What is the riskiest assumption?", desc: "What could invalidate this entire direction?" },
-          ]},
-          { type: "callout", label: "Alignment Artifacts", text: "Misalignment discovered during development costs 10× more than misalignment surfaced during definition. The Define phase produces documents that engineering, design, marketing, and leadership have all reviewed and approved, before a single line of code is written." },
-          { type: "subheading", text: "Red Flags: Insufficient Definition" },
-          { type: "bullets", items: [
-            { desc: "The team cannot articulate the core user problem in one sentence." },
-            { desc: "Different team members describe the solution in contradictory ways." },
-            { desc: "The success metric is vague (\"improve the experience\") rather than measurable (\"reduce time-to-first-value by 40%\")." },
-            { desc: "The scope includes phrases like \"and maybe also...\" or \"we could add...\"" },
-          ]},
-          { type: "output", text: "A crisp, unambiguous problem-solution statement that engineering and design can translate into a buildable product without requiring additional strategic decisions." },
-        ] as Block[],
-      },
-      {
-        id: "design", label: "Design", icon: "pencil-amber", badge: "Create", content: "",
-        blocks: [
-          { type: "para", text: "The Design phase translates an abstract problem-solution statement into a concrete, visual, interactive experience that users can see, touch, and evaluate. This is where strategy becomes tangible, where we move from \"what\" to \"how.\"" },
-          { type: "quote", text: "Design is not decoration. It is the systematic resolution of hundreds of micro-decisions: What does the user see first? Where do they click? What happens when they make a mistake? How do we communicate system state? Each decision either accelerates or obstructs the user's journey toward their goal." },
-          { type: "subheading", text: "Phases of the Design Process" },
-          { type: "bullets", items: [
-            { term: "Information architecture", desc: "Mapping all the content, features, and data that must be accessible to the user; organizing it into a logical structure that matches their mental model, not the internal database schema." },
-            { term: "User flows", desc: "Charting the step-by-step paths a user takes to accomplish key tasks; every flow must have a clear entry point, success state, and error handling." },
-            { term: "Wireframing", desc: "Creating low-fidelity skeletal layouts that establish hierarchy, content placement, and interaction patterns without color, imagery, or polish; wireframes are cheap to change and fast to test." },
-            { term: "Visual design", desc: "Applying typography, color, spacing, and imagery to wireframes; this is where brand identity and emotional tone is expressed." },
-            { term: "Prototyping", desc: "Building interactive simulations (Figma, Framer, or coded) that allow users to experience the flow before engineering begins; prototypes surface misunderstandings that static mockups hide." },
-          ]},
-          { type: "subheading", text: "Design Principles for Product Innovation" },
-          { type: "bullets", items: [
-            { term: "Clarity over cleverness", desc: "Users should never have to guess what will happen when they interact with an element; labeled buttons beat icons unless the icon is universally recognized." },
-            { term: "Consistency over customization", desc: "Reuse patterns within the product and across the ecosystem; every unique interaction pattern creates cognitive load." },
-            { term: "Feedback over silence", desc: "Every user action should produce immediate, visible feedback; loading states, success confirmations, and error messages are not optional." },
-            { term: "Progressive disclosure", desc: "Show only what the user needs now; reveal advanced functionality through progressive layers rather than overwhelming the initial screen." },
-            { term: "Accessibility by default", desc: "Design for keyboard navigation, screen readers, and high-contrast modes from the start; retrofitting accessibility is expensive and incomplete." },
-          ]},
-          { type: "subheading", text: "Handoff to Engineering" },
-          { type: "bullets", items: [
-            { desc: "Provide annotated designs that specify responsive behavior, interaction states (hover, active, disabled), and edge cases (empty states, error states, loading states)." },
-            { desc: "Document design tokens (color palette, typography scale, spacing system) to ensure consistency across implementation." },
-            { desc: "Conduct a joint design-engineering review to clarify ambiguities and confirm technical feasibility before development begins." },
-          ]},
-          { type: "output", text: "A validated, annotated design system and interactive prototype that engineering can build without requiring additional design decisions mid-sprint." },
-        ] as Block[],
-      },
-      {
-        id: "test", label: "Test", icon: "flask-amber", badge: "Validate", content: "",
-        blocks: [
-          { type: "para", text: "Testing in product innovation serves a dual purpose: validating that the solution works as designed (verification) and confirming that the solution solves the user's problem (validation). Both are essential, a perfectly functional product that solves the wrong problem is a waste." },
-          { type: "subheading", text: "Usability Testing · Validation" },
-          { type: "bullets", items: [
-            { desc: "Recruit 5–8 participants who match your target user profile (not colleagues, not friends unless they genuinely fit the persona)." },
-            { desc: "Give them realistic tasks without explaining how to complete them: \"Imagine you want to [goal]. Show me how you would do that.\"" },
-            { desc: "Observe where they hesitate, where they click the wrong thing, where they give up; these friction points are data." },
-            { desc: "Use the think-aloud protocol: ask users to narrate their thought process as they interact." },
-            { desc: "Do NOT defend the design or explain how it \"should\" work; the product must communicate without you in the room." },
-          ]},
-          { type: "subheading", text: "Functional Testing · Verification" },
-          { type: "bullets", items: [
-            { term: "Happy path testing", desc: "Verify that the primary user flows work correctly from start to finish under normal conditions." },
-            { term: "Edge case testing", desc: "Test boundary conditions: What happens with an empty list? A list with 10,000 items? Special characters in text fields? Slow network connections?" },
-            { term: "Regression testing", desc: "Confirm that new changes did not break existing functionality; ideally automated via integration test suites." },
-            { term: "Cross-platform testing", desc: "Validate behavior across devices (mobile, tablet, desktop), browsers (Chrome, Safari, Firefox, Edge), and operating systems." },
-          ]},
-          { type: "subheading", text: "Assumption Testing · De-risking" },
-          { type: "bullets", items: [
-            { desc: "List the 3–5 riskiest assumptions underlying the product concept (e.g., \"Users will tolerate a 3-second load time\")." },
-            { desc: "Design lightweight experiments to test each assumption with minimal build effort: landing page tests, concierge MVPs, smoke tests, Wizard of Oz prototypes." },
-            { desc: "Set clear success criteria before running the test: \"If fewer than 20% of users click through, the value proposition is unclear and must be redesigned.\"" },
-          ]},
-          { type: "subheading", text: "Interpreting Test Results" },
-          { type: "bullets", items: [
-            { desc: "Distinguish between \"I don't like it\" (opinion) and \"I couldn't figure out how to do X\" (usability failure); fix usability failures, question aesthetic opinions." },
-            { desc: "Look for patterns across multiple users; if one person struggles, it might be user error; if three people struggle in the same place, it's a design flaw." },
-            { desc: "Prioritize issues that block core workflows over issues that affect edge cases; a bug that prevents 80% of users from signing up is more urgent than a typo in footer text." },
-          ]},
-          { type: "subheading", text: "Common Testing Mistakes" },
-          { type: "bullets", items: [
-            { term: "Testing too late", desc: "Waiting until code is production-ready to validate the concept; prototype testing is 10× cheaper and faster." },
-            { term: "Testing with the wrong users", desc: "Showing a B2B enterprise tool to college students because they're easy to recruit." },
-            { term: "Leading the witness", desc: "\"Would you click this button to submit?\" instead of \"What would you do next?\"" },
-            { term: "Ignoring negative feedback", desc: "Rationalizing why users \"didn't understand\" instead of fixing the confusion." },
-          ]},
-          { type: "output", text: "A prioritized list of validated fixes, a confidence score on whether the core value proposition resonates, and a go/no-go recommendation for launch." },
-        ] as Block[],
-      },
-      {
-        id: "launch", label: "Launch", icon: "rocket-amber", badge: "Ship", content: "",
-        blocks: [
-          { type: "para", text: "Launch is the moment when theory meets reality, when a product that has been tested with 5–10 users is exposed to thousands or millions. This is where discipline, preparation, and contingency planning determine whether a promising innovation becomes a market success or a cautionary tale." },
-          { type: "subheading", text: "Pre-Launch Checklist (Non-Negotiables)" },
-          { type: "bullets", items: [
-            { term: "Monitoring infrastructure", desc: "Real-time dashboards tracking error rates, latency, conversion funnels, and key business metrics; if you can't measure it, you can't manage it." },
-            { term: "Feature flags", desc: "Critical functionality behind toggles that allow instant rollback without a code deployment; every launch should be reversible." },
-            { term: "Runbook documentation", desc: "Step-by-step instructions for common scenarios: rollback procedures, escalation paths, manual intervention protocols." },
-            { term: "Support readiness", desc: "Customer support team briefed on new functionality, FAQs prepared, known issues documented; the support inbox is your early-warning system." },
-            { term: "Communication plan", desc: "Email sequences, in-app notifications, blog posts, press releases timed to align with the technical release." },
-          ]},
-          { type: "subheading", text: "Launch Strategy Options" },
-          { type: "bullets", items: [
-            { term: "Dark launch", desc: "Deploy code to production but keep features disabled; validate that infrastructure handles production traffic before exposing functionality to users." },
-            { term: "Canary release", desc: "Enable features for 1–5% of users, monitor metrics for 24–48 hours, gradually expand to 10% → 25% → 50% → 100% if metrics remain healthy." },
-            { term: "Beta program", desc: "Give early access to a self-selected group of engaged users (often power users or design partners); generates testimonials, surfaces edge cases, builds anticipation." },
-            { term: "Geographic rollout", desc: "Release first in a lower-risk market (smaller country, single timezone) before global expansion." },
-            { term: "Segment-based rollout", desc: "Release to one user cohort (e.g., free users, then paid users; or new users, then existing users) to isolate impact." },
-          ]},
-          { type: "subheading", text: "Launch Day Protocol" },
-          { type: "bullets", items: [
-            { desc: "Deploy during low-traffic hours (typically Tuesday–Thursday mornings, avoiding Fridays and weekends)." },
-            { desc: "Establish a \"war room\" (virtual or physical) with engineering, product, and support leads monitoring the launch in real-time." },
-            { desc: "Define rollback criteria in advance: if error rate exceeds X%, if conversion rate drops by Y%, or if support tickets spike by Z%, trigger an immediate rollback." },
-            { desc: "Monitor continuously for the first 24–48 hours; the majority of launch issues surface within the first six hours." },
-          ]},
-          { type: "subheading", text: "Post-Launch Analysis" },
-          { type: "bullets", items: [
-            { desc: "Compare actual metrics to forecasted metrics: Did usage match predictions? Did the North Star Metric move as expected? Where did reality diverge from the model?" },
-            { desc: "Collect qualitative feedback from support tickets, user interviews, and social media mentions; quantitative data tells you what happened, qualitative data tells you why." },
-            { desc: "Document lessons learned: What went well? What failed? What should we do differently next time? Feed these insights back into the innovation process." },
-          ]},
-          { type: "subheading", text: "Common Launch Failures" },
-          { type: "bullets", items: [
-            { term: "No rollback plan", desc: "Treating launch as irreversible; when issues arise, teams scramble instead of executing a predefined protocol." },
-            { term: "All-or-nothing release", desc: "Enabling for 100% of users simultaneously without staged rollout; maximizes risk exposure." },
-            { term: "Success theater", desc: "Celebrating the launch itself rather than the business outcome; shipping is the beginning, not the end." },
-            { term: "Ignoring silent failures", desc: "Users who churn without complaining; exit surveys and cohort retention analysis surface what support tickets miss." },
-          ]},
-          { type: "output", text: "A product in production, a real-time monitoring system to track health metrics, and a continuous feedback loop that informs the next iteration cycle." },
-        ] as Block[],
-      },
-    ],
-  },
-];
+// INITIAL_NOTES now imported from @/lib/notes-data
 
 const LockBox28 = () => (
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -1126,7 +841,8 @@ const sectionCount = activeNote.sections.length;
   }, [activeSectionIdx, activeNoteId]);
 
   function switchNote(id: string) { setActiveNoteId(id); setActiveSectionIdx(0); setSidebarOpen(false); }
-  function goToNotes() { navigateTo("/", setCurrentPath); }
+  function goToNotes() { navigateTo("/notes", setCurrentPath); }
+  const isNotesRoute = currentPath === "/notes";
   const isAdminRoute = currentPath === "/admin" || currentPath.startsWith("/admin/");
 
   useEffect(() => {
@@ -1262,31 +978,6 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     </>
   );
 
-  if (isAdminRoute) {
-    return (
-      <>
-        {adminAuthed ? (
-          <AdminPanel
-            notes={notes}
-            onSave={setNotes}
-            onClose={goToNotes}
-            onLogout={async () => { try { await signOutUser(); } catch {} setAdminAuthed(false); goToNotes(); }}
-            onSaved={(noteId) => {
-              setActiveNoteId(noteId);
-              setActiveSectionIdx(0);
-              goToNotes();
-            }}
-          />
-        ) : (
-          <AdminLogin
-            onSuccess={() => setAdminAuthed(true)}
-            onClose={goToNotes}
-          />
-        )}
-      </>
-    );
-  }
-
   async function handleAuthSuccess(email: string, name: string) {
     setHasAccess(true);
     if (typeof window !== "undefined") {
@@ -1294,6 +985,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
       } catch {}
     }
+    navigateTo("/notes", setCurrentPath);
   }
 
   useEffect(() => {
@@ -1313,9 +1005,36 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     checkSession();
   }, []);
 
-  if (!hasAccess) {
-    return <LandingPage onAuthSuccess={handleAuthSuccess} />;
+  if (isAdminRoute) {
+    return (
+      <>
+        {adminAuthed ? (
+          <AdminPanel
+            notes={notes}
+            onSave={setNotes}
+            onClose={() => { navigateTo("/notes", setCurrentPath); }}
+            onLogout={async () => { try { await signOutUser(); } catch {} setAdminAuthed(false); navigateTo("/notes", setCurrentPath); }}
+            onSaved={(noteId) => {
+              setActiveNoteId(noteId);
+              setActiveSectionIdx(0);
+              navigateTo("/notes", setCurrentPath);
+            }}
+          />
+        ) : (
+          <AdminLogin
+            onSuccess={() => setAdminAuthed(true)}
+            onClose={() => { navigateTo("/notes", setCurrentPath); }}
+          />
+        )}
+      </>
+    );
   }
+
+  if (isNotesRoute) {
+    if (!hasAccess) {
+      navigateTo("/", setCurrentPath);
+      return null;
+    }
 
   return (
     <>
@@ -1357,6 +1076,12 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
           <div className="flex items-center justify-between px-4 sm:px-8 py-3 shrink-0"
             style={{ background: "rgba(248,250,252,0.95)", backdropFilter: "blur(8px)", borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, zIndex: 10 }}>
             <div className="flex items-center gap-2 min-w-0">
+              {/* Back to Home */}
+              <button onClick={() => { navigateTo("/", setCurrentPath); }} className="flex items-center gap-1.5 p-1.5 rounded-[8px] text-[12px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors shrink-0">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <span className="hidden sm:inline">Home</span>
+              </button>
+              <div className="w-px h-4 bg-slate-200 mx-1" />
               {/* Hamburger — mobile only */}
               <button className="lg:hidden p-2 rounded-[8px] hover:bg-slate-100 mr-1 shrink-0" onClick={() => setSidebarOpen(true)}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="#475569" strokeWidth="1.5" strokeLinecap="round" /></svg>
@@ -1445,4 +1170,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
     </>
   );
+  }
+
+  return <LandingPage onAuthSuccess={handleAuthSuccess} />;
 }
