@@ -17,7 +17,9 @@ type Block =
   | { type: "subheading"; text: string }
   | { type: "bullets"; items: { term?: string; desc: string }[] }
   | { type: "stat"; value: string; label: string; footnote: string }
-  | { type: "output"; text: string };
+  | { type: "output"; text: string }
+  | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "image"; src: string; alt: string; caption?: string };
 
 interface EditableSection {
   id: string;
@@ -115,6 +117,8 @@ function blocksToHtml(blocks: Block[]): string {
     if (b.type === "bullets") return `<ul>${b.items.map(i => `<li>${i.term ? `<strong>${i.term}</strong> — ` : ""}${i.desc}</li>`).join("")}</ul>`;
     if (b.type === "stat") return `<p><strong>${b.value} ${b.label}</strong> — ${b.footnote}</p>`;
     if (b.type === "output") return `<p><strong>Output:</strong> ${b.text}</p>`;
+    if (b.type === "table") return `<table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px"><thead><tr>${b.headers.map(h => `<th style="border:1px solid #e2e8f0;padding:8px 12px;background:#f8fafc;font-weight:600;text-align:left;color:#0f1729">${h}</th>`).join("")}</tr></thead><tbody>${b.rows.map(r => `<tr>${r.map(c => `<td style="border:1px solid #e2e8f0;padding:8px 12px;color:#334155">${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    if (b.type === "image") return `<figure style="margin:16px 0;text-align:center"><img src="${b.src}" alt="${b.alt}" style="max-width:100%;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,0.08)" /><figcaption style="margin-top:6px;font-size:12px;color:#94a3b8">${b.caption ?? ""}</figcaption></figure>`;
     return "";
   }).join("");
 }
@@ -176,6 +180,34 @@ function RichContent({ blocks, accent }: { blocks: Block[]; accent: string }) {
             <span className="text-[11px] font-bold tracking-[0.1em] uppercase px-2 py-0.5 rounded mt-[1px] shrink-0" style={{ background: `${accent}15`, color: accent }}>Output</span>
             <p className="text-[14px] leading-[22px] text-[#475569]">{block.text}</p>
           </div>
+        );
+        if (block.type === "table") return (
+          <div key={i} className="overflow-x-auto rounded-[12px]" style={{ border: "1px solid #e2e8f0" }}>
+            <table className="w-full text-[13px]" style={{ borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc" }}>
+                  {block.headers.map((h, j) => (
+                    <th key={j} className="font-semibold text-left px-4 py-3" style={{ borderBottom: "1px solid #e2e8f0", color: "#0f1729", fontFamily: "'Inter',sans-serif" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {block.rows.map((row, j) => (
+                  <tr key={j} style={{ background: j % 2 === 0 ? "#ffffff" : "#f8fafc" }}>
+                    {row.map((c, k) => (
+                      <td key={k} className="px-4 py-3" style={{ borderBottom: "1px solid #f1f5f9", color: "#334155", fontFamily: "'Inter',sans-serif" }}>{c}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        if (block.type === "image") return (
+          <figure key={i} className="flex flex-col items-center my-4">
+            <img src={block.src} alt={block.alt} className="max-w-full rounded-[12px]" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }} />
+            {block.caption && <figcaption className="mt-2 text-[12px] text-[#94a3b8] text-center">{block.caption}</figcaption>}
+          </figure>
         );
         return null;
       })}
@@ -748,9 +780,9 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: Edit
   );
 }
 
-const STORAGE_KEY = "hyyung-ux-notes-v4";
+const STORAGE_KEY = "hyyung-ux-notes-v5";
 const SUPABASE_TABLE = "notes";
-const NOTES_VERSION = "v4";
+const NOTES_VERSION = "v5";
 
 function navigateTo(path: string, setPath: (value: string) => void) {
   const nextPath = path === "/" ? "/" : path;
