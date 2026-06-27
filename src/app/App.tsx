@@ -7,6 +7,7 @@ import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import LandingPage from "@/app/components/LandingPage";
+import { signInWithEmail, signOutUser, getCurrentSession } from "@/lib/supabase";
 
 type Block =
   | { type: "para"; text: string }
@@ -604,18 +605,22 @@ const QUILL_MODULES = {
 const QUILL_FORMATS = ["header", "font", "size", "bold", "italic", "underline", "strike", "color", "background", "list", "bullet", "indent", "blockquote", "code-block", "link", "align"];
 
 const ADMIN_EMAIL = "hyyungnim@gmail.com";
-const ADMIN_PASS = "Hardeesah1@";
 
 function AdminLogin({ onSuccess, onClose }: { onSuccess: () => void; onClose: () => void }) {
   const [email, setEmail] = useState(""); const [pass, setPass] = useState(""); const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true);
-    setTimeout(() => {
-      if (email === ADMIN_EMAIL && pass === ADMIN_PASS) { onSuccess(); } else { setError("Invalid email or password."); }
+    try {
+      if (email !== ADMIN_EMAIL) throw new Error("Invalid email or password.");
+      await signInWithEmail(email, pass);
+      onSuccess();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid email or password.");
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   };
 
   return (
@@ -1265,7 +1270,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             notes={notes}
             onSave={setNotes}
             onClose={goToNotes}
-            onLogout={() => { setAdminAuthed(false); goToNotes(); }}
+            onLogout={async () => { try { await signOutUser(); } catch {} setAdminAuthed(false); goToNotes(); }}
             onSaved={(noteId) => {
               setActiveNoteId(noteId);
               setActiveSectionIdx(0);
@@ -1282,17 +1287,34 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     );
   }
 
-  function handleSignup(name: string, email: string) {
+  async function handleAuthSuccess(email: string, name: string) {
     setHasAccess(true);
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("hyyung-landing-signup", JSON.stringify({ name, email, joinedAt: new Date().toISOString() }));
+        localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
       } catch {}
     }
   }
 
+  useEffect(() => {
+    const checkSession = async () => {
+      const stored = localStorage.getItem("hyyung-landing-auth");
+      if (stored) {
+        setHasAccess(true);
+        return;
+      }
+      try {
+        const session = await getCurrentSession();
+        if (session) {
+          setHasAccess(true);
+        }
+      } catch {}
+    };
+    checkSession();
+  }, []);
+
   if (!hasAccess) {
-    return <LandingPage onSignup={handleSignup} />;
+    return <LandingPage onAuthSuccess={handleAuthSuccess} />;
   }
 
   return (
