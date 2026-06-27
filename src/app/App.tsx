@@ -1113,10 +1113,10 @@ const sectionCount = activeNote.sections.length;
                 {sectionCount > 0 && (
                   <div className="mt-3 flex items-center gap-3">
                     <div className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
-                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.round((completedNotes.find(n => n.id === activeNoteId)?.sections.filter(s => viewedSections.has(s.id)).length ?? 0) / sectionCount * 100)}%`, background: theme.accentColor }} />
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.round(activeNote.sections.filter(s => viewedSections.has(s.id)).length / sectionCount * 100)}%`, background: theme.accentColor }} />
                     </div>
                     <span className="text-[10.5px] font-medium" style={{ color: theme.accentColor }}>
-                      {completedNotes.find(n => n.id === activeNoteId)?.sections.filter(s => viewedSections.has(s.id)).length ?? 0}/{sectionCount}
+                      {activeNote.sections.filter(s => viewedSections.has(s.id)).length}/{sectionCount}
                     </span>
                   </div>
                 )}
