@@ -1401,7 +1401,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               const email = session?.user?.email || "";
               const name = session?.user?.user_metadata?.name || email.split("@")[0];
               onAuthSuccess(email, name);
-            } else if (currentPath !== "/" && currentPath !== "/notes") {
+            } else if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/admin") {
               navigateTo("/notes", setCurrentPath);
             }
           }
@@ -1427,7 +1427,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
           }
           if (currentPath === "/auth/callback") {
             onAuthSuccess(email, name);
-          } else if (currentPath !== "/" && currentPath !== "/notes") {
+          } else if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/admin") {
             navigateTo("/notes", setCurrentPath);
           }
         }
