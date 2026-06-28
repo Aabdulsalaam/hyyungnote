@@ -16,7 +16,10 @@ export async function signUpWithEmail(email: string, password: string, name: str
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: metadata },
+    options: {
+      data: metadata,
+      emailRedirectTo: typeof window !== "undefined" ? window.location.origin + "/auth/callback" : undefined,
+    },
   });
   if (error) throw error;
   return data;

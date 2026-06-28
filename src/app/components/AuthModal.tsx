@@ -92,6 +92,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
       const data = await signUpWithEmail(signUpEmail, signUpPassword, trimmedName, trimmedPhone);
       if (data.user?.identities?.length === 0) {
         setError("An account with this email already exists. Please sign in instead.");
+      } else if (data.session) {
+        onAuthSuccess(signUpEmail, trimmedName);
+        onOpenChange(false);
       } else {
         setVerifiedEmail(signUpEmail);
         setVerifiedScreen(true);

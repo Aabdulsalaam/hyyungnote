@@ -1397,7 +1397,11 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             prevHasAccess.current = true;
             setHasAccess(true);
             addActivity({ type: "login" });
-            if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/auth/callback") {
+            if (currentPath === "/auth/callback") {
+              const email = session?.user?.email || "";
+              const name = session?.user?.user_metadata?.name || email.split("@")[0];
+              onAuthSuccess(email, name);
+            } else if (currentPath !== "/" && currentPath !== "/notes") {
               navigateTo("/notes", setCurrentPath);
             }
           }
@@ -1421,7 +1425,9 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
             } catch {}
           }
-          if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/auth/callback") {
+          if (currentPath === "/auth/callback") {
+            onAuthSuccess(email, name);
+          } else if (currentPath !== "/" && currentPath !== "/notes") {
             navigateTo("/notes", setCurrentPath);
           }
         }
