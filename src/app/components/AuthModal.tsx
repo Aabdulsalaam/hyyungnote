@@ -6,6 +6,8 @@ import { Label } from "@/app/components/ui/label";
 import { Button } from "@/app/components/ui/button";
 import { signUpWithEmail, signInWithEmail } from "@/lib/supabase";
 
+const PHONE_REGEX = /^\+[1-9]\d{6,14}$/;
+
 type AuthModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -16,6 +18,8 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [verifiedScreen, setVerifiedScreen] = useState(false);
+  const [verifiedEmail, setVerifiedEmail] = useState("");
 
   // Sign In fields
   const [signInEmail, setSignInEmail] = useState("");
@@ -29,6 +33,8 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
 
   function reset() {
     setError("");
+    setVerifiedScreen(false);
+    setVerifiedEmail("");
     setSignInEmail("");
     setSignInPassword("");
     setSignUpName("");
@@ -47,7 +53,12 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
       onAuthSuccess(signInEmail, name);
       reset();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Sign in failed");
+      const msg = err instanceof Error ? err.message : "Sign in failed";
+      if (msg.toLowerCase().includes("email not confirmed") || msg.toLowerCase().includes("email not verified")) {
+        setError("Please verify your email first. Check your inbox for the confirmation link.");
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -61,15 +72,52 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
       const trimmedName = signUpName.trim();
       if (!trimmedName) throw new Error("Name is required");
       const trimmedPhone = signUpPhone.trim();
-      const data = await signUpWithEmail(signUpEmail, signUpPassword, trimmedName, trimmedPhone || undefined);
-      const name = data.user?.user_metadata?.name || trimmedName;
-      onAuthSuccess(signUpEmail, name);
-      reset();
+      if (!trimmedPhone) throw new Error("Phone number is required");
+      if (!PHONE_REGEX.test(trimmedPhone)) throw new Error("Phone must start with + and country code (e.g. +2349090718281)");
+      const data = await signUpWithEmail(signUpEmail, signUpPassword, trimmedName, trimmedPhone);
+      if (data.user?.identities?.length === 0) {
+        setError("An account with this email already exists. Please sign in instead.");
+      } else {
+        setVerifiedEmail(signUpEmail);
+        setVerifiedScreen(true);
+        setSignUpName("");
+        setSignUpEmail("");
+        setSignUpPassword("");
+        setSignUpPhone("");
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Sign up failed");
     } finally {
       setLoading(false);
     }
+  }
+
+  if (verifiedScreen) {
+    return (
+      <Dialog open={open} onOpenChange={(o) => { if (!o) { reset(); onOpenChange(o); } }}>
+        <DialogContent className="sm:max-w-[420px] p-6">
+          <div className="flex flex-col items-center py-6 text-center">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 mb-4">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: "'Montserrat',sans-serif" }}>Verify your email</h3>
+            <p className="text-sm text-slate-600 mt-2 max-w-[300px]">
+              We sent a confirmation link to <strong className="text-slate-900">{signUpEmail}</strong>. Click the link to activate your account, then sign in.
+            </p>
+            <div className="mt-6 flex flex-col gap-2 w-full">
+              <Button onClick={() => { reset(); setTab("signin"); }} className="w-full h-10">
+                Go to Sign In
+              </Button>
+              <Button variant="outline" onClick={() => { reset(); onOpenChange(false); }} className="w-full h-10">
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return (
@@ -148,14 +196,16 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="signup-phone">Phone (optional)</Label>
+                <Label htmlFor="signup-phone">Phone</Label>
                 <Input
                   id="signup-phone"
                   type="tel"
-                  placeholder="+234 909 071 8281"
+                  placeholder="+2349090718281"
                   value={signUpPhone}
                   onChange={(e) => { setSignUpPhone(e.target.value); setError(""); }}
+                  required
                 />
+                <p className="text-[11px] text-slate-400">Include + and country code (e.g. +2349090718281)</p>
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signup-password">Password</Label>
