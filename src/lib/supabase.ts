@@ -32,6 +32,32 @@ export async function signInWithEmail(email: string, password: string) {
   return data;
 }
 
+export async function signInWithGoogle() {
+  if (!supabase) throw new Error("Supabase not configured");
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: typeof window !== "undefined" ? window.location.origin + "/auth/callback" : undefined },
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function resetPasswordForEmail(email: string) {
+  if (!supabase) throw new Error("Supabase not configured");
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: typeof window !== "undefined" ? window.location.origin + "/auth/callback" : undefined,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function updateUserPassword(newPassword: string) {
+  if (!supabase) throw new Error("Supabase not configured");
+  const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw error;
+  return data;
+}
+
 export async function signOutUser() {
   if (!supabase) throw new Error("Supabase not configured");
   const { error } = await supabase.auth.signOut();

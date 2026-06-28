@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/ta
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Button } from "@/app/components/ui/button";
-import { signUpWithEmail, signInWithEmail } from "@/lib/supabase";
+import { signUpWithEmail, signInWithEmail, signInWithGoogle, resetPasswordForEmail } from "@/lib/supabase";
 
 const PHONE_REGEX = /^\+[1-9]\d{6,14}$/;
 
@@ -20,6 +20,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
   const [error, setError] = useState("");
   const [verifiedScreen, setVerifiedScreen] = useState(false);
   const [verifiedEmail, setVerifiedEmail] = useState("");
+  const [forgotScreen, setForgotScreen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [resetSent, setResetSent] = useState(false);
 
   // Sign In fields
   const [signInEmail, setSignInEmail] = useState("");
@@ -35,6 +38,9 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
     setError("");
     setVerifiedScreen(false);
     setVerifiedEmail("");
+    setForgotScreen(false);
+    setForgotEmail("");
+    setResetSent(false);
     setSignInEmail("");
     setSignInPassword("");
     setSignUpName("");
@@ -92,6 +98,31 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
     }
   }
 
+  async function handleGoogleSignIn() {
+    setError("");
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Google sign in failed");
+      setLoading(false);
+    }
+  }
+
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await resetPasswordForEmail(forgotEmail);
+      setResetSent(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to send reset email");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (verifiedScreen) {
     return (
       <Dialog open={open} onOpenChange={(o) => { if (!o) { reset(); onOpenChange(o); } }}>
@@ -104,7 +135,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
             </div>
             <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: "'Montserrat',sans-serif" }}>Verify your email</h3>
             <p className="text-sm text-slate-600 mt-2 max-w-[300px]">
-              We sent a confirmation link to <strong className="text-slate-900">{signUpEmail}</strong>. Click the link to activate your account, then sign in.
+              We sent a confirmation link to <strong className="text-slate-900">{verifiedEmail}</strong>. Click the link to activate your account, then sign in.
             </p>
             <div className="mt-6 flex flex-col gap-2 w-full">
               <Button onClick={() => { reset(); setTab("signin"); }} className="w-full h-10">
@@ -115,6 +146,57 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (forgotScreen) {
+    return (
+      <Dialog open={open} onOpenChange={(o) => { if (!o) { reset(); onOpenChange(o); } }}>
+        <DialogContent className="sm:max-w-[420px] p-6">
+          {resetSent ? (
+            <div className="flex flex-col items-center py-6 text-center">
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-100 mb-4">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: "'Montserrat',sans-serif" }}>Check your email</h3>
+              <p className="text-sm text-slate-600 mt-2 max-w-[300px]">
+                We sent a password reset link to <strong className="text-slate-900">{forgotEmail}</strong>.
+              </p>
+              <div className="mt-6 flex flex-col gap-2 w-full">
+                <Button onClick={() => { reset(); setTab("signin"); }} className="w-full h-10">
+                  Back to Sign In
+                </Button>
+                <Button variant="outline" onClick={() => { reset(); onOpenChange(false); }} className="w-full h-10">
+                  Close
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <button onClick={() => setForgotScreen(false)} className="p-1 rounded-md hover:bg-slate-100 transition-colors">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                </button>
+                <DialogTitle className="text-lg font-bold" style={{ fontFamily: "'Montserrat',sans-serif" }}>Reset password</DialogTitle>
+              </div>
+              <p className="text-sm text-slate-600 mb-6">Enter your email and we'll send you a reset link.</p>
+              <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="forgot-email">Email</Label>
+                  <Input id="forgot-email" type="email" placeholder="name@email.com" value={forgotEmail}
+                    onChange={(e) => { setForgotEmail(e.target.value); setError(""); }} required />
+                </div>
+                {error && <p className="text-sm text-destructive">{error}</p>}
+                <Button type="submit" disabled={loading} className="w-full h-10">
+                  {loading ? "Sending…" : "Send Reset Link"}
+                </Button>
+              </form>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     );
@@ -144,80 +226,79 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
             <form onSubmit={handleSignIn} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signin-email">Email</Label>
-                <Input
-                  id="signin-email"
-                  type="email"
-                  placeholder="name@email.com"
-                  value={signInEmail}
-                  onChange={(e) => { setSignInEmail(e.target.value); setError(""); }}
-                  required
-                />
+                <Input id="signin-email" type="email" placeholder="name@email.com" value={signInEmail}
+                  onChange={(e) => { setSignInEmail(e.target.value); setError(""); }} required />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="signin-password">Password</Label>
-                <Input
-                  id="signin-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={signInPassword}
-                  onChange={(e) => { setSignInPassword(e.target.value); setError(""); }}
-                  required
-                />
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="signin-password">Password</Label>
+                  <button type="button" onClick={() => { setForgotEmail(""); setForgotScreen(true); setResetSent(false); }}
+                    className="text-[12px] font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                    Forgot password?
+                  </button>
+                </div>
+                <Input id="signin-password" type="password" placeholder="••••••••" value={signInPassword}
+                  onChange={(e) => { setSignInPassword(e.target.value); setError(""); }} required />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full h-10">
                 {loading ? "Signing in…" : "Sign In"}
               </Button>
             </form>
+
+            <div className="relative my-5">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200" /></div>
+              <div className="relative flex justify-center"><span className="bg-white px-3 text-[12px] text-slate-400">or continue with</span></div>
+            </div>
+
+            <button type="button" onClick={handleGoogleSignIn} disabled={loading}
+              className="google-btn relative w-full flex items-center justify-center gap-3 h-11 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-700 transition-all overflow-hidden">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
+              Continue with Google
+            </button>
+            <style>{`
+              .google-btn::before {
+                content: '';
+                position: absolute;
+                inset: -2px;
+                border-radius: 12px;
+                background: conic-gradient(from 0deg, #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+                opacity: 0;
+                transition: opacity 0.3s;
+                z-index: -1;
+              }
+              .google-btn:hover::before {
+                opacity: 1;
+                animation: spin 2s linear infinite;
+              }
+              @keyframes spin {
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
           </TabsContent>
 
           <TabsContent value="signup">
             <form onSubmit={handleSignUp} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signup-name">Name</Label>
-                <Input
-                  id="signup-name"
-                  type="text"
-                  placeholder="Your name"
-                  value={signUpName}
-                  onChange={(e) => { setSignUpName(e.target.value); setError(""); }}
-                  required
-                />
+                <Input id="signup-name" type="text" placeholder="Your name" value={signUpName}
+                  onChange={(e) => { setSignUpName(e.target.value); setError(""); }} required />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="name@email.com"
-                  value={signUpEmail}
-                  onChange={(e) => { setSignUpEmail(e.target.value); setError(""); }}
-                  required
-                />
+                <Input id="signup-email" type="email" placeholder="name@email.com" value={signUpEmail}
+                  onChange={(e) => { setSignUpEmail(e.target.value); setError(""); }} required />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signup-phone">Phone</Label>
-                <Input
-                  id="signup-phone"
-                  type="tel"
-                  placeholder="+2349090718281"
-                  value={signUpPhone}
-                  onChange={(e) => { setSignUpPhone(e.target.value); setError(""); }}
-                  required
-                />
+                <Input id="signup-phone" type="tel" placeholder="+2349090718281" value={signUpPhone}
+                  onChange={(e) => { setSignUpPhone(e.target.value); setError(""); }} required />
                 <p className="text-[11px] text-slate-400">Include + and country code (e.g. +2349090718281)</p>
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signup-password">Password</Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  placeholder="At least 6 characters"
-                  value={signUpPassword}
-                  onChange={(e) => { setSignUpPassword(e.target.value); setError(""); }}
-                  minLength={6}
-                  required
-                />
+                <Input id="signup-password" type="password" placeholder="At least 6 characters" value={signUpPassword}
+                  onChange={(e) => { setSignUpPassword(e.target.value); setError(""); }} minLength={6} required />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full h-10">

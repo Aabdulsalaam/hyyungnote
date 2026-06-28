@@ -5,7 +5,7 @@ import svgLogin from "@/imports/Notes-2/svg-bix1q8uy1z";
 import svgAdmin from "@/imports/Notes-3/svg-5vzq3h17ph";
 import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
-import { isSupabaseConfigured, supabase, fetchAggregatedAnalytics, updateUserAnalytics } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase, fetchAggregatedAnalytics, updateUserAnalytics, updateUserPassword } from "@/lib/supabase";
 import type { AggregatedAnalytics } from "@/lib/supabase";
 import { signInWithEmail, signOutUser, getCurrentSession } from "@/lib/supabase";
 import { INITIAL_NOTES } from "@/lib/notes-data";
@@ -1407,6 +1407,89 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     };
     checkSession();
   }, []);
+
+  // Handle password recovery and OAuth callbacks
+  const [resetPassword, setResetPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [resetDone, setResetDone] = useState(false);
+  const [resetError, setResetError] = useState("");
+  const [resetting, setResetting] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.replace("#", ""));
+    if (params.get("type") === "recovery") {
+      setResetPassword(true);
+      navigateTo("/", setCurrentPath);
+    }
+    if (currentPath === "/auth/callback") {
+      const checkSession = async () => {
+        const session = await getCurrentSession();
+        if (session) {
+          const email = session.user?.email || "";
+          const name = session.user?.user_metadata?.name || email.split("@")[0];
+          onAuthSuccess(email, name);
+        }
+      };
+      checkSession();
+    }
+  }, []);
+
+  async function handlePasswordReset(e: React.FormEvent) {
+    e.preventDefault();
+    setResetError("");
+    setResetting(true);
+    try {
+      await updateUserPassword(newPassword);
+      setResetDone(true);
+      setTimeout(() => { setResetPassword(false); setResetDone(false); setNewPassword(""); }, 3000);
+    } catch (err: unknown) {
+      setResetError(err instanceof Error ? err.message : "Failed to reset password");
+    } finally {
+      setResetting(false);
+    }
+  }
+
+  if (resetPassword) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "#f8fafc" }}>
+        <div className="w-full max-w-[400px] rounded-[16px] p-[33px]" style={{ background: "#fff", border: "1px solid #e2e8f0", boxShadow: "0px 4px 10px rgba(0,0,0,0.08)" }}>
+          {resetDone ? (
+            <div className="flex flex-col items-center py-6 text-center">
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-100 mb-4">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: "'Montserrat',sans-serif" }}>Password updated</h3>
+              <p className="text-sm text-slate-600 mt-2">You can now sign in with your new password.</p>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-xl font-bold text-center text-slate-900 mb-2" style={{ fontFamily: "'Montserrat',sans-serif" }}>Set new password</h2>
+              <p className="text-sm text-slate-600 text-center mb-6">Enter your new password below.</p>
+              <form onSubmit={handlePasswordReset} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <label className="font-semibold text-[14px] text-[#475569]">New Password</label>
+                  <input type="password" value={newPassword} onChange={e => { setNewPassword(e.target.value); setResetError(""); }} placeholder="At least 6 characters" minLength={6} required
+                    className="w-full h-[47px] px-4 rounded-[12px] text-[14px] outline-none transition-all"
+                    style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", color: "#0f1729" }}
+                    onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+                </div>
+                {resetError && <p className="text-[12px] text-red-500">{resetError}</p>}
+                <button type="submit" disabled={resetting}
+                  className="w-full h-[47px] rounded-[12px] font-semibold text-[15.2px] text-white transition-all"
+                  style={{ background: resetting ? "#93c5fd" : "#2563eb", fontFamily: "'Inter',sans-serif" }}>
+                  {resetting ? "Resetting…" : "Reset Password"}
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (isAdminRoute) {
     return (
