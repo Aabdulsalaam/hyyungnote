@@ -5,7 +5,8 @@ import svgLogin from "@/imports/Notes-2/svg-bix1q8uy1z";
 import svgAdmin from "@/imports/Notes-3/svg-5vzq3h17ph";
 import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase, fetchAggregatedAnalytics, updateUserAnalytics } from "@/lib/supabase";
+import type { AggregatedAnalytics } from "@/lib/supabase";
 import { signInWithEmail, signOutUser, getCurrentSession } from "@/lib/supabase";
 import { INITIAL_NOTES } from "@/lib/notes-data";
 import LandingPage from "@/app/components/LandingPage";
@@ -835,16 +836,25 @@ const SECTION_COLOR_OPTIONS = [
 ];
 const ICON_OPTIONS = ["plus", "search", "target", "lightbulb", "lightbulb-amber", "tool", "check", "refresh", "box-amber", "pencil-amber", "flask-amber", "rocket-amber"];
 
-function AdminPanel({ notes, onSave, onClose, onLogout, onSaved, userStats, recentActivity }: {
+function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: {
   notes: EditableNote[];
   onSave?: (n: EditableNote[]) => void;
   onClose?: () => void;
   onLogout: () => void;
   onSaved: (noteId: string) => void;
-  userStats: { completedNotes: number; totalNotes: number; sectionsRead: number; totalSections: number; lastActive: string; currentStreak: number; completionRate: number };
-  recentActivity: ActivityEntry[];
 }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [analytics, setAnalytics] = useState<AggregatedAnalytics | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setAnalyticsLoading(true);
+    fetchAggregatedAnalytics().then(result => {
+      if (!cancelled) { setAnalytics(result); setAnalyticsLoading(false); }
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   function countBlocks(n: EditableNote) {
     const counts: Record<string, number> = {};
@@ -885,7 +895,7 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved, userStats, rece
           <div className="flex items-center gap-3">
             <div>
               <p className="font-bold text-[19.2px] text-[#1e293b] leading-tight" style={{ fontFamily: "'Montserrat',sans-serif" }}>Dashboard</p>
-              <p className="text-[12px] text-[#94a3b8]" style={{ fontFamily: "'Inter',sans-serif" }}>Progress &amp; Content Overview</p>
+              <p className="text-[12px] text-[#94a3b8]" style={{ fontFamily: "'Inter',sans-serif" }}>Analytics &amp; Content Overview</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -917,36 +927,52 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved, userStats, rece
 
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full" style={{ background: "#6366f1" }} />
-              <h2 className="font-bold text-[15px] text-[#1e293b]" style={{ fontFamily: "'Montserrat',sans-serif" }}>Your Progress</h2>
+              <div className="w-3 h-3 rounded-full" style={{ background: "#8b5cf6" }} />
+              <h2 className="font-bold text-[15px] text-[#1e293b]" style={{ fontFamily: "'Montserrat',sans-serif" }}>User Analytics</h2>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #6366f120", boxShadow: "0 2px 8px #6366f110" }}>
-                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Notes Completed</span>
-                <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#6366f1", fontFamily: "'Montserrat',sans-serif" }}>{userStats.completedNotes}<span className="text-[16px] text-[#94a3b8] font-semibold">/{userStats.totalNotes}</span></span>
-              </div>
-              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #10b98120", boxShadow: "0 2px 8px #10b98110" }}>
-                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Sections Read</span>
-                <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#10b981", fontFamily: "'Montserrat',sans-serif" }}>{userStats.sectionsRead}<span className="text-[16px] text-[#94a3b8] font-semibold">/{userStats.totalSections}</span></span>
-              </div>
-              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #f59e0b20", boxShadow: "0 2px 8px #f59e0b10" }}>
-                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Completion Rate</span>
-                <div className="flex items-end gap-2 mt-1">
-                  <span className="font-extrabold text-[28px] leading-none" style={{ color: "#f59e0b", fontFamily: "'Montserrat',sans-serif" }}>{userStats.completionRate}%</span>
-                </div>
-                <div className="mt-2 h-[4px] rounded-full w-full" style={{ background: "#f1f5f9", overflow: "hidden" }}>
-                  <div className="h-full rounded-full" style={{ width: userStats.completionRate + "%", background: "#f59e0b" }} />
+            {analyticsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#8b5cf6", borderTopColor: "transparent" }} />
+                  <span className="text-[13px]" style={{ color: "#94a3b8" }}>Loading analytics...</span>
                 </div>
               </div>
-              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #ec489920", boxShadow: "0 2px 8px #ec489910" }}>
-                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Current Streak</span>
-                <div className="flex items-end gap-2 mt-1">
-                  <span className="font-extrabold text-[28px] leading-none" style={{ color: "#ec4899", fontFamily: "'Montserrat',sans-serif" }}>{userStats.currentStreak}</span>
-                  <span className="text-[12px] font-medium mb-1" style={{ color: "#94a3b8" }}>days</span>
+            ) : analytics ? (
+              <div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                  <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #8b5cf620", boxShadow: "0 2px 8px #8b5cf610" }}>
+                    <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Total Users</span>
+                    <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#8b5cf6", fontFamily: "'Montserrat',sans-serif" }}>{analytics.totalUsers}</span>
+                  </div>
+                  <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #10b98120", boxShadow: "0 2px 8px #10b98110" }}>
+                    <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Completed Notes</span>
+                    <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#10b981", fontFamily: "'Montserrat',sans-serif" }}>{analytics.usersWithCompletedNotes}<span className="text-[16px] text-[#94a3b8] font-semibold">/{analytics.totalUsers}</span></span>
+                  </div>
+                  <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #f59e0b20", boxShadow: "0 2px 8px #f59e0b10" }}>
+                    <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Practice Done</span>
+                    <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#f59e0b", fontFamily: "'Montserrat',sans-serif" }}>{analytics.usersWithPractice}<span className="text-[16px] text-[#94a3b8] font-semibold">/{analytics.totalUsers}</span></span>
+                  </div>
+                  <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #3b82f620", boxShadow: "0 2px 8px #3b82f610" }}>
+                    <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Sections Read</span>
+                    <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#3b82f6", fontFamily: "'Montserrat',sans-serif" }}>{analytics.totalSectionsRead}</span>
+                  </div>
                 </div>
-                {userStats.lastActive && <span className="text-[10px] mt-1" style={{ color: "#94a3b8" }}>Last active: {formatRelativeTime(userStats.lastActive)}</span>}
+                <div className="rounded-[14px] p-5" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
+                  <h3 className="font-bold text-[14px] text-[#1e293b] mb-3" style={{ fontFamily: "'Montserrat',sans-serif" }}>Avg Completion Rate</h3>
+                  <div className="flex items-center gap-4">
+                    <span className="font-extrabold text-[36px]" style={{ color: "#8b5cf6", fontFamily: "'Montserrat',sans-serif" }}>{analytics.avgCompletionRate}%</span>
+                    <div className="flex-1 h-[10px] rounded-full" style={{ background: "#f1f5f9", overflow: "hidden" }}>
+                      <div className="h-full rounded-full transition-all" style={{ width: analytics.avgCompletionRate + "%", background: "#8b5cf6" }} />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col items-center py-12 text-center">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 8V12L14 14" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12" cy="12" r="9" stroke="#94A3B8" strokeWidth="1.5"/></svg>
+                <p className="text-[13px] mt-3" style={{ color: "#94a3b8" }}>No analytics data yet. Create the <code style={{ background: "#f1f5f9", padding: "1px 5px", borderRadius: 4 }}>user_analytics</code> table in Supabase and users will appear here.</p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -997,35 +1023,6 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved, userStats, rece
                 );
               })}
             </div>
-          </div>
-
-          <div className="rounded-[14px] p-5 mb-8" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
-            <h3 className="font-bold text-[14px] text-[#1e293b] mb-4" style={{ fontFamily: "'Montserrat',sans-serif" }}>Recent Activity</h3>
-            {recentActivity.length > 0 ? (
-              <div className="flex flex-col gap-0 max-h-[300px] overflow-y-auto">
-                {recentActivity.slice(0, 20).map((a, i) => {
-                  var iconColor = a.type === "login" ? "#6366f1" : a.type === "view_section" ? "#3b82f6" : a.type === "complete_note" ? "#10b981" : "#f59e0b";
-                  var iconPath = a.type === "login" ? "M5 11L8 14L13 7" : a.type === "view_section" ? "M1.5 8C1.5 8 3.5 3.5 8 3.5C12.5 3.5 14.5 8 14.5 8C14.5 8 12.5 12.5 8 12.5C3.5 12.5 1.5 8 1.5 8Z" : a.type === "complete_note" ? "M2.5 7.5L6 11L13.5 3.5" : "M8 1.5V8L11 10.5";
-                  var label = a.type === "login" ? "Logged in" : a.type === "view_section" ? `Viewed "${a.sectionLabel}"` : a.type === "complete_note" ? `Completed "${a.noteTitle}"` : `Opened practice for "${a.noteTitle}"`;
-                  return (
-                    <div key={i} className="flex items-center gap-3 py-2.5" style={{ borderBottom: i < Math.min(recentActivity.length, 20) - 1 ? "1px solid #f1f5f9" : "none" }}>
-                      <div className="shrink-0 flex items-center justify-center w-[30px] h-[30px] rounded-[8px]" style={{ background: `${iconColor}12` }}>
-                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d={iconPath} stroke={iconColor} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[12px] font-medium truncate" style={{ color: "#1e293b" }}>{label}</p>
-                        <p className="text-[10px]" style={{ color: "#94a3b8" }}>{formatRelativeTime(a.timestamp)}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center py-8 text-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8V12L14 14" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12" cy="12" r="9" stroke="#94A3B8" strokeWidth="1.5"/></svg>
-                <p className="text-[12px] mt-2" style={{ color: "#94a3b8" }}>No activity yet. Start reading notes to see your activity here.</p>
-              </div>
-            )}
           </div>
 
           <div className="mb-4">
@@ -1173,6 +1170,23 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem("hyyung-viewed-sections", JSON.stringify(Array.from(viewedSections))); } catch {}
   }, [viewedSections]);
+
+  // Sync user progress to Supabase for analytics
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let uid: string;
+    try { uid = localStorage.getItem("hyyung-user-id"); if (!uid) { uid = crypto.randomUUID(); localStorage.setItem("hyyung-user-id", uid); } } catch { uid = crypto.randomUUID(); }
+    const stats = {
+      userId: uid,
+      sectionsRead: viewedSections.size,
+      completedNotes: completedNotes.length,
+      totalSections: notes.reduce((a, n) => a + n.sections.length, 0),
+      totalNotes: notes.length,
+      practiceDone: false,
+      lastActive: new Date().toISOString(),
+    };
+    updateUserAnalytics(stats);
+  }, [viewedSections.size, completedNotes.length, notes.length]);
 
   useEffect(() => {
     const loadNotes = async () => {
@@ -1394,16 +1408,6 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     checkSession();
   }, []);
 
-  const userStats = {
-    completedNotes: completedNotes.length,
-    totalNotes: notes.length,
-    sectionsRead: viewedSections.size,
-    totalSections: notes.reduce((a, n) => a + n.sections.length, 0),
-    lastActive: activityLog.length > 0 ? activityLog[0].timestamp : "",
-    currentStreak: computeStreak(activityLog),
-    completionRate: notes.length > 0 ? Math.round((completedNotes.length / notes.length) * 100) : 0,
-  };
-
   if (isAdminRoute) {
     return (
       <>
@@ -1418,8 +1422,6 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               setActiveSectionIdx(0);
               navigateTo("/notes", setCurrentPath);
             }}
-            userStats={userStats}
-            recentActivity={activityLog}
           />
         ) : (
           <AdminLogin
