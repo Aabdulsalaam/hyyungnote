@@ -5,6 +5,7 @@ export const NOTES_A: any[] = [
     "title": "Basics of User Experience Design",
     "subtitle": "Foundational Concepts for Human Centered Design",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Basics",
       "Fundamentals",
@@ -392,6 +393,7 @@ export const NOTES_A: any[] = [
     "title": "Characteristics of a Good User Experience",
     "subtitle": "What Makes Users Love a Product",
     "wordCount": "~3,000 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Quality",
       "Usability",
@@ -757,6 +759,7 @@ export const NOTES_A: any[] = [
     "title": "Who Is a User Experience Designer?",
     "subtitle": "Role, Skills, and Mindset",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Role",
       "UX Designer",
@@ -1145,6 +1148,7 @@ export const NOTES_A: any[] = [
     "title": "User Experience Designer Careers",
     "subtitle": "Paths, Growth, and Opportunities",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Career",
       "Career Path",
@@ -1526,6 +1530,7 @@ export const NOTES_A: any[] = [
     "title": "A Day in the Life of a UX Designer",
     "subtitle": "What UX Professionals Actually Do",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Work",
       "Daily Routine",
@@ -1927,6 +1932,7 @@ export const NOTES_A: any[] = [
     "title": "Product Development Life Cycle",
     "subtitle": "Rapid Ideation to Launch Framework",
     "wordCount": "~4,200 words",
+    "difficulty": "Beginner",
     "tags": [
       "PDLC",
       "Innovation",
@@ -2542,6 +2548,7 @@ export const NOTES_A: any[] = [
     "title": "Who Are My Users?",
     "subtitle": "Understanding Your Target Audience",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "Users",
       "Target Audience",
@@ -2942,6 +2949,7 @@ export const NOTES_A: any[] = [
     "title": "Thinking About Users New to Technology",
     "subtitle": "Designing for Digital Beginners",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "Digital Literacy",
       "Inclusion",
@@ -3309,6 +3317,7 @@ export const NOTES_A: any[] = [
     "title": "Why User Experience Design?",
     "subtitle": "The Business and Human Case for UX",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Value",
       "ROI",
@@ -3654,6 +3663,7 @@ export const NOTES_A: any[] = [
     "title": "Introduction to User Experience Research",
     "subtitle": "Building Products on Evidence, Not Assumptions",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "UX Research",
       "Research Methods",
@@ -4017,6 +4027,7 @@ export const NOTES_A: any[] = [
     "title": "Empathize With the User",
     "subtitle": "Building Deep User Understanding",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "Empathy",
       "User Research",
@@ -4388,6 +4399,7 @@ export const NOTES_A: any[] = [
     "title": "Find and Recruit Interview Participants",
     "subtitle": "Finding the Right People for User Research",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "Recruitment",
       "User Interviews",
@@ -4768,6 +4780,7 @@ export const NOTES_A: any[] = [
     "title": "Determining Research Goals and Setting Questions",
     "subtitle": "Framing Effective User Research",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "Research Goals",
       "Research Questions",
@@ -5144,6 +5157,7 @@ export const NOTES_A: any[] = [
     "title": "Consider Accessibility During User Research",
     "subtitle": "Inclusive Research Practices",
     "wordCount": "~2,800 words",
+    "difficulty": "Beginner",
     "tags": [
       "Accessibility",
       "Inclusive Research",

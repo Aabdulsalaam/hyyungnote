@@ -5,6 +5,7 @@ export const NOTES_B: any[] = [
     title: "Conduct User Interviews",
     subtitle: "Techniques for Effective User Research Conversations",
     wordCount: "~1,200 words",
+    difficulty: "Intermediate",
     tags: ["User Interviews", "Research", "Qualitative"],
     sections: [
       {
@@ -375,6 +376,7 @@ export const NOTES_B: any[] = [
     title: "Understand and Build User Persona",
     subtitle: "Creating Representative User Archetypes",
     wordCount: "~1,200 words",
+    difficulty: "Intermediate",
     tags: ["Persona", "User Archetype", "Design Tool"],
     sections: [
       {
@@ -735,6 +737,7 @@ export const NOTES_B: any[] = [
     title: "Understand and Craft User Stories",
     subtitle: "Capturing User Needs in Actionable Formats",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["User Stories", "Agile", "Requirements"],
     sections: [
       {
@@ -1063,6 +1066,7 @@ export const NOTES_B: any[] = [
     title: "Understand and Build an Empathy Map",
     subtitle: "Visualizing User Thoughts and Feelings",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Empathy Map", "User Understanding", "Synthesis"],
     sections: [
       {
@@ -1351,6 +1355,7 @@ export const NOTES_B: any[] = [
     title: "Identify User Pain Points and Create Solutions",
     subtitle: "Finding Friction and Designing Fixes",
     wordCount: "~1,200 words",
+    difficulty: "Intermediate",
     tags: ["Pain Points", "Problem Solving", "User Research"],
     sections: [
       {
@@ -1606,6 +1611,7 @@ export const NOTES_B: any[] = [
     title: "Understand and Build a User Journey Map",
     subtitle: "Visualizing the Complete User Experience",
     wordCount: "~1,200 words",
+    difficulty: "Intermediate",
     tags: ["Journey Map", "User Experience", "Service Design"],
     sections: [
       {
@@ -1861,6 +1867,7 @@ export const NOTES_B: any[] = [
     title: "Create Problem Statements",
     subtitle: "Framing Design Challenges Effectively",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Problem Statement", "Design Thinking", "Problem Framing"],
     sections: [
       {
@@ -2114,6 +2121,7 @@ export const NOTES_B: any[] = [
     title: "Create Hypothesis Statements",
     subtitle: "Making Assumptions Testable",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Hypothesis", "Testing", "Validation"],
     sections: [
       {
@@ -2331,6 +2339,7 @@ export const NOTES_B: any[] = [
     title: "Create Goal Statements",
     subtitle: "Setting Clear Design Objectives",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Goal Setting", "SMART Goals", "Design Planning"],
     sections: [
       {
@@ -2549,6 +2558,7 @@ export const NOTES_B: any[] = [
     title: "Determine Value Proposition",
     subtitle: "Articulating Your Product's Unique Value",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Value Proposition", "Product Strategy", "Differentiation"],
     sections: [
       {
@@ -2768,6 +2778,7 @@ export const NOTES_B: any[] = [
     title: "Understand Design Ideation",
     subtitle: "Generating Creative Design Solutions",
     wordCount: "~1,200 words",
+    difficulty: "Intermediate",
     tags: ["Ideation", "Creativity", "Brainstorming"],
     sections: [
       {
@@ -3024,6 +3035,7 @@ export const NOTES_B: any[] = [
     title: "Recognize Business Needs During Design Ideation",
     subtitle: "Balancing User Desirability and Business Viability",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Business Needs", "Strategy", "Stakeholders"],
     sections: [
       {
@@ -3244,6 +3256,7 @@ export const NOTES_B: any[] = [
     title: "Competitive Audit",
     subtitle: "Analyzing the Competitive Landscape",
     wordCount: "~1,200 words",
+    difficulty: "Intermediate",
     tags: ["Competitive Analysis", "Research", "Strategy"],
     sections: [
       {
@@ -3502,6 +3515,7 @@ export const NOTES_B: any[] = [
     title: "Storyboarding",
     subtitle: "Visualizing User Experiences Through Stories",
     wordCount: "~1,000 words",
+    difficulty: "Intermediate",
     tags: ["Storyboarding", "Visualization", "UX Method"],
     sections: [
       {

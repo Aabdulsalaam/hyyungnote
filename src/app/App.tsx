@@ -703,6 +703,40 @@ type PracticeQuizData = {
 
 const PRACTICE_DATA: Record<string, PracticeQuizData> = {};
 
+interface ActivityEntry {
+  type: "login" | "view_section" | "complete_note" | "practice_open";
+  noteId?: string;
+  noteTitle?: string;
+  sectionLabel?: string;
+  timestamp: string;
+}
+
+const ACTIVITY_LOG_KEY = "hyyung-activity-log-v1";
+
+function formatRelativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function computeStreak(log: ActivityEntry[]): number {
+  if (log.length === 0) return 0;
+  const dates = [...new Set(log.map(e => e.timestamp.split("T")[0]))].sort().reverse();
+  let streak = 0;
+  const today = new Date().toISOString().split("T")[0];
+  let expected = today;
+  for (const d of dates) {
+    if (d === expected) { streak++; const dt = new Date(d); dt.setDate(dt.getDate() - 1); expected = dt.toISOString().split("T")[0]; }
+    else if (d < expected) break;
+  }
+  return streak;
+}
 
 function AdminLogin({ onSuccess, onClose }: { onSuccess: () => void; onClose: () => void }) {
   const [email, setEmail] = useState(""); const [pass, setPass] = useState(""); const [showPass, setShowPass] = useState(false);
@@ -801,330 +835,250 @@ const SECTION_COLOR_OPTIONS = [
 ];
 const ICON_OPTIONS = ["plus", "search", "target", "lightbulb", "lightbulb-amber", "tool", "check", "refresh", "box-amber", "pencil-amber", "flask-amber", "rocket-amber"];
 
-function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: { notes: EditableNote[]; onSave: (n: EditableNote[]) => void; onClose: () => void; onLogout: () => void; onSaved: (noteId: string) => void }) {
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-  const [isNewNote, setIsNewNote] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [tagInput, setTagInput] = useState("");
+function AdminPanel({ notes, onSave, onClose, onLogout, onSaved, userStats, recentActivity }: {
+  notes: EditableNote[];
+  onSave?: (n: EditableNote[]) => void;
+  onClose?: () => void;
+  onLogout: () => void;
+  onSaved: (noteId: string) => void;
+  userStats: { completedNotes: number; totalNotes: number; sectionsRead: number; totalSections: number; lastActive: string; currentStreak: number; completionRate: number };
+  recentActivity: ActivityEntry[];
+}) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const blankNote = (): EditableNote => ({ id: `note-${Date.now()}`, themeId: "teal", title: "", subtitle: "", wordCount: "", tags: [], sections: [] });
-  const [draft, setDraft] = useState<EditableNote>(blankNote());
-
-  function startNew() { setDraft(blankNote()); setIsNewNote(true); setSelectedNoteId(null); }
-
-  function startEdit(n: EditableNote) {
-    const fresh = notes.find(x => x.id === n.id) ?? n;
-    const copy = { ...fresh, sections: fresh.sections.map(s => ({ ...s })) };
-    setDraft(copy);
-    setIsNewNote(false);
-    setSelectedNoteId(fresh.id);
+  function countBlocks(n: EditableNote) {
+    const counts: Record<string, number> = {};
+    n.sections.forEach(s => (s.blocks || []).forEach(b => { counts[b.type] = (counts[b.type] || 0) + 1; }));
+    return counts;
   }
 
-  function deleteNote(id: string) {
-    onSave(notes.filter(n => n.id !== id));
-    if (selectedNoteId === id) { setSelectedNoteId(null); setIsNewNote(false); }
+  function totalStats() {
+    const sums: Record<string, number> = {};
+    notes.forEach(n => {
+      const c = countBlocks(n);
+      Object.keys(c).forEach(k => { sums[k] = (sums[k] || 0) + c[k]; });
+    });
+    return sums;
   }
 
-  // Push a new draft value to both local state AND the parent immediately.
-  // For new notes we only push to parent when Create is clicked (note doesn't exist yet).
-  function pushDraft(next: EditableNote) {
-    setDraft(next);
-    if (!isNewNote && next.id) {
-      onSave(notes.map(n => n.id === next.id ? next : n));
-    }
-  }
+  const stats = totalStats();
+  const totalBlocks = Object.values(stats).reduce((a, b) => a + b, 0);
+  const totalSections = notes.reduce((a, n) => a + n.sections.length, 0);
+  const difficultyCounts: Record<string, number> = {};
+  notes.forEach(n => { const d = n.difficulty || "Unset"; difficultyCounts[d] = (difficultyCounts[d] || 0) + 1; });
+  const tagCounts: Record<string, number> = {};
+  notes.forEach(n => n.tags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+  const topTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
-  function updateDraft(patch: Partial<EditableNote>) {
-    pushDraft({ ...draft, ...patch });
-  }
+  const blockColors: Record<string, string> = {
+    para: "#3b82f6", callout: "#f59e0b", quote: "#8b5cf6", subheading: "#64748b",
+    bullets: "#10b981", stat: "#06b6d4", output: "#6366f1", table: "#ec4899",
+    image: "#14b8a6", quiz: "#f97316", glossary: "#84cc16"
+  };
 
-  useEffect(() => {
-    setTagInput(draft.tags.join(", "));
-  }, [draft.id, draft.tags.join(",")]);
-
-  function addSection() {
-    const sec: EditableSection = { id: `sec-${Date.now()}`, label: "New Section", icon: "plus", badge: null, color: null, content: "" };
-    pushDraft({ ...draft, sections: [...draft.sections, sec] });
-  }
-
-  function deleteSection(idx: number) {
-    pushDraft({ ...draft, sections: draft.sections.filter((_, i) => i !== idx) });
-  }
-
-  function updateSection(idx: number, patch: Partial<EditableSection>) {
-    pushDraft({ ...draft, sections: draft.sections.map((s, i) => i === idx ? { ...s, ...patch } : s) });
-  }
-
-  function addTagsFromInput() {
-    const nextTags = tagInput.split(",").map(tag => tag.trim()).filter(Boolean);
-    if (!nextTags.length) return;
-    updateDraft({ tags: Array.from(new Set([...draft.tags, ...nextTags])) });
-    setTagInput("");
-  }
-
-  function removeTag(tag: string) {
-    updateDraft({ tags: draft.tags.filter(existing => existing !== tag) });
-  }
-
-  // For new notes: add to parent. For existing notes: already saved via pushDraft.
-  // In both cases close the panel and navigate to the note.
-  function saveDraft() {
-    if (isNewNote) {
-      onSave([...notes, draft]);
-    }
-    setSaved(true);
-    // Short delay so user sees "Saved!" then lands on the note
-    setTimeout(() => { onSaved(draft.id); }, 800);
-  }
-
-  const field = (label: string, value: string, onChange: (v: string) => void, placeholder: string, required = false) => (
-    <div className="flex flex-col gap-1.5">
-      <label className="font-semibold text-[12.8px] text-[#475569]" style={{ fontFamily: "'Inter',sans-serif" }}>{label}{required && " *"}</label>
-      <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full px-[13px] py-[9px] rounded-[8px] text-[14px] outline-none"
-        style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 39, color: "#0f1729" }}
-        onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
-    </div>
-  );
-
-  const noteTheme = (n: EditableNote) => THEMES[n.themeId] ?? THEMES.teal;
+  const filteredNotes = notes.filter(n => !searchQuery || n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col" style={{ background: "#f8fafc" }}>
-      <style>{`
-        .ql-editor { min-height: 200px; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: #1e293b; }
-        .ql-container.ql-snow { border: none !important; border-radius: 0 0 12px 12px; }
-        .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #e2e8f0 !important; border-radius: 12px 12px 0 0; background: #f8fafc; padding: 8px 12px; flex-wrap: wrap; }
-        .ql-snow .ql-picker-label { color: #64748b; }
-        .ql-snow .ql-stroke { stroke: #64748b; }
-        .ql-snow .ql-fill { fill: #64748b; }
-        .ql-snow button:hover .ql-stroke { stroke: #1e293b; }
-        .ql-editor.ql-blank::before { color: #94a3b8; font-style: normal; }
-      `}</style>
-
-      {/* Top nav */}
       <div className="shrink-0 w-full" style={{ background: "rgba(255,255,255,0.95)", borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, zIndex: 10 }}>
-        <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-[1152px]">
+        <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-[1200px]">
           <div className="flex items-center gap-3">
-            <button onClick={() => { if (isNewNote) onSave([...notes, draft]); onSaved(draft.id); }} className="p-2 rounded-[8px] hover:bg-slate-100 transition-colors"><BackArrow /></button>
             <div>
-              <p className="font-bold text-[19.2px] text-[#1e293b] leading-tight" style={{ fontFamily: "'Montserrat',sans-serif" }}>Admin Panel</p>
-              <p className="text-[12px] text-[#94a3b8]" style={{ fontFamily: "'Inter',sans-serif" }}>Content Management System</p>
+              <p className="font-bold text-[19.2px] text-[#1e293b] leading-tight" style={{ fontFamily: "'Montserrat',sans-serif" }}>Dashboard</p>
+              <p className="text-[12px] text-[#94a3b8]" style={{ fontFamily: "'Inter',sans-serif" }}>Progress &amp; Content Overview</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => { if (isNewNote) onSave([...notes, draft]); onSaved(draft.id); }} className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[14px] text-white transition-colors" style={{ background: "#2563EB", fontFamily: "'Inter',sans-serif" }}>
-              <ViewNotesIcon /> <span className="hidden sm:inline">View Notes</span>
+            <button onClick={() => onSaved(notes[0]?.id || "")} className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[14px] text-white transition-colors" style={{ background: "#2563EB", fontFamily: "'Inter',sans-serif" }}>
+              View Notes
             </button>
             <button onClick={onLogout} className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[14px] text-[#dc2626] transition-colors" style={{ border: "1px solid #fca5a5", fontFamily: "'Inter',sans-serif" }}>
-              <LogoutIcon /> <span className="hidden sm:inline">Logout</span>
+              Logout
             </button>
           </div>
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-[1152px] px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-6">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 py-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            {[
+              { label: "Total Notes", value: notes.length, color: "#3b82f6" },
+              { label: "Total Sections", value: totalSections, color: "#10b981" },
+              { label: "Total Blocks", value: totalBlocks, color: "#f59e0b" },
+              { label: "Difficulty Levels", value: Object.keys(difficultyCounts).length, color: "#8b5cf6" },
+            ].map((m, i) => (
+              <div key={i} className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: `1px solid ${m.color}20`, boxShadow: `0 2px 8px ${m.color}10` }}>
+                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>{m.label}</span>
+                <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: m.color, fontFamily: "'Montserrat',sans-serif" }}>{m.value}</span>
+              </div>
+            ))}
+          </div>
 
-          {/* Left: existing notes */}
-          <div className="w-full lg:w-[352px] shrink-0">
-            <div className="rounded-[16px] p-[21px]" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
-              <h2 className="font-bold text-[15.2px] text-[#1e293b] mb-3" style={{ fontFamily: "'Montserrat',sans-serif" }}>
-                Existing Notes ({notes.length})
-              </h2>
-              <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search notes..."
-                className="w-full px-[13px] py-[9px] rounded-[8px] text-[13px] outline-none mb-3"
-                style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 36, color: "#0f1729" }}
-                onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
-              <div className="flex flex-col gap-2 mt-4 max-h-[60vh] overflow-y-auto">
-                {notes.filter(n => !searchQuery || n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))).map(n => {
-                  const t = noteTheme(n);
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-3 h-3 rounded-full" style={{ background: "#6366f1" }} />
+              <h2 className="font-bold text-[15px] text-[#1e293b]" style={{ fontFamily: "'Montserrat',sans-serif" }}>Your Progress</h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #6366f120", boxShadow: "0 2px 8px #6366f110" }}>
+                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Notes Completed</span>
+                <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#6366f1", fontFamily: "'Montserrat',sans-serif" }}>{userStats.completedNotes}<span className="text-[16px] text-[#94a3b8] font-semibold">/{userStats.totalNotes}</span></span>
+              </div>
+              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #10b98120", boxShadow: "0 2px 8px #10b98110" }}>
+                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Sections Read</span>
+                <span className="font-extrabold text-[28px] mt-1 leading-none" style={{ color: "#10b981", fontFamily: "'Montserrat',sans-serif" }}>{userStats.sectionsRead}<span className="text-[16px] text-[#94a3b8] font-semibold">/{userStats.totalSections}</span></span>
+              </div>
+              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #f59e0b20", boxShadow: "0 2px 8px #f59e0b10" }}>
+                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Completion Rate</span>
+                <div className="flex items-end gap-2 mt-1">
+                  <span className="font-extrabold text-[28px] leading-none" style={{ color: "#f59e0b", fontFamily: "'Montserrat',sans-serif" }}>{userStats.completionRate}%</span>
+                </div>
+                <div className="mt-2 h-[4px] rounded-full w-full" style={{ background: "#f1f5f9", overflow: "hidden" }}>
+                  <div className="h-full rounded-full" style={{ width: userStats.completionRate + "%", background: "#f59e0b" }} />
+                </div>
+              </div>
+              <div className="rounded-[14px] p-5 flex flex-col" style={{ background: "#fff", border: "1px solid #ec489920", boxShadow: "0 2px 8px #ec489910" }}>
+                <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: "#94a3b8" }}>Current Streak</span>
+                <div className="flex items-end gap-2 mt-1">
+                  <span className="font-extrabold text-[28px] leading-none" style={{ color: "#ec4899", fontFamily: "'Montserrat',sans-serif" }}>{userStats.currentStreak}</span>
+                  <span className="text-[12px] font-medium mb-1" style={{ color: "#94a3b8" }}>days</span>
+                </div>
+                {userStats.lastActive && <span className="text-[10px] mt-1" style={{ color: "#94a3b8" }}>Last active: {formatRelativeTime(userStats.lastActive)}</span>}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="rounded-[14px] p-5" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
+              <h3 className="font-bold text-[14px] text-[#1e293b] mb-3" style={{ fontFamily: "'Montserrat',sans-serif" }}>Difficulty Distribution</h3>
+              <div className="flex flex-col gap-2">
+                {Object.entries(difficultyCounts).map(([level, count]) => {
+                  const color = level === "Beginner" ? "#10b981" : level === "Intermediate" ? "#f59e0b" : level === "Advanced" ? "#ef4444" : "#94a3b8";
+                  const pct = Math.round((count / notes.length) * 100);
                   return (
-                    <div key={n.id} className="rounded-[12px] p-[13px]" style={{ background: "#f8fafc", border: "1px solid #f1f5f9" }}>
-                      <div className="flex items-start gap-2 mb-2">
-                        <div className="mt-0.5 shrink-0">{n.themeId === "pdlc" ? LightningIcon14(t.accentColor) : BookIcon(t.accentColor)}</div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-[12.8px] text-[#1e293b] truncate" style={{ fontFamily: "'Inter',sans-serif" }}>{n.title || "Untitled"}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: `${t.accentColor}15`, color: t.accentColor }}>{n.sections.length} sections</span>
-                            {n.wordCount && <span className="text-[10px] text-[#94a3b8]">{n.wordCount}</span>}
-                          </div>
-                        </div>
+                    <div key={level} className="flex items-center gap-3">
+                      <span className="text-[12px] font-semibold w-[100px]" style={{ color }}>{level}</span>
+                      <div className="flex-1 h-[20px] rounded-[6px]" style={{ background: "#f1f5f9", overflow: "hidden" }}>
+                        <div className="h-full rounded-[6px] transition-all" style={{ width: pct + "%", background: color }} />
                       </div>
-                      <div className="flex items-center gap-1 h-[28px]">
-                        <button onClick={() => startEdit(n)} className="flex-1 h-full rounded-[8px] text-[11.5px] font-semibold text-center transition-colors" style={{ background: `${t.accentColor}14`, color: t.accentColor, fontFamily: "'Inter',sans-serif" }}>Edit</button>
-                        <button onClick={() => deleteNote(n.id)} className="w-[32px] h-full rounded-[8px] flex items-center justify-center" style={{ background: "#fee2e2" }}><TrashIcon12 /></button>
+                      <span className="text-[12px] font-semibold w-[50px] text-right" style={{ color: "#475569" }}>{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-[14px] p-5" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
+              <h3 className="font-bold text-[14px] text-[#1e293b] mb-3" style={{ fontFamily: "'Montserrat',sans-serif" }}>Top Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {topTags.map(([tag, count]) => (
+                  <div key={tag} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium" style={{ background: "#f1f5f9", color: "#475569" }}>
+                    <span>{tag}</span>
+                    <span className="text-[10px] font-bold px-1 py-0.5 rounded-full" style={{ background: "#e2e8f0", color: "#64748b" }}>{count}</span>
+                  </div>
+                ))}
+                {topTags.length === 0 && <p className="text-[13px] text-[#94a3b8]">No tags found</p>}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[14px] p-5 mb-8" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
+            <h3 className="font-bold text-[14px] text-[#1e293b] mb-4" style={{ fontFamily: "'Montserrat',sans-serif" }}>Block Types</h3>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(stats).sort((a, b) => b[1] - a[1]).map(([type, count]) => {
+                const color = blockColors[type] || "#94a3b8";
+                return (
+                  <div key={type} className="flex items-center gap-1.5 px-3 py-2 rounded-[8px]" style={{ background: `${color}10`, border: `1px solid ${color}20` }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: color }} />
+                    <span className="text-[12px] font-semibold" style={{ color: "#1e293b" }}>{type}</span>
+                    <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-[4px]" style={{ background: `${color}20`, color }}>{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-[14px] p-5 mb-8" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
+            <h3 className="font-bold text-[14px] text-[#1e293b] mb-4" style={{ fontFamily: "'Montserrat',sans-serif" }}>Recent Activity</h3>
+            {recentActivity.length > 0 ? (
+              <div className="flex flex-col gap-0 max-h-[300px] overflow-y-auto">
+                {recentActivity.slice(0, 20).map((a, i) => {
+                  var iconColor = a.type === "login" ? "#6366f1" : a.type === "view_section" ? "#3b82f6" : a.type === "complete_note" ? "#10b981" : "#f59e0b";
+                  var iconPath = a.type === "login" ? "M5 11L8 14L13 7" : a.type === "view_section" ? "M1.5 8C1.5 8 3.5 3.5 8 3.5C12.5 3.5 14.5 8 14.5 8C14.5 8 12.5 12.5 8 12.5C3.5 12.5 1.5 8 1.5 8Z" : a.type === "complete_note" ? "M2.5 7.5L6 11L13.5 3.5" : "M8 1.5V8L11 10.5";
+                  var label = a.type === "login" ? "Logged in" : a.type === "view_section" ? `Viewed "${a.sectionLabel}"` : a.type === "complete_note" ? `Completed "${a.noteTitle}"` : `Opened practice for "${a.noteTitle}"`;
+                  return (
+                    <div key={i} className="flex items-center gap-3 py-2.5" style={{ borderBottom: i < Math.min(recentActivity.length, 20) - 1 ? "1px solid #f1f5f9" : "none" }}>
+                      <div className="shrink-0 flex items-center justify-center w-[30px] h-[30px] rounded-[8px]" style={{ background: `${iconColor}12` }}>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d={iconPath} stroke={iconColor} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] font-medium truncate" style={{ color: "#1e293b" }}>{label}</p>
+                        <p className="text-[10px]" style={{ color: "#94a3b8" }}>{formatRelativeTime(a.timestamp)}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <button onClick={startNew} className="flex items-center justify-center gap-2 w-full rounded-[12px] px-[18px] py-[10px] mt-4 text-[14px] text-[#64748b] transition-colors hover:bg-slate-50"
-                style={{ border: "2px dashed #cbd5e1", fontFamily: "'Inter',sans-serif" }}>
-                <PlusIcon16 /> New Note
-              </button>
-            </div>
+            ) : (
+              <div className="flex flex-col items-center py-8 text-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8V12L14 14" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12" cy="12" r="9" stroke="#94A3B8" strokeWidth="1.5"/></svg>
+                <p className="text-[12px] mt-2" style={{ color: "#94a3b8" }}>No activity yet. Start reading notes to see your activity here.</p>
+              </div>
+            )}
           </div>
 
-          {/* Right: create/edit form */}
-          {(isNewNote || selectedNoteId) ? (
-            <div className="flex-1 min-w-0">
-              <div className="rounded-[16px] p-[25px]" style={{ background: "#fff", border: "1px solid #e2e8f0" }}>
-                <h2 className="font-bold text-[17.6px] text-[#1e293b] mb-6" style={{ fontFamily: "'Montserrat',sans-serif" }}>
-                  {isNewNote ? "Create New Note" : `Edit: ${draft.title || "Note"}`}
-                </h2>
-                <div className="flex flex-col gap-4">
-                  {field("Note Title", draft.title, v => updateDraft({ title: v }), "e.g., Design Thinking", true)}
-                  {field("Subtitle", draft.subtitle, v => updateDraft({ subtitle: v }), "e.g., A Human-Centered Approach to Innovation", true)}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-semibold text-[12.8px] text-[#475569]" style={{ fontFamily: "'Inter',sans-serif" }}>Color Theme</label>
-                      <div className="flex gap-2 flex-wrap">
-                        {THEME_OPTIONS.map(t => (
-                          <button key={t.id} onClick={() => updateDraft({ themeId: t.id })}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
-                            style={{ background: draft.themeId === t.id ? t.color + "20" : "#f1f5f9", border: `1.5px solid ${draft.themeId === t.id ? t.color : "transparent"}`, color: draft.themeId === t.id ? t.color : "#64748b" }}>
-                            <div className="w-2 h-2 rounded-full" style={{ background: t.color }} />{t.label}
-                          </button>
-                        ))}
-                      </div>
+          <div className="mb-4">
+            <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search notes by title or tag..."
+              className="w-full px-[14px] py-[10px] rounded-[10px] text-[13px] outline-none"
+              style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", color: "#0f1729" }}
+              onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredNotes.map(n => {
+              const t = THEMES[n.themeId] || THEMES.teal;
+              const bc = countBlocks(n);
+              return (
+                <div key={n.id} className="rounded-[14px] p-[16px]" style={{ background: "#fff", border: "1px solid #e2e8f0", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="shrink-0 flex items-center justify-center w-[36px] h-[36px] rounded-[10px]" style={{ background: `${t.accentColor}15` }}>
+                      <span className="font-bold text-[14px]" style={{ color: t.accentColor }}>{(n.title || "U").charAt(0).toUpperCase()}</span>
                     </div>
-                    {field("Word Count", draft.wordCount, v => updateDraft({ wordCount: v }), "e.g., ~2,800")}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-[13px] text-[#1e293b] truncate" style={{ fontFamily: "'Inter',sans-serif" }}>{n.title || "Untitled"}</p>
+                      <p className="text-[11px] text-[#94a3b8] truncate mt-0.5">{n.subtitle || "No subtitle"}</p>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-[12.8px] text-[#475569]" style={{ fontFamily: "'Inter',sans-serif" }}>Tags</label>
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                      <input value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addTagsFromInput(); } }} placeholder="Type a tag and press Enter"
-                        className="flex-1 px-[13px] py-[9px] rounded-[8px] text-[14px] outline-none"
-                        style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 39, color: "#0f1729" }}
-                        onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
-                      <button type="button" onClick={addTagsFromInput} className="px-3 py-2 rounded-[8px] text-[12px] font-semibold text-white" style={{ background: "#2563EB", fontFamily: "'Inter',sans-serif" }}>Add Tag</button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {draft.tags.map(tag => (
-                        <button key={tag} type="button" onClick={() => removeTag(tag)} className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: "#eff6ff", color: "#1d4ed8" }}>
-                          <span>{tag}</span>
-                          <span className="text-[10px]">×</span>
-                        </button>
-                      ))}
-                    </div>
-                    <p className="text-[11px] text-[#64748b]" style={{ fontFamily: "'Inter',sans-serif" }}>Add as many tags as you want. Separate them with commas or press Enter.</p>
-                  </div>
-
-                  {/* Sections */}
-                  <div className="mt-2">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-[15.2px] text-[#1e293b]" style={{ fontFamily: "'Montserrat',sans-serif" }}>Sections ({draft.sections.length})</h3>
-                      <button onClick={addSection} className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[12.8px] text-[#1d4ed8]" style={{ background: "#eff6ff", fontFamily: "'Inter',sans-serif" }}>
-                        {PlusIcon14()} Add Section
-                      </button>
-                    </div>
-
-                    {draft.sections.length === 0 ? (
-                      <div className="rounded-[12px] p-[26px] flex flex-col items-center gap-2" style={{ border: "2px dashed #e2e8f0" }}>
-                        <InfoCircle24 />
-                        <p className="text-[14px] text-[#64748b] text-center" style={{ fontFamily: "'Inter',sans-serif" }}>No sections yet. Click "Add Section" to get started.</p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-4">
-                        {draft.sections.map((sec, idx) => (
-                          <div key={sec.id} className="rounded-[12px] p-[17px]" style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-                            {/* Section header */}
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="font-semibold text-[12px] text-[#94a3b8] tracking-wider uppercase" style={{ fontFamily: "'Inter',sans-serif" }}>Section {idx + 1}</span>
-                              <button onClick={() => deleteSection(idx)} className="p-1 rounded-[4px] hover:bg-red-50 transition-colors"><TrashIcon12 /></button>
-                            </div>
-
-                            {/* Icon + Color row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                              <div>
-                                <label className="font-semibold text-[12px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>Icon</label>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {ICON_OPTIONS.map(ic => (
-                                    <button key={ic} onClick={() => updateSection(idx, { icon: ic })} className="p-1.5 rounded-[6px] transition-all"
-                                      style={{ background: sec.icon === ic ? "#eff6ff" : "#fff", border: `1px solid ${sec.icon === ic ? "#2563EB" : "#e2e8f0"}` }}>
-                                      <SectionIcon type={ic} color={sec.icon === ic ? "#2563EB" : "#94a3b8"} />
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                              <div>
-                                <label className="font-semibold text-[12px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>Color</label>
-                                <div className="flex gap-2 flex-wrap">
-                                  <button type="button" onClick={() => updateSection(idx, { color: null })} className="px-2 py-1 rounded-full text-[11px] font-semibold transition-all" style={{ background: sec.color ? "#f1f5f9" : "#eff6ff", color: sec.color ? "#64748b" : "#1d4ed8", border: `1px solid ${sec.color ? "#e2e8f0" : "#bfdbfe"}` }}>
-                                    Auto
-                                  </button>
-                                  {SECTION_COLOR_OPTIONS.map(option => (
-                                    <button key={option.color} type="button" onClick={() => updateSection(idx, { color: option.color })}
-                                      className="w-6 h-6 rounded-full transition-all" style={{ background: option.color, outline: "none", boxShadow: sec.color === option.color ? `0 0 0 2px #fff, 0 0 0 4px ${option.color}` : "none" }} title={option.label} />
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Section title */}
-                            <div className="mb-3">
-                              <label className="font-semibold text-[12px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>Section Title *</label>
-                              <input value={sec.label} onChange={e => updateSection(idx, { label: e.target.value })} placeholder="e.g., Stage 1 — Empathize"
-                                className="w-full px-[9px] py-[7px] rounded-[8px] text-[14px] outline-none"
-                                style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 34 }}
-                                onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
-                            </div>
-
-                            {/* Badge row */}
-                            <div className="mb-3">
-                              <label className="font-semibold text-[11.2px] text-[#64748b] block mb-1" style={{ fontFamily: "'Inter',sans-serif" }}>Badge (optional)</label>
-                              <input value={sec.badge ?? ""} onChange={e => updateSection(idx, { badge: e.target.value || null })}
-                                placeholder="e.g., Foundation"
-                                className="w-full px-[9px] py-[5px] rounded-[4px] text-[12px] outline-none"
-                                style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", height: 26 }}
-                                onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
-                            </div>
-
-                            {/* Content / React Quill */}
-                            <div>
-                              <label className="font-semibold text-[12px] text-[#64748b] block mb-1.5" style={{ fontFamily: "'Inter',sans-serif" }}>Content *</label>
-                              <div className="rounded-[12px] overflow-hidden" style={{ border: "1px solid #e2e8f0", background: "#fff" }}>
-                                <ReactQuill
-                                  key={sec.id}
-                                  theme="snow"
-                                  value={sec.isHtml ? sec.content : sec.blocks && sec.blocks.length > 0 ? blocksToHtml(sec.blocks) : sec.content.split("\n").filter(Boolean).map(l => `<p>${l}</p>`).join("")}
-                                  onChange={(html: string) => updateSection(idx, { content: html, isHtml: true, blocks: undefined })}
-                                  modules={QUILL_MODULES}
-                                  formats={QUILL_FORMATS}
-                                  placeholder="Write your content here... Use bullet points with • symbol."
-                                />
-                              </div>
-                              <div className="rounded-[4px] px-2 py-1.5 mt-2" style={{ background: "#f8fafc" }}>
-                                <span className="font-bold text-[12px] text-[#475569]" style={{ fontFamily: "'Inter',sans-serif" }}>Formatting: </span>
-                                <span className="text-[12px] text-[#64748b]" style={{ fontFamily: "'Inter',sans-serif" }}>**bold**, *italic*, `code`, ~~strikethrough~~, [link text](url)</span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.accentColor}15`, color: t.accentColor }}>{n.sections.length} sections</span>
+                    {n.difficulty && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{
+                        background: n.difficulty === "Beginner" ? "#d1fae5" : n.difficulty === "Intermediate" ? "#fef3c7" : "#fee2e2",
+                        color: n.difficulty === "Beginner" ? "#065f46" : n.difficulty === "Intermediate" ? "#92400e" : "#991b1b"
+                      }}>{n.difficulty === "Beginner" ? "B" : n.difficulty === "Intermediate" ? "I" : "A"}</span>
                     )}
                   </div>
-
-                  {/* Save button */}
-                  <button onClick={saveDraft} className="flex items-center justify-center gap-2 w-full rounded-[12px] h-[44px] text-[16px] font-semibold text-white mt-4 transition-all"
-                    style={{ background: saved ? "#10B981" : "#2563eb", fontFamily: "'Inter',sans-serif" }}>
-                    <SaveIcon16 /> {saved ? "Saved!" : isNewNote ? "Create Note" : "Changes Saved"}
-                  </button>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {n.tags.slice(0, 3).map(tag => (
+                      <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ background: "#f1f5f9", color: "#64748b" }}>{tag}</span>
+                    ))}
+                    {n.tags.length > 3 && <span className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ background: "#f1f5f9", color: "#94a3b8" }}>+{n.tags.length - 3}</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-1 pt-2" style={{ borderTop: "1px solid #f1f5f9" }}>
+                    {Object.entries(bc).map(([type, count]) => {
+                      const color = blockColors[type] || "#94a3b8";
+                      return (
+                        <span key={type} className="text-[8px] font-medium px-1.5 py-0.5 rounded" style={{ background: `${color}10`, color }}>
+                          {type}: {count}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <InfoCircle24 />
-                <p className="text-[14px] text-[#94a3b8] mt-3" style={{ fontFamily: "'Inter',sans-serif" }}>Select a note to edit, or create a new one</p>
-                <button onClick={startNew} className="mt-4 px-6 py-2.5 rounded-[12px] text-[14px] font-semibold text-white" style={{ background: "#2563eb", fontFamily: "'Inter',sans-serif" }}>+ New Note</button>
-              </div>
-            </div>
-          )}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
@@ -1172,6 +1126,44 @@ export default function App() {
     } catch { return new Set(); }
   });
 
+  const [activityLog, setActivityLog] = useState<ActivityEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(ACTIVITY_LOG_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  });
+
+  function addActivity(entry: Omit<ActivityEntry, "timestamp">) {
+    const newEntry: ActivityEntry = { ...entry, timestamp: new Date().toISOString() };
+    setActivityLog(prev => {
+      const next = [newEntry, ...prev].slice(0, 100);
+      try { localStorage.setItem(ACTIVITY_LOG_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
+
+  const completedNotes = notes.filter(n => n.sections.every(s => viewedSections.has(s.id)));
+  const allCompleted = notes.length > 0 && completedNotes.length === notes.length;
+
+  const completedNoteIdsRef = useRef(new Set<string>());
+  useEffect(() => {
+    for (const n of completedNotes) {
+      if (!completedNoteIdsRef.current.has(n.id)) {
+        completedNoteIdsRef.current = new Set(completedNoteIdsRef.current).add(n.id);
+        addActivity({ type: "complete_note", noteId: n.id, noteTitle: n.title });
+      }
+    }
+  }, [completedNotes.length, notes.length]);
+
+  const prevPracticeNoteId = useRef<string | null>(null);
+  useEffect(() => {
+    if (practiceNoteId && practiceNoteId !== prevPracticeNoteId.current) {
+      const n = notes.find(n => n.id === practiceNoteId);
+      if (n) addActivity({ type: "practice_open", noteId: practiceNoteId, noteTitle: n.title });
+    }
+    prevPracticeNoteId.current = practiceNoteId;
+  }, [practiceNoteId]);
+
   // Persist every change to localStorage so edits survive re-renders and refreshes
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: NOTES_VERSION, notes })); } catch {}
@@ -1181,9 +1173,6 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem("hyyung-viewed-sections", JSON.stringify(Array.from(viewedSections))); } catch {}
   }, [viewedSections]);
-
-  const completedNotes = notes.filter(n => n.sections.every(s => viewedSections.has(s.id)));
-  const allCompleted = notes.length > 0 && completedNotes.length === notes.length;
 
   useEffect(() => {
     const loadNotes = async () => {
@@ -1249,6 +1238,7 @@ const sectionCount = activeNote.sections.length;
   useEffect(() => {
     if (section && !viewedSections.has(section.id)) {
       setViewedSections(prev => new Set(prev).add(section.id));
+      addActivity({ type: "view_section", noteId: activeNote.id, noteTitle: activeNote.title, sectionLabel: section.label });
     }
   }, [section?.id]);
 
@@ -1375,6 +1365,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
   async function handleAuthSuccess(email: string, name: string) {
     setHasAccess(true);
+    addActivity({ type: "login" });
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
@@ -1383,11 +1374,14 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     navigateTo("/notes", setCurrentPath);
   }
 
+  const sessionLoggedRef = useRef(false);
   useEffect(() => {
     const checkSession = async () => {
       const stored = localStorage.getItem("hyyung-landing-auth");
-      if (stored) {
+      if (stored && !sessionLoggedRef.current) {
+        sessionLoggedRef.current = true;
         setHasAccess(true);
+        addActivity({ type: "login" });
         return;
       }
       try {
@@ -1399,6 +1393,16 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     };
     checkSession();
   }, []);
+
+  const userStats = {
+    completedNotes: completedNotes.length,
+    totalNotes: notes.length,
+    sectionsRead: viewedSections.size,
+    totalSections: notes.reduce((a, n) => a + n.sections.length, 0),
+    lastActive: activityLog.length > 0 ? activityLog[0].timestamp : "",
+    currentStreak: computeStreak(activityLog),
+    completionRate: notes.length > 0 ? Math.round((completedNotes.length / notes.length) * 100) : 0,
+  };
 
   if (isAdminRoute) {
     return (
@@ -1414,6 +1418,8 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               setActiveSectionIdx(0);
               navigateTo("/notes", setCurrentPath);
             }}
+            userStats={userStats}
+            recentActivity={activityLog}
           />
         ) : (
           <AdminLogin

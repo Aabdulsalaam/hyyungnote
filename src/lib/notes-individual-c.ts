@@ -5,6 +5,7 @@ export const NOTES_C: any[] = [
     title: "User Flow and Task Flow",
     subtitle: "Mapping the Path Users Take Through Your Product",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["User Flow", "Task Flow", "UX Design", "Navigation"],
     sections: [
       {
@@ -288,6 +289,7 @@ export const NOTES_C: any[] = [
     title: "Sketching in UX",
     subtitle: "Rapid Visualization for Design Thinking",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Sketching", "Ideation", "UX Design", "Visual Thinking"],
     sections: [
       {
@@ -562,6 +564,7 @@ export const NOTES_C: any[] = [
     title: "Design Sprints",
     subtitle: "Five Days to Solve Big Problems and Test New Ideas",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Design Sprint", "Agile", "Rapid Prototyping", "GV"],
     sections: [
       {
@@ -835,6 +838,7 @@ export const NOTES_C: any[] = [
     title: "Laws of UX",
     subtitle: "Psychological Principles for Intuitive Interfaces",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["UX Laws", "Psychology", "Usability", "UI Design"],
     sections: [
       {
@@ -1103,6 +1107,7 @@ export const NOTES_C: any[] = [
     title: "Design Thinking",
     subtitle: "A Human Centered Approach to Innovation",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Design Thinking", "UX", "Innovation", "Human Centered", "IDEO", "Stanford"],
     sections: [
       {
@@ -1401,6 +1406,7 @@ export const NOTES_C: any[] = [
     title: "Introduction to Wireframing",
     subtitle: "Building the Blueprint for Digital Products",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Wireframing", "UX Design", "Prototyping", "Layout"],
     sections: [
       {
@@ -1671,6 +1677,7 @@ export const NOTES_C: any[] = [
     title: "Wireframing for Mobile",
     subtitle: "Designing for Small Screens and Touch Interactions",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Wireframing", "Mobile", "Responsive", "Touch"],
     sections: [
       {
@@ -1955,6 +1962,7 @@ export const NOTES_C: any[] = [
     title: "Wireframing for Desktop",
     subtitle: "Larger Canvases, Richer Interactions",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Wireframing", "Desktop", "Layout", "Navigation"],
     sections: [
       {
@@ -2236,6 +2244,7 @@ export const NOTES_C: any[] = [
     title: "Prototyping in UX",
     subtitle: "Bringing Ideas to Life Before Development",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Prototyping", "UX Design", "Testing", "Iteration"],
     sections: [
       {
@@ -2512,6 +2521,7 @@ export const NOTES_C: any[] = [
     title: "Visual Design Principles",
     subtitle: "The Art and Science of Aesthetic Interfaces",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Visual Design", "UI", "Typography", "Color Theory"],
     sections: [
       {
@@ -2786,6 +2796,7 @@ export const NOTES_C: any[] = [
     title: "Design Systems",
     subtitle: "Scalable, Consistent Design Languages",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Design Systems", "Components", "Scalability", "UI"],
     sections: [
       {
@@ -3060,6 +3071,7 @@ export const NOTES_C: any[] = [
     title: "Information Architecture",
     subtitle: "Organizing Content for Findability and Understanding",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["IA", "Content", "Navigation", "Structure"],
     sections: [
       {
@@ -3333,6 +3345,7 @@ export const NOTES_C: any[] = [
     title: "Interaction Design",
     subtitle: "Crafting Meaningful Interactions Between Users and Products",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["Interaction Design", "Microinteractions", "Motion", "UX"],
     sections: [
       {
@@ -3610,6 +3623,7 @@ export const NOTES_C: any[] = [
     title: "Your Importance as a UX Designer",
     subtitle: "Why Your Role Matters in Product Development",
     wordCount: "~2,400 words",
+    difficulty: "Advanced",
     tags: ["UX Career", "Impact", "Advocacy", "Professional Growth"],
     sections: [
       {
