@@ -1085,9 +1085,9 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved, userStats, rece
   );
 }
 
-const STORAGE_KEY = "hyyung-ux-notes-v5";
+const STORAGE_KEY = "hyyung-ux-notes-v6";
 const SUPABASE_TABLE = "notes";
-const NOTES_VERSION = "v5";
+const NOTES_VERSION = "v6";
 
 function navigateTo(path: string, setPath: (value: string) => void) {
   const nextPath = path === "/" ? "/" : path;
