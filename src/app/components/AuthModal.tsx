@@ -27,11 +27,15 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
   // Sign In fields
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
+  const [showSignInPassword, setShowSignInPassword] = useState(false);
 
   // Sign Up fields
   const [signUpName, setSignUpName] = useState("");
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpConfirmPassword, setSignUpConfirmPassword] = useState("");
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [showSignUpConfirm, setShowSignUpConfirm] = useState(false);
   const [signUpPhone, setSignUpPhone] = useState("");
 
   function reset() {
@@ -43,9 +47,13 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
     setResetSent(false);
     setSignInEmail("");
     setSignInPassword("");
+    setShowSignInPassword(false);
     setSignUpName("");
     setSignUpEmail("");
     setSignUpPassword("");
+    setSignUpConfirmPassword("");
+    setShowSignUpPassword(false);
+    setShowSignUpConfirm(false);
     setSignUpPhone("");
   }
 
@@ -77,6 +85,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
     try {
       const trimmedName = signUpName.trim();
       if (!trimmedName) throw new Error("Name is required");
+      if (signUpPassword !== signUpConfirmPassword) throw new Error("Passwords do not match");
       const trimmedPhone = signUpPhone.trim();
       if (!trimmedPhone) throw new Error("Phone number is required");
       if (!PHONE_REGEX.test(trimmedPhone)) throw new Error("Phone must start with + and country code (e.g. +2349090718281)");
@@ -89,6 +98,7 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
         setSignUpName("");
         setSignUpEmail("");
         setSignUpPassword("");
+        setSignUpConfirmPassword("");
         setSignUpPhone("");
       }
     } catch (err: unknown) {
@@ -237,8 +247,18 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
                     Forgot password?
                   </button>
                 </div>
-                <Input id="signin-password" type="password" placeholder="••••••••" value={signInPassword}
-                  onChange={(e) => { setSignInPassword(e.target.value); setError(""); }} required />
+                <div className="relative">
+                  <Input id="signin-password" type={showSignInPassword ? "text" : "password"} placeholder="••••••••" value={signInPassword}
+                    onChange={(e) => { setSignInPassword(e.target.value); setError(""); }} required className="pr-10" />
+                  <button type="button" onClick={() => setShowSignInPassword(!showSignInPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showSignInPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    )}
+                  </button>
+                </div>
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full h-10">
@@ -297,8 +317,33 @@ export default function AuthModal({ open, onOpenChange, onAuthSuccess }: AuthMod
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="signup-password">Password</Label>
-                <Input id="signup-password" type="password" placeholder="At least 6 characters" value={signUpPassword}
-                  onChange={(e) => { setSignUpPassword(e.target.value); setError(""); }} minLength={6} required />
+                <div className="relative">
+                  <Input id="signup-password" type={showSignUpPassword ? "text" : "password"} placeholder="At least 6 characters" value={signUpPassword}
+                    onChange={(e) => { setSignUpPassword(e.target.value); setError(""); }} minLength={6} required className="pr-10" />
+                  <button type="button" onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showSignUpPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="signup-confirm-password">Confirm Password</Label>
+                <div className="relative">
+                  <Input id="signup-confirm-password" type={showSignUpConfirm ? "text" : "password"} placeholder="Repeat your password" value={signUpConfirmPassword}
+                    onChange={(e) => { setSignUpConfirmPassword(e.target.value); setError(""); }} required className="pr-10" />
+                  <button type="button" onClick={() => setShowSignUpConfirm(!showSignUpConfirm)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showSignUpConfirm ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    )}
+                  </button>
+                </div>
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full h-10">

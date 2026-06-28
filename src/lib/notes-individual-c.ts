@@ -2,7 +2,7 @@ export const NOTES_C: any[] = [
   {
     id: "user-flow",
     themeId: "violet",
-    title: "User Flow and Task Flow",
+    title: "User Flow",
     subtitle: "Mapping the Path Users Take Through Your Product",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -286,7 +286,7 @@ export const NOTES_C: any[] = [
   {
     id: "sketching",
     themeId: "rose",
-    title: "Sketching in UX",
+    title: "Brainstorm Design Ideas by Sketching",
     subtitle: "Rapid Visualization for Design Thinking",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -561,7 +561,7 @@ export const NOTES_C: any[] = [
   {
     id: "design-sprint",
     themeId: "emerald",
-    title: "Design Sprints",
+    title: "Design Sprint",
     subtitle: "Five Days to Solve Big Problems and Test New Ideas",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -1100,306 +1100,6 @@ export const NOTES_C: any[] = [
       }
     ]
   },
-
-  {
-    id: "dt",
-    themeId: "indigo",
-    title: "Design Thinking",
-    subtitle: "A Human Centered Approach to Innovation",
-    wordCount: "~2,400 words",
-    difficulty: "Advanced",
-    tags: ["Design Thinking", "UX", "Innovation", "Human Centered", "IDEO", "Stanford"],
-    sections: [
-      {
-        id: "dt-1",
-        label: "What Is Design Thinking?",
-        icon: "plus",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Design Thinking is a human centered, iterative problem solving methodology originally developed at Stanford University d.school and popularized globally by IDEO. It is not merely a design process but a mindset that enables teams to approach complex, ambiguous problems by centering the human experience at every stage."
-          },
-          {
-            type: "para",
-            text: "At its core, Design Thinking reframes problems from a user perspective rather than a business or technology perspective. It encourages divergent thinking followed by convergent thinking, cycling repeatedly until a solution is validated and refined."
-          },
-          {
-            type: "callout",
-            label: "Why It Matters",
-            text: "Design Thinking is adopted across healthcare, education, financial services, and government because it reduces the risk of building solutions no one wants. It shifts focus from delivering features to solving human problems."
-          },
-          {
-            type: "subheading",
-            text: "Core Mindset Shifts"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "From Problem Centric to Human Centric", desc: "Start with understanding the people affected by the problem, not the problem statement itself." },
-              { term: "From Linear to Iterative", desc: "Cycle through stages, repeating and revisiting as insights emerge. Progress is circular, not linear." },
-              { term: "From Certainty to Experimentation", desc: "Treat every solution as a hypothesis to be tested. Learning replaces delivering as the measure of progress." },
-              { term: "From Individual to Collaborative", desc: "Requires diverse, cross functional teams. Best solutions emerge from different perspectives." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "3x",
-            label: "higher innovation success rates with Design Thinking",
-            footnote: "Meta analysis of innovation programs across 40 companies, 2019"
-          }
-        ]
-      },
-      {
-        id: "dt-2",
-        label: "Empathize",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Empathy is the cornerstone of Design Thinking. This stage requires practitioners to set aside assumptions and immerse themselves in the lived experience of the people they are designing for. The goal is deep understanding of user needs, motivations, and frustrations."
-          },
-          {
-            type: "para",
-            text: "Effective empathy requires humility and curiosity. Designers must approach users as experts in their own experience. Insights from this stage inform every decision that follows."
-          },
-          {
-            type: "subheading",
-            text: "Key Activities"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Contextual Interviews", desc: "Open ended conversations in the user natural environment, revealing behavior cues and constraints." },
-              { term: "Shadowing and Observation", desc: "Watching users perform tasks to capture the gap between stated and actual behavior where design opportunities lie." },
-              { term: "Experience Mapping", desc: "Documenting the emotional journey across a process, capturing highs and lows." },
-              { term: "Empathy Maps", desc: "2x2 grids capturing what users Say, Think, Do, and Feel to build shared understanding." },
-              { term: "Diary Studies", desc: "Longitudinal self reporting capturing behaviors in real time without memory distortion." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Empathy is not about feeling sorry for someone. It is about understanding their world so deeply that you can design for them as if you were them."
-          }
-        ]
-      },
-      {
-        id: "dt-3",
-        label: "Define",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "The Define stage transforms raw empathy research into a sharp, actionable problem statement. This is often the most undervalued step. Teams rush from research to ideation and skip the crucial synthesis that makes ideation productive."
-          },
-          {
-            type: "para",
-            text: "A well crafted problem statement, known as a Point of View statement, distills hours of research into a single human centered sentence. The quality of this statement directly determines the quality of solutions that follow."
-          },
-          {
-            type: "callout",
-            label: "Primary Output",
-            text: "[User] needs [need] because [insight] a single human centered sentence that anchors every decision. Example: A busy parent needs a way to track activities because they feel overwhelmed managing multiple schedules."
-          },
-          {
-            type: "subheading",
-            text: "Supporting Tools"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Affinity Mapping", desc: "Clustering observations into themes to reveal patterns across qualitative data." },
-              { term: "How Might We Questions", desc: "Reframing problems as opportunities for creative ideation while keeping focus." },
-              { term: "Journey Maps", desc: "Visualizing pain points across the experience to reveal where intervention matters most." },
-              { term: "Job to Be Done Framing", desc: "Articulating the underlying job the user needs to accomplish, independent of solutions." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "70%",
-            label: "of design failures traced to poor problem definition",
-            footnote: "Design Management Institute research"
-          }
-        ]
-      },
-      {
-        id: "dt-4",
-        label: "Ideate",
-        icon: "lightbulb",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Ideation is the generative phase where quantity trumps quality. Teams defer judgment and produce as many ideas as possible before evaluating any. This counters the tendency to anchor on the first reasonable idea."
-          },
-          {
-            type: "para",
-            text: "The most innovative solutions emerge after obvious ideas are exhausted and the team pushes into novel territory. Psychological safety is essential for proposing unconventional ideas without fear of judgment."
-          },
-          {
-            type: "subheading",
-            text: "Core Ideation Techniques"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Brainstorming", desc: "Rapid idea generation with yes, and rules. No criticism allowed. Build on each other ideas." },
-              { term: "Brainwriting", desc: "Silent written ideation followed by sharing. Surfaces ideas from quieter team members." },
-              { term: "Crazy 8s", desc: "Sketch eight ideas in eight minutes, forcing rapid divergence and preventing overthinking." },
-              { term: "Analogous Inspiration", desc: "Borrowing solutions from unrelated domains to find novel approaches competitors would not consider." },
-              { term: "Worst Possible Idea", desc: "Intentionally generating terrible ideas to break creative blocks and reduce the pressure of being clever." }
-            ]
-          },
-          {
-            type: "output",
-            text: "The best way to get a good idea is to get a lot of ideas first. Generate first, evaluate second. You cannot edit a blank page."
-          }
-        ]
-      },
-      {
-        id: "dt-5",
-        label: "Prototype",
-        icon: "tool",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Prototyping makes ideas tangible for learning, not delivery. A prototype can be a paper sketch, cardboard model, clickable wireframe, or roleplay scenario that tests an assumption cheaply and quickly. Cost should match the uncertainty being reduced."
-          },
-          {
-            type: "para",
-            text: "The shift from building to deliver to building to learn is crucial. A prototype succeeds when it generates insights, not when it works perfectly. Design prototypes to answer specific questions."
-          },
-          {
-            type: "subheading",
-            text: "Fidelity Spectrum"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Low Fidelity", desc: "Paper sketches and storyboards. Fast and cheap, ideal for testing core concepts before committing resources." },
-              { term: "Mid Fidelity", desc: "Digital wireframes with basic interactions. Tests navigation flows and interaction patterns." },
-              { term: "High Fidelity", desc: "Polished visual mockups used for testing specific visual, branding, or technical behaviors." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "IDEO Mantra",
-            text: "Fail early, fail often, fail forward. The cost of a failed prototype is learning. The cost of a failed product launch is catastrophic."
-          }
-        ]
-      },
-      {
-        id: "dt-6",
-        label: "Test",
-        icon: "check",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Testing in Design Thinking is not quality assurance. It is learning. The goal is to observe how real users interact with your prototype, surface unexpected behaviors, and collect insights that feed back into the process."
-          },
-          {
-            type: "para",
-            text: "Testing closes the loop but does not mark the end. Insights flow back into earlier stages, sparking new empathy work, refined problem statements, or revised prototypes."
-          },
-          {
-            type: "subheading",
-            text: "Principles of Effective Testing"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Show, Don't Tell", desc: "Place the prototype before the user and observe. If you have to explain it, the design needs improvement." },
-              { term: "Think Aloud Protocol", desc: "Ask users to narrate their experience. Their commentary reveals mental models and confusion points." },
-              { term: "Test with Extreme Users", desc: "People at the edges of your audience reveal problems mainstream users encounter but may not articulate." },
-              { term: "Five User Rule", desc: "Five participants uncover about 85 percent of usability issues according to Nielsen Norman research." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Testing is not the final step. It is the gateway back into the process. Each test makes your solution better and your understanding of users deeper."
-          }
-        ]
-      },
-      {
-        id: "dt-7",
-        label: "Iteration",
-        icon: "refresh",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "The most misunderstood aspect of Design Thinking is its non linearity. The five stages are not a waterfall. You may prototype before fully defining the problem or return to empathy after testing reveals new questions."
-          },
-          {
-            type: "para",
-            text: "Iteration is not failure. It is the mechanism through which Design Thinking produces better outcomes. Each cycle refines understanding and improves the solution."
-          },
-          {
-            type: "subheading",
-            text: "Common Iteration Patterns"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Empathize to Define to Empathize", desc: "New research reveals the initial framing was wrong. Return to empathy to ensure accurate problem definition." },
-              { term: "Prototype to Define", desc: "Building reveals the team misunderstood the core problem. Prototyping clarifies thinking." },
-              { term: "Test to Ideate", desc: "User feedback invalidates the solution direction, requiring fresh ideation." },
-              { term: "Test to Empathize", desc: "Test results raise new questions requiring fresh field research." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Organizational Implications",
-            text: "Design Thinking requires psychological safety. Teams must feel comfortable abandoning ideas and embracing failure as learning, not incompetence."
-          }
-        ]
-      },
-      {
-        id: "dt-8",
-        label: "Organizational Adoption",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Scaling Design Thinking beyond individual teams presents unique challenges. Organizations that successfully embed it into their culture see transformative results in innovation capacity and customer satisfaction."
-          },
-          {
-            type: "subheading",
-            text: "Adoption Strategies"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Executive Sponsorship", desc: "Visible support from senior leaders who model the mindset and invest in resources and training." },
-              { term: "Dedicated Spaces", desc: "Physical or digital spaces for collaborative, creative work signal organizational commitment." },
-              { term: "Embedded Coaches", desc: "Trained coaches working alongside teams accelerate skill development and ensure fidelity." },
-              { term: "Recognition and Incentives", desc: "Reward user empathy, experimentation, collaboration, and learning from failure." },
-              { term: "Storytelling", desc: "Document and share success stories to inspire others and build momentum for wider adoption." }
-            ]
-          },
-          {
-            type: "output",
-            text: "Design Thinking is not something you do. It is something you become. Organizations that succeed transform their culture around its principles, not just their processes."
-          }
-        ]
-      }
-    ]
-  },
-
-
   {
     id: "intro-wireframing",
     themeId: "teal",
@@ -1672,9 +1372,53 @@ export const NOTES_C: any[] = [
   },
 
   {
-    id: "wireframing-mobile",
+    id: "benefit-wireframing",
+    themeId: "emerald",
+    title: "Understand the Benefit of Wireframing",
+    subtitle: "Why Wireframing Matters in UX Design",
+    wordCount: "~600 words",
+    difficulty: "Advanced",
+    tags: ["Wireframing", "UX Process", "Design Thinking"],
+    sections: [
+      {
+        id: "s1-introduction",
+        label: "Introduction",
+        icon: "plus",
+        badge: null,
+        content: "This is an introduction to the topic.",
+        blocks: [
+          { type: "para", text: "Learn about this important UX topic and how it applies to designing better user experiences." }
+        ]
+      }
+    ],
+  },
+
+  {
+    id: "gestalt-wireframing",
+    themeId: "emerald",
+    title: "Understand the Gestalt Principle When Wireframing",
+    subtitle: "Applying Psychology to Layout Design",
+    wordCount: "~600 words",
+    difficulty: "Advanced",
+    tags: ["Gestalt", "Wireframing", "Visual Perception"],
+    sections: [
+      {
+        id: "s1-introduction",
+        label: "Introduction",
+        icon: "plus",
+        badge: null,
+        content: "This is an introduction to the topic.",
+        blocks: [
+          { type: "para", text: "Learn about this important UX topic and how it applies to designing better user experiences." }
+        ]
+      }
+    ],
+  },
+
+  {
+    id: "paper-wireframe",
     themeId: "violet",
-    title: "Wireframing for Mobile",
+    title: "Draw Your First Paper Wireframe",
     subtitle: "Designing for Small Screens and Touch Interactions",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -1957,9 +1701,9 @@ export const NOTES_C: any[] = [
   },
 
   {
-    id: "wireframing-desktop",
+    id: "digital-wireframe",
     themeId: "rose",
-    title: "Wireframing for Desktop",
+    title: "Create Your First Digital Wireframe",
     subtitle: "Larger Canvases, Richer Interactions",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -2241,7 +1985,7 @@ export const NOTES_C: any[] = [
   {
     id: "prototyping",
     themeId: "emerald",
-    title: "Prototyping in UX",
+    title: "Learn and Understand Lo-Fi Prototyping",
     subtitle: "Bringing Ideas to Life Before Development",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -2516,559 +2260,53 @@ export const NOTES_C: any[] = [
   },
 
   {
-    id: "visual-design",
-    themeId: "cyan",
-    title: "Visual Design Principles",
-    subtitle: "The Art and Science of Aesthetic Interfaces",
-    wordCount: "~2,400 words",
+    id: "avoid-bias",
+    themeId: "violet",
+    title: "Understand and Learn How to Avoid Bias in UX Design",
+    subtitle: "Designing Fair and Inclusive Products",
+    wordCount: "~600 words",
     difficulty: "Advanced",
-    tags: ["Visual Design", "UI", "Typography", "Color Theory"],
+    tags: ["Bias", "Inclusive Design", "Ethics"],
     sections: [
       {
-        id: "visual-design-1",
-        label: "What Is Visual Design?",
+        id: "s1-introduction",
+        label: "Introduction",
         icon: "plus",
         badge: null,
-        content: "",
+        content: "This is an introduction to the topic.",
         blocks: [
-          {
-            type: "para",
-            text: "Visual design is the practice of creating aesthetically pleasing and functional interfaces through the strategic use of typography, color, layout, imagery, and iconography. It bridges the gap between structure and emotion, transforming wireframes into experiences that users find beautiful, trustworthy, and engaging."
-          },
-          {
-            type: "para",
-            text: "Effective visual design is not just about making things look attractive. It serves functional purposes: guiding attention, communicating hierarchy, establishing brand identity, and improving usability. When visual design is executed well, users intuitively understand where to look and what to do."
-          },
-          {
-            type: "callout",
-            label: "Visual Design vs UI Design",
-            text: "Visual design and UI design overlap significantly, but visual design has a broader scope that includes brand identity, illustration, and communication design. UI design focuses specifically on interactive interface elements and their layout."
-          },
-          {
-            type: "subheading",
-            text: "Core Visual Design Elements"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Line", desc: "Creates separation, emphasis, and direction. Lines organize content and guide the eye across the interface." },
-              { term: "Shape", desc: "Defines buttons, cards, icons, and containers. Shapes create structure and communicate affordance." },
-              { term: "Color", desc: "Evokes emotion, establishes brand, creates hierarchy, and communicates meaning. Color is one of the most powerful visual tools." },
-              { term: "Texture", desc: "Adds depth and tactile quality to digital interfaces. Subtle textures create visual interest without distraction." },
-              { term: "Space", desc: "Whitespace provides breathing room, separates content groups, and improves readability." },
-              { term: "Typography", desc: "The art of arranging type to make language readable and appealing. Typography establishes hierarchy and personality." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "94%",
-            label: "of first impressions are design related",
-            footnote: "Research on the impact of visual design on user perception, 2023"
-          }
-        ]
-      },
-      {
-        id: "visual-design-2",
-        label: "Typography",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Typography is one of the most important elements of visual design. The choice of typefaces, sizes, weights, spacing, and alignment significantly impacts readability, hierarchy, and the overall aesthetic of an interface. Good typography is invisible users read the content without noticing the type."
-          },
-          {
-            type: "subheading",
-            text: "Typography Best Practices"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Typeface Selection", desc: "Choose typefaces that reflect the brand personality and support the content. Limit to two typefaces: one for headings and one for body text." },
-              { term: "Hierarchy", desc: "Establish clear typographic hierarchy through size, weight, and color. Headings should be noticeably larger and bolder than body text." },
-              { term: "Line Length", desc: "Optimal line length for readability is 45 to 75 characters per line. Longer lines tire the eyes and shorter lines disrupt reading flow." },
-              { term: "Line Height", desc: "Body text should have a line height of 1.4 to 1.6 times the font size for comfortable reading." },
-              { term: "Color Contrast", desc: "Ensure sufficient contrast between text and background. WCAG AA requires a minimum contrast ratio of 4.5:1 for body text." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Typography is the foundation of visual design. Get typography right and the rest of the design falls into place naturally."
-          }
-        ]
-      },
-      {
-        id: "visual-design-3",
-        label: "Color Theory",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Color is a powerful communication tool in visual design. It creates mood, establishes brand identity, communicates meaning, and guides attention. Understanding color theory helps designers make intentional, strategic color decisions."
-          },
-          {
-            type: "subheading",
-            text: "Color Theory Fundamentals"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Color Wheel", desc: "The color wheel organizes hues in a circle showing relationships. Primary colors (red, blue, yellow) combine to create secondary and tertiary colors." },
-              { term: "Color Harmony", desc: "Harmonious color combinations include complementary (opposite on the wheel), analogous (adjacent), and triadic (evenly spaced)." },
-              { term: "Color Psychology", desc: "Colors evoke emotional responses. Blue conveys trust, green suggests growth, red creates urgency, and yellow communicates optimism." },
-              { term: "Accessibility", desc: "Ensure sufficient color contrast for readability. Do not rely solely on color to convey information, always include text labels or icons." },
-              { term: "Brand Colors", desc: "Establish a primary brand color, secondary colors, neutral colors, and accent colors in a cohesive palette." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Color Accessibility",
-            text: "Approximately 8 percent of men have some form of color vision deficiency. Never use color alone to convey critical information. Combine color with text, icons, or patterns."
-          }
-        ]
-      },
-      {
-        id: "visual-design-4",
-        label: "Layout and Composition",
-        icon: "tool",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Layout and composition determine how visual elements are arranged on a screen. Good composition creates balance, guides the eye, and establishes visual hierarchy. Users should intuitively understand where to look and in what order."
-          },
-          {
-            type: "subheading",
-            text: "Composition Principles"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Visual Hierarchy", desc: "Arrange elements to communicate their importance. The most important content gets the most visual weight through size, color, and position." },
-              { term: "Balance", desc: "Distribute visual weight evenly across the composition. Symmetrical balance feels formal. Asymmetrical balance feels dynamic." },
-              { term: "Alignment", desc: "Every element should be visually connected to something else. Consistent alignment creates order and professionalism." },
-              { term: "Proximity", desc: "Related elements should be grouped together. Proximity communicates relationships without requiring explicit borders or labels." },
-              { term: "Repetition", desc: "Repeating visual elements like colors, typefaces, and spacing creates consistency and reinforces brand identity." }
-            ]
-          },
-          {
-            type: "output",
-            text: "Good composition feels effortless because it respects the user visual processing. Users should never have to work to understand where to look or how to navigate the page."
-          }
-        ]
-      },
-      {
-        id: "visual-design-5",
-        label: "Visual Hierarchy",
-        icon: "check",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Visual hierarchy is the arrangement of elements in order of importance. It guides users through content in a predetermined sequence, ensuring they see the most important information first. Without clear hierarchy, users feel lost and must work to understand the page."
-          },
-          {
-            type: "subheading",
-            text: "Creating Visual Hierarchy"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Size and Scale", desc: "Larger elements attract more attention. Use size to indicate importance: headlines larger than subheadings, subheadings larger than body text." },
-              { term: "Color and Contrast", desc: "High contrast elements draw the eye. Use bold colors sparingly for the most important actions or information." },
-              { term: "Position", desc: "Users typically scan from top to bottom and left to right. Place the most important content in the upper left area." },
-              { term: "Whitespace", desc: "Elements surrounded by more whitespace receive greater visual emphasis. Space around an element signals its importance." },
-              { term: "Texture and Style", desc: "Unique textures, patterns, or styles make elements stand out. Use distinction deliberately for key call to actions." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Visual hierarchy is the single most important concept in layout design. When hierarchy is clear, users effortlessly understand what matters most and what to do next."
-          }
-        ]
-      },
-      {
-        id: "visual-design-6",
-        label: "Imagery and Iconography",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Imagery and iconography add visual interest, communicate concepts quickly, and enhance emotional connection. Well chosen images and icons can convey complex ideas faster than text and create memorable brand experiences."
-          },
-          {
-            type: "subheading",
-            text: "Imagery Guidelines"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Relevance", desc: "Every image should serve a purpose: communicate a concept, evoke an emotion, or support content. Avoid decorative images that add no value." },
-              { term: "Quality", desc: "Use high resolution images that look crisp on Retina displays. Blurry or pixelated images damage credibility." },
-              { term: "Consistency", desc: "Maintain a consistent photographic style across all images. Consistent lighting, color treatment, and composition create a cohesive look." },
-              { term: "Icon Clarity", desc: "Icons should be universally recognizable. Test icons with users to ensure they communicate the intended meaning without labels." },
-              { term: "Icon Consistency", desc: "Use a single icon style throughout the product. Consistent stroke weights, corner radii, and visual weights create harmony." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Icon Testing",
-            text: "Never assume an icon is clear. What seems obvious to you may be confusing to users. Always test icons with representative users before finalizing."
-          }
-        ]
-      },
-      {
-        id: "visual-design-7",
-        label: "Consistency and Brand",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Visual consistency across a product builds trust, reduces cognitive load, and reinforces brand identity. When users encounter consistent visual patterns, they develop accurate mental models that make navigation intuitive."
-          },
-          {
-            type: "subheading",
-            text: "Consistency Principles"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Visual Consistency", desc: "Maintain consistent use of colors, typefaces, spacing, and alignment across all screens. Inconsistency feels unprofessional." },
-              { term: "Functional Consistency", desc: "Similar elements should behave similarly throughout the product. Buttons should trigger the same type of response everywhere." },
-              { term: "External Consistency", desc: "Align with platform conventions. Users bring expectations from operating systems and other apps in the ecosystem." },
-              { term: "Brand Expression", desc: "Visual design should consistently express the brand personality through color, typography, imagery, and tone of voice." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "80%",
-            label: "of users cite consistency as a key factor in trust",
-            footnote: "Research on visual consistency and user trust in digital products"
-          }
-        ]
-      },
-      {
-        id: "visual-design-8",
-        label: "Accessibility in Visual Design",
-        icon: "lightbulb",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Accessibility is not a constraint on visual design but an opportunity to create better experiences for everyone. Inclusive visual design considers users with diverse abilities, ensuring that aesthetic choices do not exclude people."
-          },
-          {
-            type: "subheading",
-            text: "Accessibility Guidelines"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Color Contrast", desc: "Ensure text meets WCAG AA standards (4.5:1 ratio for body text, 3:1 for large text). Use contrast checking tools during design." },
-              { term: "Not Relying on Color Alone", desc: "Always pair color with text labels, icons, or patterns. Color blind users should not miss information conveyed by color." },
-              { term: "Readable Typography", desc: "Use sufficient font sizes (16px minimum for body text), adequate line height, and clear typefaces for readability." },
-              { term: "Focus Indicators", desc: "Design visible focus states for keyboard navigation. Focus indicators should have sufficient contrast and be clearly visible." },
-              { term: "Responsive and Scalable", desc: "Designs should work at 200 percent zoom without losing content or functionality. Test all layouts at multiple zoom levels." }
-            ]
-          },
-          {
-            type: "output",
-            text: "Accessible visual design is good visual design. When you design for inclusion, the result is clearer, more usable interfaces that benefit everyone."
-          }
+          { type: "para", text: "Learn about this important UX topic and how it applies to designing better user experiences." }
         ]
       }
-    ]
+    ],
   },
 
   {
-    id: "design-systems",
-    themeId: "indigo",
-    title: "Design Systems",
-    subtitle: "Scalable, Consistent Design Languages",
-    wordCount: "~2,400 words",
+    id: "avoid-deceptive-patterns",
+    themeId: "violet",
+    title: "Understand and Learn How to Avoid Deceptive Patterns in Design",
+    subtitle: "Ethical Design Practices for Trustworthy Products",
+    wordCount: "~600 words",
     difficulty: "Advanced",
-    tags: ["Design Systems", "Components", "Scalability", "UI"],
+    tags: ["Deceptive Patterns", "Ethics", "Trust"],
     sections: [
       {
-        id: "design-systems-1",
-        label: "What Are Design Systems?",
+        id: "s1-introduction",
+        label: "Introduction",
         icon: "plus",
         badge: null,
-        content: "",
+        content: "This is an introduction to the topic.",
         blocks: [
-          {
-            type: "para",
-            text: "A design system is a comprehensive collection of reusable components, guidelines, principles, and tools that enable teams to create consistent digital products at scale. It goes beyond a simple component library by including design tokens, usage guidelines, code snippets, and governance processes that ensure coherence across an entire product ecosystem."
-          },
-          {
-            type: "para",
-            text: "Design systems solve the scalability problem that every growing organization faces: how to maintain visual and functional consistency when multiple teams work on multiple products. By establishing a shared language and set of building blocks, design systems eliminate redundant work and ensure that users experience a unified product regardless of which team built the feature."
-          },
-          {
-            type: "callout",
-            label: "System vs Library",
-            text: "A component library is a collection of UI elements. A design system includes the component library plus design tokens, usage guidelines, contribution processes, and governance. The system is the complete ecosystem; the library is one part of it."
-          },
-          {
-            type: "subheading",
-            text: "Benefits of Design Systems"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Consistency at Scale", desc: "Ensures every screen feels like it belongs to the same product, regardless of which team built it." },
-              { term: "Designer and Developer Efficiency", desc: "Reusable components eliminate redundant work. Teams spend less time rebuilding patterns and more time solving unique problems." },
-              { term: "Faster Prototyping", desc: "Designers can assemble interfaces from pre built components rather than designing from scratch each time." },
-              { term: "Shared Vocabulary", desc: "Creates a common language that designers, developers, product managers, and stakeholders use to discuss the product." },
-              { term: "Single Source of Truth", desc: "Centralized documentation eliminates ambiguity about how components should look and behave." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "50%",
-            label: "faster design and development with mature design systems",
-            footnote: "Forrester research on design system ROI, 2023"
-          }
-        ]
-      },
-      {
-        id: "design-systems-2",
-        label: "Component Libraries",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "The component library is the heart of any design system. It contains all the reusable UI elements that teams can assemble to build interfaces. Components range from small atomic elements like buttons and inputs to complex patterns like navigation bars and data tables."
-          },
-          {
-            type: "subheading",
-            text: "Component Library Structure"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Atomic Elements", desc: "Buttons, links, inputs, labels, icons, and other indivisible UI elements that form the foundation of the system." },
-              { term: "Composite Components", desc: "Cards, form groups, navigation bars, modals, and other combinations of atomic elements that form reusable patterns." },
-              { term: "Complex Templates", desc: "Page level templates like dashboards, detail views, and list views that compose multiple components into layouts." },
-              { term: "Component States", desc: "Each component should include all states: default, hover, active, disabled, error, loading, and empty." },
-              { term: "Responsive Variants", desc: "Components should have responsive variants that adapt gracefully to different screen sizes." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "A component library is not about restricting creativity. It is about freeing teams from solving the same problems repeatedly so they can focus on the unique challenges of their product area."
-          }
-        ]
-      },
-      {
-        id: "design-systems-3",
-        label: "Design Tokens",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Design tokens are the atomic values that define the visual language of a design system. They represent decisions about color, typography, spacing, shadows, and other visual properties. Tokens abstract design decisions from implementation, making it possible to update the entire system by changing a single value."
-          },
-          {
-            type: "subheading",
-            text: "Token Categories"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Color Tokens", desc: "Define the complete color palette including primary, secondary, neutral, success, warning, error, and information colors." },
-              { term: "Typography Tokens", desc: "Font families, sizes, weights, line heights, and letter spacing values that define the typographic system." },
-              { term: "Spacing Tokens", desc: "A consistent spacing scale (4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px) used for margins and padding." },
-              { term: "Shadow Tokens", desc: "Elevation values for cards, modals, dropdowns, and other layered elements." },
-              { term: "Border Token", desc: "Border widths, radii, and styles that define how containers and inputs are outlined." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Token Naming",
-            text: "Use semantic token names that describe purpose, not value. For example, color-primary is better than blue-500. Semantic names make tokens reusable and make the intent clear regardless of the actual value."
-          }
-        ]
-      },
-      {
-        id: "design-systems-4",
-        label: "Patterns and Templates",
-        icon: "tool",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Beyond individual components, design systems define patterns and templates that solve common user experience challenges. Patterns are reusable solutions to recurring design problems. Templates are pre arranged layouts for common page types."
-          },
-          {
-            type: "subheading",
-            text: "Common Design Patterns"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Navigation Patterns", desc: "Standard approaches to top navigation, sidebars, tab bars, breadcrumbs, and pagination that users already understand." },
-              { term: "Data Display Patterns", desc: "Tables, lists, cards, grids, and charts with consistent interaction behaviors for viewing and managing data." },
-              { term: "Form Patterns", desc: "Standard form layouts, validation patterns, error handling, and input configurations for data collection." },
-              { term: "Feedback Patterns", desc: "Toast notifications, banners, modals, inline errors, and confirmation dialogs with consistent behavior and placement." },
-              { term: "Empty State Patterns", desc: "Designs for screens with no data, including illustrations, helpful messages, and clear calls to action." }
-            ]
-          },
-          {
-            type: "output",
-            text: "Patterns encode best practices and make them accessible to every team member. When a designer encounters a common problem, they can reach for the established pattern rather than inventing a new solution."
-          }
-        ]
-      },
-      {
-        id: "design-systems-5",
-        label: "Governance and Maintenance",
-        icon: "check",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "A design system is a living product that requires ongoing governance and maintenance. Without proper governance, systems fall into disrepair as teams create one off components that bypass the system. Effective governance ensures the system remains healthy, relevant, and adopted."
-          },
-          {
-            type: "subheading",
-            text: "Governance Practices"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Contribution Process", desc: "Define how new components are proposed, reviewed, approved, and added to the system. A clear process encourages contributions while maintaining quality." },
-              { term: "Versioning", desc: "Use semantic versioning to track changes and communicate impact. Major versions for breaking changes, minor versions for additions, patches for fixes." },
-              { term: "Regular Audits", desc: "Periodically review the system for unused components, inconsistencies, and opportunities for simplification." },
-              { term: "Deprecation Policy", desc: "Clearly communicate when components are deprecated and provide migration paths to replacements." },
-              { term: "Community Management", desc: "Maintain communication channels for users to ask questions, report issues, and suggest improvements." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "A design system is never finished. It is a living product that must be nurtured, pruned, and evolved as the product and organization grow."
-          }
-        ]
-      },
-      {
-        id: "design-systems-6",
-        label: "Adoption and Documentation",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "The best design system is useless if teams do not adopt it. Successful adoption requires excellent documentation, onboarding support, and integration into team workflows. Documentation is the bridge between the system and its users."
-          },
-          {
-            type: "subheading",
-            text: "Documentation Best Practices"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Usage Guidelines", desc: "Explain when and how to use each component, including dos and donts with concrete examples." },
-              { term: "Code Examples", desc: "Provide copy paste code snippets for every component in the supported frameworks." },
-              { term: "Interactive Playground", desc: "Allow users to experiment with component properties and see live results." },
-              { term: "Changelog", desc: "Maintain a clear changelog documenting what changed, why, and how to migrate." },
-              { term: "Onboarding Materials", desc: "Create getting started guides, tutorials, and video walkthroughs for new team members." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Adoption Metrics",
-            text: "Track adoption metrics like component usage frequency, number of teams using the system, and time to integrate new features. Use data to identify adoption barriers and prioritize improvements."
-          }
-        ]
-      },
-      {
-        id: "design-systems-7",
-        label: "Tools and Platforms",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "A variety of tools support design system creation, documentation, and distribution. The right tool stack depends on team size, technology choices, and workflow preferences."
-          },
-          {
-            type: "subheading",
-            text: "Design System Tools"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Figma", desc: "Primary design tool for most design systems. Supports components, variants, auto layout, and team libraries for easy sharing." },
-              { term: "Storybook", desc: "Industry standard for developing and documenting UI components in isolation. Supports multiple frameworks." },
-              { term: "Zeroheight", desc: "Dedicated design system documentation platform that connects design and code references." },
-              { term: "Specify", desc: "Design token management and distribution platform that syncs tokens from design to code." },
-              { term: "Supernova", desc: "End to end design system platform for documentation, token management, and code generation." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "85%",
-            label: "of enterprise organizations have or are building a design system",
-            footnote: "Industry survey on design system adoption, 2024"
-          }
-        ]
-      },
-      {
-        id: "design-systems-8",
-        label: "Common Design System Mistakes",
-        icon: "refresh",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Building and maintaining a design system comes with predictable challenges. Recognizing common mistakes helps teams avoid pitfalls and build systems that truly serve their users."
-          },
-          {
-            type: "subheading",
-            text: "Mistakes to Avoid"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Building Before Needed", desc: "Creating a comprehensive system before understanding what teams actually need. Start small and grow based on real demand." },
-              { term: "Too Restrictive", desc: "Creating a system so rigid that teams feel constrained. Good systems provide guidelines with room for creative problem solving." },
-              { term: "Ignoring Maintenance", desc: "Treating the system as a one time project rather than an ongoing product requiring dedicated resources." },
-              { term: "Poor Documentation", desc: "Building great components but failing to document how to use them. Undocumented components might as well not exist." },
-              { term: "Designer Developer Gap", desc: "Creating separate design and code implementations that diverge over time. Design and code must stay synchronized." }
-            ]
-          },
-          {
-            type: "output",
-            text: "The most successful design systems are those that evolve with the needs of their users. Start small, listen to feedback, and invest in maintenance. A well cared for system is one of the most valuable assets a product organization can have."
-          }
+          { type: "para", text: "Learn about this important UX topic and how it applies to designing better user experiences." }
         ]
       }
-    ]
+    ],
   },
 
   {
     id: "information-architecture",
     themeId: "teal",
-    title: "Information Architecture",
+    title: "Understand Information Architecture",
     subtitle: "Organizing Content for Findability and Understanding",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -3338,289 +2576,10 @@ export const NOTES_C: any[] = [
       }
     ]
   },
-
-  {
-    id: "interaction-design",
-    themeId: "violet",
-    title: "Interaction Design",
-    subtitle: "Crafting Meaningful Interactions Between Users and Products",
-    wordCount: "~2,400 words",
-    difficulty: "Advanced",
-    tags: ["Interaction Design", "Microinteractions", "Motion", "UX"],
-    sections: [
-      {
-        id: "interaction-design-1",
-        label: "What Is Interaction Design?",
-        icon: "plus",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Interaction design is the practice of designing interactive digital products, systems, and services with a focus on how users interact with them. It goes beyond what users see to define what users do: how they engage, respond, and experience the product over time. Interaction design shapes the dialogue between people and technology."
-          },
-          {
-            type: "para",
-            text: "The field draws from human computer interaction, psychology, and industrial design. Interaction designers craft the moment to moment experience of using a product, considering every action, reaction, feedback, and transition. Good interaction design feels natural and intuitive, while poor interaction design leaves users confused or frustrated."
-          },
-          {
-            type: "callout",
-            label: "Why Interaction Design Matters",
-            text: "Interactions define the user experience more than any other design discipline. A beautiful screen with poor interactions will frustrate users. A simple screen with thoughtful interactions will delight them."
-          },
-          {
-            type: "subheading",
-            text: "Core Principles"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Predictability", desc: "Users should be able to predict what will happen when they interact. Consistent responses build trust and confidence." },
-              { term: "Feedback", desc: "Every user action should produce a clear, immediate response. Feedback confirms the action was received and indicates the result." },
-              { term: "Learnability", desc: "First time users should be able to accomplish their goals without instruction. Intuitive interactions reduce the learning curve." },
-              { term: "Efficiency", desc: "Experienced users should be able to perform actions quickly with shortcuts and power user features." },
-              { term: "Error Prevention", desc: "The best interactions prevent errors before they happen through constraints, confirmations, and thoughtful defaults." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "70%",
-            label: "of user satisfaction is driven by interaction quality",
-            footnote: "Research on factors influencing digital product satisfaction"
-          }
-        ]
-      },
-      {
-        id: "interaction-design-2",
-        label: "The Five Dimensions of Interaction Design",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Bill Moggridge and Gillian Crampton Smith defined five dimensions of interaction design that provide a framework for thinking about interactions holistically. These dimensions help designers consider every aspect of the user experience."
-          },
-          {
-            type: "subheading",
-            text: "The Five Dimensions"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Words", desc: "The text used in interfaces including labels, instructions, and error messages. Words should be clear, concise, and human." },
-              { term: "Visual Representations", desc: "The graphical elements including typography, icons, images, and layout that communicate meaning and affordance." },
-              { term: "Physical Objects or Space", desc: "The physical context: what users interact with (mouse, keyboard, touch screen, voice) and the space they occupy." },
-              { term: "Time", desc: "The temporal dimension including how content changes over time, animation duration, and response timing." },
-              { term: "Behavior", desc: "The emotional feedback and responses that users experience: how actions affect the system and how the system responds." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "The five dimensions remind us that interaction design is about more than screens. It is about words, visuals, physical context, time, and emotion working together in harmony."
-          }
-        ]
-      },
-      {
-        id: "interaction-design-3",
-        label: "Microinteractions",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Microinteractions are small, contained moments within a product that accomplish a single task. They are the details that make a product feel polished and alive. From liking a post to toggling a setting, microinteractions shape how users perceive product quality."
-          },
-          {
-            type: "para",
-            text: "Dan Saffer, author of Microinteractions, describes them as having four parts: trigger, rules, feedback, and loops and modes. Understanding these parts helps designers create microinteractions that feel satisfying and intentional."
-          },
-          {
-            type: "subheading",
-            text: "Microinteraction Components"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Trigger", desc: "What initiates the microinteraction. Triggers can be user initiated (tap, swipe) or system initiated (notification, alert)." },
-              { term: "Rules", desc: "What happens during the microinteraction. Rules determine the logic, constraints, and conditions." },
-              { term: "Feedback", desc: "What the user sees, hears, or feels during the interaction. Feedback confirms the trigger was received." },
-              { term: "Loops and Modes", desc: "What happens to the microinteraction over time. Loops repeat automatically. Modes change behavior under different conditions." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Microinteraction Impact",
-            text: "Well crafted microinteractions make products feel alive and responsive. They communicate quality, build emotional connections, and turn routine tasks into satisfying moments."
-          }
-        ]
-      },
-      {
-        id: "interaction-design-4",
-        label: "Motion and Animation",
-        icon: "tool",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Motion in interaction design serves both functional and aesthetic purposes. Well designed motion guides attention, provides feedback, communicates hierarchy, and creates a sense of spatial continuity. Poorly executed motion distracts and disorients."
-          },
-          {
-            type: "subheading",
-            text: "Motion Design Principles"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Purposeful Motion", desc: "Every animation should serve a purpose: guiding attention, providing feedback, or communicating state changes. Avoid decorative motion." },
-              { term: "Natural Timing", desc: "Animations should feel natural, typically lasting 200-500 milliseconds. Too fast feels jarring. Too slow feels sluggish." },
-              { term: "Easing", desc: "Use easing curves that mimic natural movement. Objects in the real world accelerate and decelerate; digital motion should do the same." },
-              { term: "Spatial Continuity", desc: "Motion should maintain spatial relationships. Elements that move between screens should follow a logical path." },
-              { term: "Performance", desc: "Animations must run at 60 frames per second to feel smooth. Test on target devices to ensure performance." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Motion is not decoration. It is communication. Good motion explains relationships, provides feedback, and guides attention without the user ever noticing it."
-          }
-        ]
-      },
-      {
-        id: "interaction-design-5",
-        label: "Gesture Design",
-        icon: "check",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Gestures are touch based interactions that go beyond simple taps. They include swipes, pinches, long presses, and multi finger gestures. Gestures enable rich, efficient interactions but require careful design because they are invisible."
-          },
-          {
-            type: "subheading",
-            text: "Gesture Design Guidelines"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Discoverability", desc: "Gestures must be discoverable since they have no visible controls. Use onboarding, visual cues, or progressive disclosure to teach users." },
-              { term: "Consistency", desc: "Use consistent gestures throughout the product. A swipe left should always do the same thing." },
-              { term: "Forgiveness", desc: "Design gestures with forgiveness. Users may not execute gestures perfectly. Allow for imprecision." },
-              { term: "Platform Standards", desc: "Follow platform gesture conventions. Users bring expectations from the operating system." },
-              { term: "Fallbacks", desc: "Always provide alternative ways to perform actions initiated by gestures for accessibility." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "80%",
-            label: "of users prefer gesture based navigation over buttons",
-            footnote: "Mobile UX research on gesture preferences, 2024"
-          }
-        ]
-      },
-      {
-        id: "interaction-design-6",
-        label: "Feedback Systems",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Feedback is how the system communicates the results of user actions. Effective feedback is immediate, informative, and appropriate to the context. Without clear feedback, users cannot build accurate mental models of how the system works."
-          },
-          {
-            type: "subheading",
-            text: "Feedback Types"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Visual Feedback", desc: "Changes in appearance that communicate state: button presses, loading indicators, success messages, error states." },
-              { term: "Haptic Feedback", desc: "Physical vibrations that confirm actions. Haptic feedback is particularly useful for mobile interactions where users cannot see the screen." },
-              { term: "Auditory Feedback", desc: "Sounds that indicate events. Use sparingly and provide controls to disable sounds." },
-              { term: "Transitional Feedback", desc: "Animations that communicate state changes: screens sliding in, elements fading, lists updating." },
-              { term: "Proactive Feedback", desc: "System initiated feedback that notifies users of events, changes, or required actions." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Feedback Timing",
-            text: "Feedback should be immediate. Users perceive delays of 100ms as instantaneous. Delays of 1 second break the feeling of direct manipulation. Always show loading states for operations taking longer than 100ms."
-          }
-        ]
-      },
-      {
-        id: "interaction-design-7",
-        label: "Affordances and Signifiers",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Affordances are the possible actions an object offers to a user. Signifiers are cues that indicate where those actions can be performed. Understanding both concepts is essential for creating interfaces that users intuitively know how to operate."
-          },
-          {
-            type: "subheading",
-            text: "Applying Affordances"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Visual Affordances", desc: "Buttons should look pressable, links should look clickable, sliders should look draggable. Visual design communicates possibility." },
-              { term: "Signifier Clarity", desc: "Signifiers should be unambiguous. A blue underlined text clearly signifies a link. A gray box with a border signifies an input field." },
-              { term: "False Affordances", desc: "Avoid elements that look interactive but are not. False affordances frustrate users who click expecting functionality." },
-              { term: "Platform Conventions", desc: "Leverage established platform conventions. Users already know how tabs, buttons, and links work." },
-              { term: "Progressive Disclosure", desc: "Reveal advanced affordances as users gain expertise. Beginners see core actions. Experts discover power features." }
-            ]
-          },
-          {
-            type: "output",
-            text: "Good affordances make interactions obvious. Users should never wonder whether something is clickable, draggable, or tappable. If they have to guess, the design has failed."
-          }
-        ]
-      },
-      {
-        id: "interaction-design-8",
-        label: "Testing Interactions",
-        icon: "check",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Testing interactions requires observing how users actually behave with your product, not just whether they complete tasks. Interaction testing reveals timing issues, gesture problems, and feedback gaps that static testing misses."
-          },
-          {
-            type: "subheading",
-            text: "Interaction Testing Methods"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Usability Testing", desc: "Observe users completing tasks and note where interactions break down. Pay attention to hesitations and errors." },
-              { term: "A/B Interaction Testing", desc: "Compare two interaction patterns for the same task to determine which performs better." },
-              { term: "Animation Review", desc: "Review animations frame by frame to ensure timing, easing, and sequence are correct." },
-              { term: "Gesture Testing", desc: "Specifically test gesture based interactions to ensure they are discoverable and reliable." },
-              { term: "Performance Testing", desc: "Measure interaction response times on target devices to ensure feedback feels immediate." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Great interactions are invisible. Users notice them only when they fail. The goal of interaction design is to create experiences so natural that users focus entirely on their goals, not on the interface."
-          }
-        ]
-      }
-    ]
-  },
-
   {
     id: "your-importance",
     themeId: "rose",
-    title: "Your Importance as a UX Designer",
+    title: "Understand Your Importance as a UX Designer",
     subtitle: "Why Your Role Matters in Product Development",
     wordCount: "~2,400 words",
     difficulty: "Advanced",

@@ -1527,7 +1527,7 @@ export const NOTES_A: any[] = [
   {
     "id": "day-in-life",
     "themeId": "emerald",
-    "title": "A Day in the Life of a UX Designer",
+    "title": "A Day in the Life of a User Experience Designer",
     "subtitle": "What UX Professionals Actually Do",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -4777,7 +4777,7 @@ export const NOTES_A: any[] = [
   {
     "id": "research-goals",
     "themeId": "cyan",
-    "title": "Determining Research Goals and Setting Questions",
+    "title": "Determining Research Goal and Set Questions",
     "subtitle": "Framing Effective User Research",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",

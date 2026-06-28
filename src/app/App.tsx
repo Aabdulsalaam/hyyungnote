@@ -9,6 +9,7 @@ import { isSupabaseConfigured, supabase, fetchAggregatedAnalytics, updateUserAna
 import type { AggregatedAnalytics } from "@/lib/supabase";
 import { signInWithEmail, signOutUser, getCurrentSession } from "@/lib/supabase";
 import { INITIAL_NOTES } from "@/lib/notes-data";
+import { PRACTICE_DATA } from "@/lib/practice-data";
 import LandingPage from "@/app/components/LandingPage";
 
 type Block =
@@ -697,13 +698,6 @@ function PracticeModal({ noteTitle, questions, tasks, onClose }: {
   );
 }
 
-type PracticeQuizData = {
-  questions: PracticeQuestion[];
-  tasks: PracticeTask[];
-};
-
-const PRACTICE_DATA: Record<string, PracticeQuizData> = {};
-
 interface ActivityEntry {
   type: "login" | "view_section" | "complete_note" | "practice_open";
   noteId?: string;
@@ -1388,29 +1382,63 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     navigateTo("/notes", setCurrentPath);
   }
 
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const sessionLoggedRef = useRef(false);
+  const prevHasAccess = useRef(false);
   useEffect(() => {
-    const checkSession = async () => {
-      const stored = localStorage.getItem("hyyung-landing-auth");
-      if (stored && !sessionLoggedRef.current) {
-        sessionLoggedRef.current = true;
-        setHasAccess(true);
-        addActivity({ type: "login" });
-        return;
-      }
+    let listener: { data: { subscription: { unsubscribe: () => void } } } | null = null;
+
+    const initAuth = async () => {
       try {
         const session = await getCurrentSession();
         if (session) {
-          setHasAccess(true);
+          if (!sessionLoggedRef.current) {
+            sessionLoggedRef.current = true;
+            prevHasAccess.current = true;
+            setHasAccess(true);
+            addActivity({ type: "login" });
+            if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/auth/callback") {
+              navigateTo("/notes", setCurrentPath);
+            }
+          }
         }
       } catch {}
+      setCheckingAuth(false);
     };
-    checkSession();
+    initAuth();
+
+    if (supabase) {
+      listener = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          if (!sessionLoggedRef.current) {
+            sessionLoggedRef.current = true;
+          }
+          setHasAccess(true);
+          const email = session.user?.email || "";
+          const name = session.user?.user_metadata?.name || email.split("@")[0];
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
+            } catch {}
+          }
+          if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/auth/callback") {
+            navigateTo("/notes", setCurrentPath);
+          }
+        }
+      });
+    }
+
+    return () => {
+      if (listener) listener.data.subscription.unsubscribe();
+    };
   }, []);
 
   // Handle password recovery and OAuth callbacks
   const [resetPassword, setResetPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [resetDone, setResetDone] = useState(false);
   const [resetError, setResetError] = useState("");
   const [resetting, setResetting] = useState(false);
@@ -1425,12 +1453,14 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     }
     if (currentPath === "/auth/callback") {
       const checkSession = async () => {
-        const session = await getCurrentSession();
-        if (session) {
-          const email = session.user?.email || "";
-          const name = session.user?.user_metadata?.name || email.split("@")[0];
-          onAuthSuccess(email, name);
-        }
+        try {
+          const session = await getCurrentSession();
+          if (session) {
+            const email = session.user?.email || "";
+            const name = session.user?.user_metadata?.name || email.split("@")[0];
+            onAuthSuccess(email, name);
+          }
+        } catch {}
       };
       checkSession();
     }
@@ -1439,16 +1469,29 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
   async function handlePasswordReset(e: React.FormEvent) {
     e.preventDefault();
     setResetError("");
+    if (newPassword !== confirmNewPassword) {
+      setResetError("Passwords do not match");
+      return;
+    }
     setResetting(true);
     try {
       await updateUserPassword(newPassword);
       setResetDone(true);
-      setTimeout(() => { setResetPassword(false); setResetDone(false); setNewPassword(""); }, 3000);
+      setTimeout(() => { setResetPassword(false); setResetDone(false); setNewPassword(""); setConfirmNewPassword(""); }, 3000);
     } catch (err: unknown) {
       setResetError(err instanceof Error ? err.message : "Failed to reset password");
     } finally {
       setResetting(false);
     }
+  }
+
+  if (checkingAuth) {
+    return <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "#f8fafc" }}>
+      <div className="flex flex-col items-center gap-3">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="animate-spin" stroke="#2563EB" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="8" /></svg>
+        <span className="text-sm text-slate-500">Loading…</span>
+      </div>
+    </div>;
   }
 
   if (resetPassword) {
@@ -1472,10 +1515,37 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               <form onSubmit={handlePasswordReset} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold text-[14px] text-[#475569]">New Password</label>
-                  <input type="password" value={newPassword} onChange={e => { setNewPassword(e.target.value); setResetError(""); }} placeholder="At least 6 characters" minLength={6} required
-                    className="w-full h-[47px] px-4 rounded-[12px] text-[14px] outline-none transition-all"
-                    style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", color: "#0f1729" }}
-                    onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+                  <div className="relative">
+                    <input type={showNewPassword ? "text" : "password"} value={newPassword} onChange={e => { setNewPassword(e.target.value); setResetError(""); }} placeholder="At least 6 characters" minLength={6} required
+                      className="w-full h-[47px] px-4 pr-10 rounded-[12px] text-[14px] outline-none transition-all"
+                      style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", color: "#0f1729" }}
+                      onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+                    <button type="button" onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                      {showNewPassword ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-semibold text-[14px] text-[#475569]">Confirm Password</label>
+                  <div className="relative">
+                    <input type={showConfirmNewPassword ? "text" : "password"} value={confirmNewPassword} onChange={e => { setConfirmNewPassword(e.target.value); setResetError(""); }} placeholder="Repeat your password" required
+                      className="w-full h-[47px] px-4 pr-10 rounded-[12px] text-[14px] outline-none transition-all"
+                      style={{ border: "1px solid #e2e8f0", fontFamily: "'Inter',sans-serif", color: "#0f1729" }}
+                      onFocus={e => (e.target.style.borderColor = "#2563EB")} onBlur={e => (e.target.style.borderColor = "#e2e8f0")} />
+                    <button type="button" onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                      {showConfirmNewPassword ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 {resetError && <p className="text-[12px] text-red-500">{resetError}</p>}
                 <button type="submit" disabled={resetting}

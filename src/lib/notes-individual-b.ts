@@ -2,7 +2,7 @@ export const NOTES_B: any[] = [
   {
     id: "conduct-interviews",
     themeId: "violet",
-    title: "Conduct User Interviews",
+    title: "Conduct User Interview",
     subtitle: "Techniques for Effective User Research Conversations",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
@@ -734,7 +734,7 @@ export const NOTES_B: any[] = [
   {
     id: "user-stories",
     themeId: "rose",
-    title: "Understand and Craft User Stories",
+    title: "Understand and Craft User Story",
     subtitle: "Capturing User Needs in Actionable Formats",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -1063,7 +1063,7 @@ export const NOTES_B: any[] = [
   {
     id: "empathy-map",
     themeId: "emerald",
-    title: "Understand and Build an Empathy Map",
+    title: "Understand and Build Empathy Map",
     subtitle: "Visualizing User Thoughts and Feelings",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -1352,7 +1352,7 @@ export const NOTES_B: any[] = [
   {
     id: "pain-points",
     themeId: "cyan",
-    title: "Identify User Pain Points and Create Solutions",
+    title: "Identify User Pain Points and Create a Solution",
     subtitle: "Finding Friction and Designing Fixes",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
