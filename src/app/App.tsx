@@ -1310,10 +1310,10 @@ const sectionCount = activeNote.sections.length;
                   <span className="font-semibold text-[11.68px] truncate" style={{ color: isActive ? t.accentDark : "#475569", fontFamily: "'Inter',sans-serif" }}>{n.title}</span>
                   <div className="flex items-center gap-1 shrink-0 ml-auto">
                     {n.difficulty && (
-                      <span className="text-[7px] font-bold px-1 py-0.5 rounded" style={{
+                      <span className="text-[7px] font-bold px-1.5 py-0.5 rounded" style={{
                         background: n.difficulty === "Beginner" ? "#d1fae5" : n.difficulty === "Intermediate" ? "#fef3c7" : "#fee2e2",
                         color: n.difficulty === "Beginner" ? "#065f46" : n.difficulty === "Intermediate" ? "#92400e" : "#991b1b"
-                      }}>{n.difficulty === "Beginner" ? "B" : n.difficulty === "Intermediate" ? "I" : "A"}</span>
+                      }}>{n.difficulty === "Beginner" ? "Beginner" : n.difficulty === "Intermediate" ? "Int" : "Adv"}</span>
                     )}
                   </div>
                 </div>
@@ -1523,6 +1523,14 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               <div className="flex-1 min-w-0">
                 <h1 className="font-extrabold text-[22px] sm:text-[26.4px] leading-tight text-[#0f1729]" style={{ fontFamily: "'Montserrat',sans-serif" }}>{activeNote.title}</h1>
                 <p className="text-[13px] sm:text-[13.6px] text-[#64748b] mt-1">{activeNote.subtitle}</p>
+                {activeNote.difficulty && (
+                  <div className="mt-2">
+                    <span className="inline-block text-[10px] font-bold px-2.5 py-1 rounded-full" style={{
+                      background: activeNote.difficulty === "Beginner" ? "#d1fae5" : activeNote.difficulty === "Intermediate" ? "#fef3c7" : "#fee2e2",
+                      color: activeNote.difficulty === "Beginner" ? "#065f46" : activeNote.difficulty === "Intermediate" ? "#92400e" : "#991b1b"
+                    }}>{activeNote.difficulty}</span>
+                  </div>
+                )}
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-3">
                   <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d={svgDT.p1f658e00} stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.916667" /><path d={svgDT.p105d7900} stroke="#94A3B8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.916667" /></svg>
                   <span className="text-[10.72px] text-[#94a3b8]">Last edited: June 25, 2026</span>
