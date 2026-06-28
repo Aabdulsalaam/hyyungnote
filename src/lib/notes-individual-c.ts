@@ -1425,7 +1425,7 @@ export const NOTES_C: any[] = [
     tags: ["Wireframing", "Mobile", "Responsive", "Touch"],
     sections: [
       {
-        id: "wireframing-mobile-1",
+        id: "paper-wireframe-1",
         label: "Mobile Wireframing Challenges",
         icon: "plus",
         badge: null,
@@ -1467,7 +1467,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-2",
+        id: "paper-wireframe-2",
         label: "Screen Size Constraints",
         icon: "search",
         badge: null,
@@ -1501,7 +1501,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-3",
+        id: "paper-wireframe-3",
         label: "Touch Interaction Design",
         icon: "target",
         badge: null,
@@ -1537,7 +1537,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-4",
+        id: "paper-wireframe-4",
         label: "Mobile Navigation Patterns",
         icon: "tool",
         badge: null,
@@ -1570,7 +1570,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-5",
+        id: "paper-wireframe-5",
         label: "Mobile First Approach",
         icon: "check",
         badge: null,
@@ -1604,7 +1604,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-6",
+        id: "paper-wireframe-6",
         label: "Tools for Mobile Wireframing",
         icon: "search",
         badge: null,
@@ -1636,7 +1636,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-7",
+        id: "paper-wireframe-7",
         label: "Testing Mobile Wireframes",
         icon: "check",
         badge: null,
@@ -1667,7 +1667,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-mobile-8",
+        id: "paper-wireframe-8",
         label: "Common Mobile Wireframing Mistakes",
         icon: "refresh",
         badge: null,
@@ -1710,7 +1710,7 @@ export const NOTES_C: any[] = [
     tags: ["Wireframing", "Desktop", "Layout", "Navigation"],
     sections: [
       {
-        id: "wireframing-desktop-1",
+        id: "digital-wireframe-1",
         label: "Desktop Wireframing Considerations",
         icon: "plus",
         badge: null,
@@ -1752,7 +1752,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-2",
+        id: "digital-wireframe-2",
         label: "Screen Real Estate Management",
         icon: "search",
         badge: null,
@@ -1783,7 +1783,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-3",
+        id: "digital-wireframe-3",
         label: "Multi Column Layouts",
         icon: "target",
         badge: null,
@@ -1817,7 +1817,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-4",
+        id: "digital-wireframe-4",
         label: "Desktop Navigation Patterns",
         icon: "tool",
         badge: null,
@@ -1849,7 +1849,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-5",
+        id: "digital-wireframe-5",
         label: "Advanced Interactions",
         icon: "check",
         badge: null,
@@ -1884,7 +1884,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-6",
+        id: "digital-wireframe-6",
         label: "Tools and Techniques",
         icon: "search",
         badge: null,
@@ -1917,7 +1917,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-7",
+        id: "digital-wireframe-7",
         label: "Testing Desktop Wireframes",
         icon: "check",
         badge: null,
@@ -1949,7 +1949,7 @@ export const NOTES_C: any[] = [
         ]
       },
       {
-        id: "wireframing-desktop-8",
+        id: "digital-wireframe-8",
         label: "Common Desktop Wireframing Mistakes",
         icon: "refresh",
         badge: null,
