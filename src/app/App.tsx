@@ -690,31 +690,34 @@ function AdminLogin({ onSuccess, onClose }: { onSuccess: () => void; onClose: ()
 
 function PracticeModal({ noteId, noteTitle, onClose }: { noteId: string; noteTitle: string; onClose: (score?: number) => void }) {
   const quizData = PRACTICE_QUIZZES[noteId];
-  const tasks = quizData?.tasks || [];
+  const allTasks = quizData?.tasks || [];
   const [tab, setTab] = useState<"mcq" | "tasks">("mcq");
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [picked, setPicked] = useState<PracticeQuestion[]>([]);
+  const [pickedTasks, setPickedTasks] = useState<PracticeTask[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Record<number, boolean>>(() => {
     try { const s = localStorage.getItem(`hyyung-tasks-${noteId}`); return s ? JSON.parse(s) : {}; } catch { return {}; }
   });
 
-  function pick10(arr: PracticeQuestion[]) {
+  function pickRandom<T>(arr: T[], n: number) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
-    return a.slice(0, 10);
+    return a.slice(0, n);
   }
 
   useEffect(() => {
-    setPicked(quizData?.questions ? pick10(quizData.questions) : []);
+    if (quizData?.questions) setPicked(pickRandom(quizData.questions, 10));
+    if (allTasks.length) setPickedTasks(pickRandom(allTasks, 2));
     setAnswers({});
     setSubmitted(false);
   }, [noteId]);
 
   const questions = picked;
+  const tasks = pickedTasks;
   const score = submitted ? questions.filter((q, i) => answers[i] === q.correctIndex).length : 0;
 
   function select(qIdx: number, optIdx: number) {
@@ -728,13 +731,17 @@ function PracticeModal({ noteId, noteTitle, onClose }: { noteId: string; noteTit
   }
 
   function handleReset() {
-    if (quizData?.questions) setPicked(pick10(quizData.questions));
+    if (quizData?.questions) setPicked(pickRandom(quizData.questions, 10));
+    if (allTasks.length) setPickedTasks(pickRandom(allTasks, 2));
     setAnswers({});
     setSubmitted(false);
   }
 
   function toggleTask(idx: number) {
-    const next = { ...completedTasks, [idx]: !completedTasks[idx] };
+    const task = tasks[idx];
+    if (!task) return;
+    const key = task.title;
+    const next = { ...completedTasks, [key]: !completedTasks[key] };
     setCompletedTasks(next);
     try { localStorage.setItem(`hyyung-tasks-${noteId}`, JSON.stringify(next)); } catch {}
   }
@@ -776,7 +783,7 @@ function PracticeModal({ noteId, noteTitle, onClose }: { noteId: string; noteTit
           </button>
           <button onClick={() => setTab("tasks")} className="flex-1 py-2 rounded-[8px] text-[12px] font-semibold transition-all"
             style={{ background: tab === "tasks" ? "#fff" : "transparent", color: tab === "tasks" ? "#0f1729" : "#64748b", boxShadow: tab === "tasks" ? "0 1px 3px rgba(0,0,0,0.08)" : "none" }}>
-            Practical Tasks ({Object.keys(completedTasks).filter(k => completedTasks[+k]).length}/{tasks.length})
+            Practical Tasks ({Object.keys(completedTasks).filter(k => completedTasks[k]).length}/{tasks.length})
           </button>
         </div>
 
@@ -846,7 +853,7 @@ function PracticeModal({ noteId, noteTitle, onClose }: { noteId: string; noteTit
         {tab === "tasks" && (
           <div className="flex flex-col gap-4">
             {tasks.map((t, i) => {
-              const done = completedTasks[i];
+              const done = completedTasks[t.title];
               return (
                 <div key={i} className="rounded-[10px] p-4" style={{ background: done ? "#f0fdf4" : "#f8fafc", border: `1px solid ${done ? "#6ee7b7" : "#e2e8f0"}` }}>
                   <div className="flex items-start gap-3">
