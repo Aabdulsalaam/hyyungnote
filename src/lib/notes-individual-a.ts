@@ -2,7 +2,7 @@ export const NOTES_A: any[] = [
   {
     "id": "basics-ux",
     "themeId": "indigo",
-    "title": "Basics of User Experience Design",
+    "title": "Basics of user experience design",
     "subtitle": "Foundational Concepts for Human Centered Design",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -390,7 +390,7 @@ export const NOTES_A: any[] = [
   {
     "id": "good-ux",
     "themeId": "teal",
-    "title": "Characteristics of a Good User Experience",
+    "title": "Characteristics of a good user experience",
     "subtitle": "What Makes Users Love a Product",
     "wordCount": "~3,000 words",
     "difficulty": "Beginner",
@@ -756,7 +756,7 @@ export const NOTES_A: any[] = [
   {
     "id": "who-is-uxd",
     "themeId": "violet",
-    "title": "Who Is a User Experience Designer?",
+    "title": "Who is a user experience designer",
     "subtitle": "Role, Skills, and Mindset",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -1145,7 +1145,7 @@ export const NOTES_A: any[] = [
   {
     "id": "ux-careers",
     "themeId": "rose",
-    "title": "User Experience Designer Careers",
+    "title": "User experience designer careers",
     "subtitle": "Paths, Growth, and Opportunities",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -1527,7 +1527,7 @@ export const NOTES_A: any[] = [
   {
     "id": "day-in-life",
     "themeId": "emerald",
-    "title": "A Day in the Life of a User Experience Designer",
+    "title": "A day in the life of a user experience designer",
     "subtitle": "What UX Professionals Actually Do",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -1929,7 +1929,7 @@ export const NOTES_A: any[] = [
   {
     "id": "pdlc",
     "themeId": "pdlc",
-    "title": "Product Development Life Cycle",
+    "title": "Product development life cycle",
     "subtitle": "Rapid Ideation to Launch Framework",
     "wordCount": "~4,200 words",
     "difficulty": "Beginner",
@@ -2545,7 +2545,7 @@ export const NOTES_A: any[] = [
   {
     "id": "who-are-users",
     "themeId": "cyan",
-    "title": "Who Are My Users?",
+    "title": "Who are my users?",
     "subtitle": "Understanding Your Target Audience",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -2946,7 +2946,7 @@ export const NOTES_A: any[] = [
   {
     "id": "new-to-tech",
     "themeId": "indigo",
-    "title": "Thinking About Users New to Technology",
+    "title": "Thinking about users new to technology",
     "subtitle": "Designing for Digital Beginners",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -3314,7 +3314,7 @@ export const NOTES_A: any[] = [
   {
     "id": "why-ux",
     "themeId": "violet",
-    "title": "Why User Experience Design?",
+    "title": "Why user experience design?",
     "subtitle": "The Business and Human Case for UX",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -3660,7 +3660,7 @@ export const NOTES_A: any[] = [
   {
     "id": "intro-ux-research",
     "themeId": "teal",
-    "title": "Introduction to User Experience Research",
+    "title": "Introduction to user experience research",
     "subtitle": "Building Products on Evidence, Not Assumptions",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -4024,7 +4024,7 @@ export const NOTES_A: any[] = [
   {
     "id": "empathize",
     "themeId": "rose",
-    "title": "Empathize With the User",
+    "title": "Empathize with the user",
     "subtitle": "Building Deep User Understanding",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -4396,7 +4396,7 @@ export const NOTES_A: any[] = [
   {
     "id": "recruit-participants",
     "themeId": "emerald",
-    "title": "Find and Recruit Interview Participants",
+    "title": "Find and recruit interview participants",
     "subtitle": "Finding the Right People for User Research",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -4777,7 +4777,7 @@ export const NOTES_A: any[] = [
   {
     "id": "research-goals",
     "themeId": "cyan",
-    "title": "Determining Research Goal and Set Questions",
+    "title": "Determining research goal and set questions",
     "subtitle": "Framing Effective User Research",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",
@@ -5154,7 +5154,7 @@ export const NOTES_A: any[] = [
   {
     "id": "accessibility-research",
     "themeId": "indigo",
-    "title": "Consider Accessibility During User Research",
+    "title": "Consider accessibility during user research",
     "subtitle": "Inclusive Research Practices",
     "wordCount": "~2,800 words",
     "difficulty": "Beginner",

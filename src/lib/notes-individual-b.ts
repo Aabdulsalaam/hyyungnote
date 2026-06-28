@@ -2,7 +2,7 @@ export const NOTES_B: any[] = [
   {
     id: "conduct-interviews",
     themeId: "violet",
-    title: "Conduct User Interview",
+    title: "Conduct user interview",
     subtitle: "Techniques for Effective User Research Conversations",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
@@ -373,7 +373,7 @@ export const NOTES_B: any[] = [
   {
     id: "user-persona",
     themeId: "teal",
-    title: "Understand and Build User Persona",
+    title: "Understand and build user persona",
     subtitle: "Creating Representative User Archetypes",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
@@ -734,7 +734,7 @@ export const NOTES_B: any[] = [
   {
     id: "user-stories",
     themeId: "rose",
-    title: "Understand and Craft User Story",
+    title: "Understand and craft user story",
     subtitle: "Capturing User Needs in Actionable Formats",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -1063,7 +1063,7 @@ export const NOTES_B: any[] = [
   {
     id: "empathy-map",
     themeId: "emerald",
-    title: "Understand and Build Empathy Map",
+    title: "Understand and build empathy map",
     subtitle: "Visualizing User Thoughts and Feelings",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -1352,7 +1352,7 @@ export const NOTES_B: any[] = [
   {
     id: "pain-points",
     themeId: "cyan",
-    title: "Identify User Pain Points and Create a Solution",
+    title: "Identify user pain points and create a solution",
     subtitle: "Finding Friction and Designing Fixes",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
@@ -1608,7 +1608,7 @@ export const NOTES_B: any[] = [
   {
     id: "journey-map",
     themeId: "indigo",
-    title: "Understand and Build a User Journey Map",
+    title: "Understand and build a user journey map",
     subtitle: "Visualizing the Complete User Experience",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
@@ -1864,7 +1864,7 @@ export const NOTES_B: any[] = [
   {
     id: "problem-statements",
     themeId: "violet",
-    title: "Create Problem Statements",
+    title: "Create Problem statements",
     subtitle: "Framing Design Challenges Effectively",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -2118,7 +2118,7 @@ export const NOTES_B: any[] = [
   {
     id: "hypothesis-statements",
     themeId: "teal",
-    title: "Create Hypothesis Statements",
+    title: "Create Hypothesis statements",
     subtitle: "Making Assumptions Testable",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -2336,7 +2336,7 @@ export const NOTES_B: any[] = [
   {
     id: "goal-statements",
     themeId: "rose",
-    title: "Create Goal Statements",
+    title: "Create goal statements",
     subtitle: "Setting Clear Design Objectives",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -2555,7 +2555,7 @@ export const NOTES_B: any[] = [
   {
     id: "value-proposition",
     themeId: "emerald",
-    title: "Determine Value Proposition",
+    title: "Determine value proposition",
     subtitle: "Articulating Your Product's Unique Value",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -2775,7 +2775,7 @@ export const NOTES_B: any[] = [
   {
     id: "design-ideation",
     themeId: "cyan",
-    title: "Understand Design Ideation",
+    title: "Understand design ideation",
     subtitle: "Generating Creative Design Solutions",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",
@@ -3032,7 +3032,7 @@ export const NOTES_B: any[] = [
   {
     id: "business-needs",
     themeId: "indigo",
-    title: "Recognize Business Needs During Design Ideation",
+    title: "Recognize business needs during design ideation",
     subtitle: "Balancing User Desirability and Business Viability",
     wordCount: "~1,000 words",
     difficulty: "Intermediate",
@@ -3253,7 +3253,7 @@ export const NOTES_B: any[] = [
   {
     id: "competitive-audit",
     themeId: "violet",
-    title: "Competitive Audit",
+    title: "Competitive audit",
     subtitle: "Analyzing the Competitive Landscape",
     wordCount: "~1,200 words",
     difficulty: "Intermediate",

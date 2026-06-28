@@ -2,7 +2,7 @@ export const NOTES_C: any[] = [
   {
     id: "user-flow",
     themeId: "violet",
-    title: "User Flow",
+    title: "User flow",
     subtitle: "Mapping the Path Users Take Through Your Product",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -286,7 +286,7 @@ export const NOTES_C: any[] = [
   {
     id: "sketching",
     themeId: "rose",
-    title: "Brainstorm Design Ideas by Sketching",
+    title: "Brainstorm design ideas by sketching",
     subtitle: "Rapid Visualization for Design Thinking",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -561,7 +561,7 @@ export const NOTES_C: any[] = [
   {
     id: "design-sprint",
     themeId: "emerald",
-    title: "Design Sprint",
+    title: "Design sprint.",
     subtitle: "Five Days to Solve Big Problems and Test New Ideas",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -1103,7 +1103,7 @@ export const NOTES_C: any[] = [
   {
     id: "intro-wireframing",
     themeId: "teal",
-    title: "Introduction to Wireframing",
+    title: "Introduction to wireframing",
     subtitle: "Building the Blueprint for Digital Products",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -1374,7 +1374,7 @@ export const NOTES_C: any[] = [
   {
     id: "benefit-wireframing",
     themeId: "emerald",
-    title: "Understand the Benefit of Wireframing",
+    title: "Understand the benefit of wireframing",
     subtitle: "Why Wireframing Matters in UX Design",
     wordCount: "~600 words",
     difficulty: "Advanced",
@@ -1396,7 +1396,7 @@ export const NOTES_C: any[] = [
   {
     id: "gestalt-wireframing",
     themeId: "emerald",
-    title: "Understand the Gestalt Principle When Wireframing",
+    title: "Understand the Gestalt principle when wireframing",
     subtitle: "Applying Psychology to Layout Design",
     wordCount: "~600 words",
     difficulty: "Advanced",
@@ -1418,7 +1418,7 @@ export const NOTES_C: any[] = [
   {
     id: "paper-wireframe",
     themeId: "violet",
-    title: "Draw Your First Paper Wireframe",
+    title: "Draw your first paper wireframe",
     subtitle: "Designing for Small Screens and Touch Interactions",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -1703,7 +1703,7 @@ export const NOTES_C: any[] = [
   {
     id: "digital-wireframe",
     themeId: "rose",
-    title: "Create Your First Digital Wireframe",
+    title: "Create your first digital wireframe",
     subtitle: "Larger Canvases, Richer Interactions",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -1982,10 +1982,285 @@ export const NOTES_C: any[] = [
     ]
   },
 
+
+  {
+    id: "information-architecture",
+    themeId: "teal",
+    title: "Understand information architecture",
+    subtitle: "Organizing Content for Findability and Understanding",
+    wordCount: "~2,400 words",
+    difficulty: "Advanced",
+    tags: ["IA", "Content", "Navigation", "Structure"],
+    sections: [
+      {
+        id: "information-architecture-1",
+        label: "What Is Information Architecture?",
+        icon: "plus",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Information architecture is the practice of organizing, structuring, and labeling content in a way that makes it findable and understandable to users. It is the structural foundation upon which great user experiences are built. Without solid IA, even the most beautifully designed interface will frustrate users who cannot find what they need."
+          },
+          {
+            type: "para",
+            text: "The term information architecture was coined by Richard Saul Wurman in 1975, who defined an information architect as someone who organizes patterns inherent in data, making the complex clear. In digital product design, IA determines how content is categorized, labeled, and connected. It shapes the mental models users develop about your product."
+          },
+          {
+            type: "callout",
+            label: "IA Principles",
+            text: "Content should be organized in ways that match user mental models. Labels should be clear and consistent. Navigation should be predictable. Users should always know where they are and where they can go next."
+          },
+          {
+            type: "subheading",
+            text: "Key Components"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Organization", desc: "How content is categorized and structured into hierarchies, sequences, or matrices. Effective schemes reflect how users think about content." },
+              { term: "Labeling", desc: "The words used to represent content categories and navigation options. Good labels are descriptive and consistent with user terminology." },
+              { term: "Navigation", desc: "The systems that enable users to move through the structure, including menus, breadcrumbs, search, and contextual links." },
+              { term: "Search", desc: "Functionality allowing users to bypass navigation and find content directly through well structured metadata and filtering." }
+            ]
+          },
+          {
+            type: "stat",
+            value: "50%",
+            label: "of usability problems are attributable to poor information architecture",
+            footnote: "Nielsen Norman Group research on web usability"
+          }
+        ]
+      },
+      {
+        id: "information-architecture-2",
+        label: "IA Design Process",
+        icon: "refresh",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Designing IA is a research driven process that ensures content organization aligns with user needs. The process moves from understanding existing content through testing proposed structures with real users."
+          },
+          {
+            type: "subheading",
+            text: "Process Steps"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Content Audit", desc: "Inventory all existing content and evaluate for accuracy, relevance, and completeness. Reveals gaps and redundancies." },
+              { term: "Card Sorting", desc: "Users organize content into categories. Open card sorts reveal natural groupings. Closed card sorts test proposed structures." },
+              { term: "Labeling", desc: "Develop user centered labels for each category. Test labels with users to ensure they communicate intended meaning." },
+              { term: "Tree Testing", desc: "Validate IA by having users find items in a text based hierarchy without visual design. Reveals structural problems early." },
+              { term: "Iterate", desc: "Refine IA based on testing results until users can find content efficiently. IA is never perfect on the first attempt." }
+            ]
+          },
+          {
+            type: "quote",
+            text: "The best IA is invisible. When done well, users find what they need without thinking. When IA fails, users blame the interface, but the real problem is content organization."
+          }
+        ]
+      },
+      {
+        id: "information-architecture-3",
+        label: "Organization Schemes",
+        icon: "search",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Organization schemes define how content is categorized and grouped. The right scheme depends on the content type, user goals, and context. Most products use multiple schemes working together."
+          },
+          {
+            type: "subheading",
+            text: "Organization Schemes"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Alphabetical", desc: "Organizing content by name. Works well for directories, glossaries, and reference content where users know the name." },
+              { term: "Chronological", desc: "Organizing by date or time. Common for news, blogs, events, and activity streams where recency matters." },
+              { term: "Topical", desc: "Organizing by subject or category. The most common scheme for general content where users browse by topic." },
+              { term: "Task Based", desc: "Organizing by user tasks or goals. Effective for applications where users want to accomplish specific actions." },
+              { term: "Audience Based", desc: "Organizing by user type or role. Useful for products serving distinct user groups with different needs." }
+            ]
+          },
+          {
+            type: "callout",
+            label: "Hybrid Schemes",
+            text: "Most products use multiple organization schemes. A news site might use chronological for articles, topical for sections, and task based for account management. Choose the right scheme for each content type."
+          }
+        ]
+      },
+      {
+        id: "information-architecture-4",
+        label: "Labeling Systems",
+        icon: "target",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Labels are the words and phrases used to represent content categories, navigation options, and links. Good labels make the IA understandable. Poor labels confuse users even when the underlying structure is sound."
+          },
+          {
+            type: "subheading",
+            text: "Labeling Best Practices"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "User Centered Language", desc: "Use words that users actually use, not internal jargon or technical terminology. Research user language through search logs and interviews." },
+              { term: "Consistency", desc: "Use the same label for the same concept throughout the product. Inconsistency destroys user trust in the navigation." },
+              { term: "Specificity", desc: "Be as specific as possible without being verbose. Products is vague, but Outdoor Gear is clear and descriptive." },
+              { term: "Scannability", desc: "Labels should be quickly scannable. Use short phrases (1-3 words) that users can process at a glance." },
+              { term: "Testing", desc: "Test labels with users to ensure they communicate the intended meaning without ambiguity." }
+            ]
+          },
+          {
+            type: "output",
+            text: "Labels are the interface between users and your content structure. Invest in getting them right through research and testing. Well labeled IA feels intuitive; poorly labeled IA feels confusing even when the structure is logical."
+          }
+        ]
+      },
+      {
+        id: "information-architecture-5",
+        label: "Navigation Systems",
+        icon: "tool",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Navigation systems enable users to move through content and understand their location within the structure. Effective navigation supports multiple ways of finding content: browsing, searching, and following contextual links."
+          },
+          {
+            type: "subheading",
+            text: "Navigation Types"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Global Navigation", desc: "Primary navigation available on every page, providing access to top level sections. Typically a top bar or left sidebar." },
+              { term: "Local Navigation", desc: "Sub navigation within a section for moving between related pages or sub categories." },
+              { term: "Breadcrumbs", desc: "Secondary navigation showing the current location in the hierarchy and enabling quick upward movement." },
+              { term: "Faceted Navigation", desc: "Filter based navigation that allows users to narrow content by multiple attributes or dimensions." },
+              { term: "Contextual Navigation", desc: "Links within content that connect to related information, supporting discovery through association." }
+            ]
+          },
+          {
+            type: "quote",
+            text: "Great navigation anticipates user needs and provides multiple paths to content. Users approach information in different ways. A single navigation path will not serve everyone."
+          }
+        ]
+      },
+      {
+        id: "information-architecture-6",
+        label: "Search Systems",
+        icon: "search",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Search is a critical component of IA that allows users to bypass navigation and find content directly. Effective search requires well structured content, clear metadata, and relevant ranking."
+          },
+          {
+            type: "subheading",
+            text: "Search Design Considerations"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Content Structure", desc: "Well structured content with clear headings, metadata, and semantic markup improves search relevance significantly." },
+              { term: "Search Scope", desc: "Define what the search covers: all content, specific sections, or filtered by content type. Clear scope prevents user confusion." },
+              { term: "Search Results", desc: "Display results with clear titles, descriptions, and metadata that help users identify relevant content quickly." },
+              { term: "Filters and Facets", desc: "Allow users to refine search results by relevant attributes like date, category, author, or content type." },
+              { term: "No Results Handling", desc: "Design helpful no results pages with suggestions, spelling corrections, and alternative search options." }
+            ]
+          },
+          {
+            type: "stat",
+            value: "60%",
+            label: "of users prefer search over navigation for finding content",
+            footnote: "NNGroup research on user search behavior"
+          }
+        ]
+      },
+      {
+        id: "information-architecture-7",
+        label: "IA for Mobile",
+        icon: "target",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "Mobile IA presents unique challenges due to limited screen space and touch based interaction. IA decisions that work on desktop may fail on mobile, requiring different approaches."
+          },
+          {
+            type: "subheading",
+            text: "Mobile IA Considerations"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Shallow Navigation", desc: "Mobile benefits from shallower structures reducing the number of taps to reach content." },
+              { term: "Thumb Friendly Targets", desc: "Navigation elements must be within easy thumb reach. The bottom of the screen is most accessible." },
+              { term: "Reduced Visibility", desc: "Mobile shows less content at once. Clear labels and section titles become more important for orientation." },
+              { term: "Context Aware Navigation", desc: "Mobile navigation should adapt to user context like location or recent activity." },
+              { term: "Gesture Based Navigation", desc: "Swipes and taps offer additional dimensions but must be discoverable and consistent." }
+            ]
+          },
+          {
+            type: "callout",
+            label: "Mobile First IA",
+            text: "Design IA for mobile first to prioritize ruthlessly. Limited space reveals essential content and navigation. Mobile constraints lead to better IA for all platforms."
+          }
+        ]
+      },
+      {
+        id: "information-architecture-8",
+        label: "Testing and Maintenance",
+        icon: "check",
+        badge: null,
+        content: "",
+        blocks: [
+          {
+            type: "para",
+            text: "IA is not a one time activity. As content grows and changes, IA must evolve. Testing and maintenance ensure the IA continues to serve user needs over time."
+          },
+          {
+            type: "subheading",
+            text: "Testing and Governance"
+          },
+          {
+            type: "bullets",
+            items: [
+              { term: "Tree Testing", desc: "Test IA structure by having users find items in a text hierarchy. Reveals structural problems without visual design influence." },
+              { term: "First Click Testing", desc: "Measure where users click first when asked to find something. Reveals whether labels and placement match expectations." },
+              { term: "Content Ownership", desc: "Assign clear ownership for each IA section. Content owners maintain accuracy and relevance." },
+              { term: "Regular Audits", desc: "Schedule periodic audits to identify broken links, outdated content, and structural issues." },
+              { term: "Analytics Monitoring", desc: "Monitor search logs and navigation patterns to identify where users struggle to find content." }
+            ]
+          },
+          {
+            type: "output",
+            text: "IA is never finished. It is a living system that must be nurtured and adapted as content and user needs evolve. The best IA is not perfectly designed but actively maintained."
+          }
+        ]
+      }
+    ]
+  },
+
   {
     id: "prototyping",
     themeId: "emerald",
-    title: "Learn and Understand Lo-Fi Prototyping",
+    title: "Learn and understand Lo-fi prototyping",
     subtitle: "Bringing Ideas to Life Before Development",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
@@ -2258,11 +2533,10 @@ export const NOTES_C: any[] = [
       }
     ]
   },
-
   {
     id: "avoid-bias",
     themeId: "violet",
-    title: "Understand and Learn How to Avoid Bias in UX Design",
+    title: "Understand and learn how to avoid bias in user experience design",
     subtitle: "Designing Fair and Inclusive Products",
     wordCount: "~600 words",
     difficulty: "Advanced",
@@ -2280,11 +2554,10 @@ export const NOTES_C: any[] = [
       }
     ],
   },
-
   {
     id: "avoid-deceptive-patterns",
     themeId: "violet",
-    title: "Understand and Learn How to Avoid Deceptive Patterns in Design",
+    title: "Understand and learn how to avoid deceptive patterns in design",
     subtitle: "Ethical Design Practices for Trustworthy Products",
     wordCount: "~600 words",
     difficulty: "Advanced",
@@ -2302,284 +2575,10 @@ export const NOTES_C: any[] = [
       }
     ],
   },
-
-  {
-    id: "information-architecture",
-    themeId: "teal",
-    title: "Understand Information Architecture",
-    subtitle: "Organizing Content for Findability and Understanding",
-    wordCount: "~2,400 words",
-    difficulty: "Advanced",
-    tags: ["IA", "Content", "Navigation", "Structure"],
-    sections: [
-      {
-        id: "information-architecture-1",
-        label: "What Is Information Architecture?",
-        icon: "plus",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Information architecture is the practice of organizing, structuring, and labeling content in a way that makes it findable and understandable to users. It is the structural foundation upon which great user experiences are built. Without solid IA, even the most beautifully designed interface will frustrate users who cannot find what they need."
-          },
-          {
-            type: "para",
-            text: "The term information architecture was coined by Richard Saul Wurman in 1975, who defined an information architect as someone who organizes patterns inherent in data, making the complex clear. In digital product design, IA determines how content is categorized, labeled, and connected. It shapes the mental models users develop about your product."
-          },
-          {
-            type: "callout",
-            label: "IA Principles",
-            text: "Content should be organized in ways that match user mental models. Labels should be clear and consistent. Navigation should be predictable. Users should always know where they are and where they can go next."
-          },
-          {
-            type: "subheading",
-            text: "Key Components"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Organization", desc: "How content is categorized and structured into hierarchies, sequences, or matrices. Effective schemes reflect how users think about content." },
-              { term: "Labeling", desc: "The words used to represent content categories and navigation options. Good labels are descriptive and consistent with user terminology." },
-              { term: "Navigation", desc: "The systems that enable users to move through the structure, including menus, breadcrumbs, search, and contextual links." },
-              { term: "Search", desc: "Functionality allowing users to bypass navigation and find content directly through well structured metadata and filtering." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "50%",
-            label: "of usability problems are attributable to poor information architecture",
-            footnote: "Nielsen Norman Group research on web usability"
-          }
-        ]
-      },
-      {
-        id: "information-architecture-2",
-        label: "IA Design Process",
-        icon: "refresh",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Designing IA is a research driven process that ensures content organization aligns with user needs. The process moves from understanding existing content through testing proposed structures with real users."
-          },
-          {
-            type: "subheading",
-            text: "Process Steps"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Content Audit", desc: "Inventory all existing content and evaluate for accuracy, relevance, and completeness. Reveals gaps and redundancies." },
-              { term: "Card Sorting", desc: "Users organize content into categories. Open card sorts reveal natural groupings. Closed card sorts test proposed structures." },
-              { term: "Labeling", desc: "Develop user centered labels for each category. Test labels with users to ensure they communicate intended meaning." },
-              { term: "Tree Testing", desc: "Validate IA by having users find items in a text based hierarchy without visual design. Reveals structural problems early." },
-              { term: "Iterate", desc: "Refine IA based on testing results until users can find content efficiently. IA is never perfect on the first attempt." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "The best IA is invisible. When done well, users find what they need without thinking. When IA fails, users blame the interface, but the real problem is content organization."
-          }
-        ]
-      },
-      {
-        id: "information-architecture-3",
-        label: "Organization Schemes",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Organization schemes define how content is categorized and grouped. The right scheme depends on the content type, user goals, and context. Most products use multiple schemes working together."
-          },
-          {
-            type: "subheading",
-            text: "Organization Schemes"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Alphabetical", desc: "Organizing content by name. Works well for directories, glossaries, and reference content where users know the name." },
-              { term: "Chronological", desc: "Organizing by date or time. Common for news, blogs, events, and activity streams where recency matters." },
-              { term: "Topical", desc: "Organizing by subject or category. The most common scheme for general content where users browse by topic." },
-              { term: "Task Based", desc: "Organizing by user tasks or goals. Effective for applications where users want to accomplish specific actions." },
-              { term: "Audience Based", desc: "Organizing by user type or role. Useful for products serving distinct user groups with different needs." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Hybrid Schemes",
-            text: "Most products use multiple organization schemes. A news site might use chronological for articles, topical for sections, and task based for account management. Choose the right scheme for each content type."
-          }
-        ]
-      },
-      {
-        id: "information-architecture-4",
-        label: "Labeling Systems",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Labels are the words and phrases used to represent content categories, navigation options, and links. Good labels make the IA understandable. Poor labels confuse users even when the underlying structure is sound."
-          },
-          {
-            type: "subheading",
-            text: "Labeling Best Practices"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "User Centered Language", desc: "Use words that users actually use, not internal jargon or technical terminology. Research user language through search logs and interviews." },
-              { term: "Consistency", desc: "Use the same label for the same concept throughout the product. Inconsistency destroys user trust in the navigation." },
-              { term: "Specificity", desc: "Be as specific as possible without being verbose. Products is vague, but Outdoor Gear is clear and descriptive." },
-              { term: "Scannability", desc: "Labels should be quickly scannable. Use short phrases (1-3 words) that users can process at a glance." },
-              { term: "Testing", desc: "Test labels with users to ensure they communicate the intended meaning without ambiguity." }
-            ]
-          },
-          {
-            type: "output",
-            text: "Labels are the interface between users and your content structure. Invest in getting them right through research and testing. Well labeled IA feels intuitive; poorly labeled IA feels confusing even when the structure is logical."
-          }
-        ]
-      },
-      {
-        id: "information-architecture-5",
-        label: "Navigation Systems",
-        icon: "tool",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Navigation systems enable users to move through content and understand their location within the structure. Effective navigation supports multiple ways of finding content: browsing, searching, and following contextual links."
-          },
-          {
-            type: "subheading",
-            text: "Navigation Types"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Global Navigation", desc: "Primary navigation available on every page, providing access to top level sections. Typically a top bar or left sidebar." },
-              { term: "Local Navigation", desc: "Sub navigation within a section for moving between related pages or sub categories." },
-              { term: "Breadcrumbs", desc: "Secondary navigation showing the current location in the hierarchy and enabling quick upward movement." },
-              { term: "Faceted Navigation", desc: "Filter based navigation that allows users to narrow content by multiple attributes or dimensions." },
-              { term: "Contextual Navigation", desc: "Links within content that connect to related information, supporting discovery through association." }
-            ]
-          },
-          {
-            type: "quote",
-            text: "Great navigation anticipates user needs and provides multiple paths to content. Users approach information in different ways. A single navigation path will not serve everyone."
-          }
-        ]
-      },
-      {
-        id: "information-architecture-6",
-        label: "Search Systems",
-        icon: "search",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Search is a critical component of IA that allows users to bypass navigation and find content directly. Effective search requires well structured content, clear metadata, and relevant ranking."
-          },
-          {
-            type: "subheading",
-            text: "Search Design Considerations"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Content Structure", desc: "Well structured content with clear headings, metadata, and semantic markup improves search relevance significantly." },
-              { term: "Search Scope", desc: "Define what the search covers: all content, specific sections, or filtered by content type. Clear scope prevents user confusion." },
-              { term: "Search Results", desc: "Display results with clear titles, descriptions, and metadata that help users identify relevant content quickly." },
-              { term: "Filters and Facets", desc: "Allow users to refine search results by relevant attributes like date, category, author, or content type." },
-              { term: "No Results Handling", desc: "Design helpful no results pages with suggestions, spelling corrections, and alternative search options." }
-            ]
-          },
-          {
-            type: "stat",
-            value: "60%",
-            label: "of users prefer search over navigation for finding content",
-            footnote: "NNGroup research on user search behavior"
-          }
-        ]
-      },
-      {
-        id: "information-architecture-7",
-        label: "IA for Mobile",
-        icon: "target",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "Mobile IA presents unique challenges due to limited screen space and touch based interaction. IA decisions that work on desktop may fail on mobile, requiring different approaches."
-          },
-          {
-            type: "subheading",
-            text: "Mobile IA Considerations"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Shallow Navigation", desc: "Mobile benefits from shallower structures reducing the number of taps to reach content." },
-              { term: "Thumb Friendly Targets", desc: "Navigation elements must be within easy thumb reach. The bottom of the screen is most accessible." },
-              { term: "Reduced Visibility", desc: "Mobile shows less content at once. Clear labels and section titles become more important for orientation." },
-              { term: "Context Aware Navigation", desc: "Mobile navigation should adapt to user context like location or recent activity." },
-              { term: "Gesture Based Navigation", desc: "Swipes and taps offer additional dimensions but must be discoverable and consistent." }
-            ]
-          },
-          {
-            type: "callout",
-            label: "Mobile First IA",
-            text: "Design IA for mobile first to prioritize ruthlessly. Limited space reveals essential content and navigation. Mobile constraints lead to better IA for all platforms."
-          }
-        ]
-      },
-      {
-        id: "information-architecture-8",
-        label: "Testing and Maintenance",
-        icon: "check",
-        badge: null,
-        content: "",
-        blocks: [
-          {
-            type: "para",
-            text: "IA is not a one time activity. As content grows and changes, IA must evolve. Testing and maintenance ensure the IA continues to serve user needs over time."
-          },
-          {
-            type: "subheading",
-            text: "Testing and Governance"
-          },
-          {
-            type: "bullets",
-            items: [
-              { term: "Tree Testing", desc: "Test IA structure by having users find items in a text hierarchy. Reveals structural problems without visual design influence." },
-              { term: "First Click Testing", desc: "Measure where users click first when asked to find something. Reveals whether labels and placement match expectations." },
-              { term: "Content Ownership", desc: "Assign clear ownership for each IA section. Content owners maintain accuracy and relevance." },
-              { term: "Regular Audits", desc: "Schedule periodic audits to identify broken links, outdated content, and structural issues." },
-              { term: "Analytics Monitoring", desc: "Monitor search logs and navigation patterns to identify where users struggle to find content." }
-            ]
-          },
-          {
-            type: "output",
-            text: "IA is never finished. It is a living system that must be nurtured and adapted as content and user needs evolve. The best IA is not perfectly designed but actively maintained."
-          }
-        ]
-      }
-    ]
-  },
   {
     id: "your-importance",
     themeId: "rose",
-    title: "Understand Your Importance as a UX Designer",
+    title: "Understand your importance as a user experience designer.",
     subtitle: "Why Your Role Matters in Product Development",
     wordCount: "~2,400 words",
     difficulty: "Advanced",
