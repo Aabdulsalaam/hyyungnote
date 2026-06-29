@@ -59,22 +59,22 @@ export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPagePro
         {/* Sticky Navbar */}
         <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-xl">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-xs font-bold text-white shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="flex h-8 w-8 shrink-0 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-[10px] sm:text-xs font-bold text-white shadow-sm">
                 H
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-900" style={{ fontFamily: "'Montserrat',sans-serif" }}>Hyyung's Notes</span>
-                <span className="text-[11px] text-slate-500">UX Research & Design</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Montserrat',sans-serif" }}>Hyyung's Notes</span>
+                <span className="hidden sm:block text-[11px] text-slate-500">UX Research & Design</span>
               </div>
             </div>
-            <nav className="flex items-center gap-3">
+            <nav className="flex items-center gap-2 sm:gap-3 shrink-0">
               {!hasAccess && (
-                <Button variant="ghost" onClick={openSignIn} className="text-sm font-medium text-slate-700 hover:text-blue-600">
+                <Button variant="ghost" onClick={openSignIn} className="text-sm font-medium text-slate-700 hover:text-blue-600 px-2 sm:px-4">
                   Sign In
                 </Button>
               )}
-              <Button onClick={openSignUp} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
+              <Button onClick={openSignUp} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700 text-xs sm:text-sm px-3 sm:px-4 h-9 sm:h-10">
                 Get Started
               </Button>
             </nav>
