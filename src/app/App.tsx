@@ -1686,7 +1686,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         </aside>
 
         {/* Main content */}
-        <div ref={contentRef} className="flex-1 flex flex-col min-w-0 overflow-y-auto" style={{ height: "100vh" }}>
+        <div className="flex-1 flex flex-col min-w-0" style={{ height: "100vh" }}>
           {/* Toolbar */}
           <div className="flex items-center justify-between px-4 sm:px-8 py-3 shrink-0"
             style={{ background: "rgba(248,250,252,0.95)", backdropFilter: "blur(8px)", borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, zIndex: 10 }}>
@@ -1733,6 +1733,8 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             </div>
           </div>
 
+          {/* Scrollable content area */}
+          <div ref={contentRef} className="flex-1 overflow-y-auto">
           {/* Hero */}
           <div className="px-4 sm:px-10 pt-8 sm:pt-10 pb-[33px]" style={{ background: theme.heroGradient, borderBottom: "1px solid #e2e8f0" }}>
             <div className="flex items-start gap-4 max-w-[848px] mx-auto">
@@ -1806,35 +1808,6 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
                 )}
               </div>
 
-              {/* Section completion checkmarks */}
-              <div className="flex items-center justify-center gap-1.5 mt-6">
-                {activeNote.sections.map((s, j) => (
-                  <button key={s.id} onClick={() => { setActiveSectionIdx(j); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}
-                    className="w-6 h-1.5 rounded-full transition-all"
-                    style={{ background: j === activeSectionIdx ? sectionAccent : viewedSections.has(s.id) ? "#10B981" : "#e2e8f0" }} />
-                ))}
-              </div>
-              {/* Prev/Next */}
-              <div className="flex items-center justify-between mt-3">
-                <button onClick={() => { setActiveSectionIdx(p => Math.max(0, p - 1)); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }} disabled={isFirst}
-                  className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-[#64748b]"
-                  style={{ background: "#f1f5f9", opacity: isFirst ? 0.35 : 1, cursor: isFirst ? "default" : "pointer" }}>
-                  ← Previous
-                </button>
-                <span className="text-[10.72px] text-[#94a3b8]">{activeSectionIdx + 1} of {activeNote.sections.length}</span>
-                <button onClick={() => {
-                  if (isLast) {
-                    setPracticeNoteId(activeNoteId);
-                  } else {
-                    setActiveSectionIdx(p => Math.min(activeNote.sections.length - 1, p + 1));
-                    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-                  }
-                }}
-                  className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-white transition-all"
-                  style={{ background: isLast ? "#10B981" : sectionAccent }}>
-                  {isLast ? "Practice ✓" : "Next →"}
-                </button>
-              </div>
             </div>
           ) : (
             <div className="flex-1 flex items-center justify-center px-6 py-12">
@@ -1845,6 +1818,39 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             </div>
           )}
         </div>
+
+        {/* Sticky nav footer */}
+        {activeNote.sections.length > 0 && (
+          <div className="shrink-0 px-4 sm:px-10 py-3" style={{ background: "#ffffff", borderTop: "1px solid #e2e8f0" }}>
+            <div className="max-w-[848px] w-full mx-auto flex items-center justify-between">
+              <button onClick={() => { setActiveSectionIdx(p => Math.max(0, p - 1)); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }} disabled={isFirst}
+                className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-[#64748b]"
+                style={{ background: "#f1f5f9", opacity: isFirst ? 0.35 : 1, cursor: isFirst ? "default" : "pointer" }}>
+                ← Previous
+              </button>
+              <div className="flex items-center gap-1.5">
+                {activeNote.sections.map((s, j) => (
+                  <button key={s.id} onClick={() => { setActiveSectionIdx(j); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    className="w-6 h-1.5 rounded-full transition-all"
+                    style={{ background: j === activeSectionIdx ? sectionAccent : viewedSections.has(s.id) ? "#10B981" : "#e2e8f0" }} />
+                ))}
+              </div>
+              <button onClick={() => {
+                if (isLast) {
+                  setPracticeNoteId(activeNoteId);
+                } else {
+                  setActiveSectionIdx(p => Math.min(activeNote.sections.length - 1, p + 1));
+                  contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+                className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-white transition-all"
+                style={{ background: isLast ? "#10B981" : sectionAccent }}>
+                {isLast ? "Practice ✓" : "Next →"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       </div>
 
       {practiceNoteId && (
