@@ -14,7 +14,7 @@ type SearchResult = {
   sectionId?: string;
   label: string;
   description: string;
-  type: "note" | "section" | "tag";
+  type: "note";
 };
 
 type SearchModalProps = {
@@ -45,27 +45,6 @@ export default function SearchModal({ notes, currentNoteId, onSelect, onClose }:
     for (const note of notes) {
       if (note.title.toLowerCase().includes(q)) {
         found.push({ noteId: note.id, label: note.title, description: note.subtitle, type: "note" });
-      }
-      for (const tag of note.tags) {
-        if (tag.toLowerCase().includes(q)) {
-          found.push({ noteId: note.id, label: `${note.title} — ${tag}`, description: "Tag match", type: "tag" });
-        }
-      }
-      for (const section of note.sections) {
-        if (section.label.toLowerCase().includes(q)) {
-          found.push({ noteId: note.id, sectionId: section.id, label: section.label, description: `Section in ${note.title}`, type: "section" });
-          continue;
-        }
-        for (const block of section.blocks || []) {
-          if (block.text && block.text.toLowerCase().includes(q)) {
-            found.push({ noteId: note.id, sectionId: section.id, label: section.label, description: (block.text.length > 100 ? block.text.slice(0, 100) + "..." : block.text), type: "section" });
-            break;
-          }
-          if (block.desc && block.desc.toLowerCase().includes(q)) {
-            found.push({ noteId: note.id, sectionId: section.id, label: section.label, description: (block.desc.length > 100 ? block.desc.slice(0, 100) + "..." : block.desc), type: "section" });
-            break;
-          }
-        }
       }
     }
 
@@ -98,7 +77,7 @@ export default function SearchModal({ notes, currentNoteId, onSelect, onClose }:
             <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M11.5 11.5L15 15" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <input ref={inputRef} type="text" placeholder="Search notes, sections, tags..."
+          <input ref={inputRef} type="text" placeholder="Search note topics..."
             value={query} onChange={e => setQuery(e.target.value)} onKeyDown={handleKeyDown}
             className="flex-1 text-[14px] text-[#0f1729] outline-none placeholder:text-[#94a3b8] bg-transparent"
             style={{ fontFamily: "'Inter',sans-serif" }} />

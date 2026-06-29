@@ -1735,7 +1735,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
           {/* Hero */}
           <div className="px-4 sm:px-10 pt-8 sm:pt-10 pb-[33px]" style={{ background: theme.heroGradient, borderBottom: "1px solid #e2e8f0" }}>
-            <div className="flex items-start gap-4 max-w-[808px] mx-auto">
+            <div className="flex items-start gap-4 max-w-[848px] mx-auto">
               <div className="mt-1 shrink-0">
                 <div className="flex items-center justify-center rounded-[16px]" style={{ width: 48, height: 48, background: theme.iconBg }}>
                   <HeroIcon themeId={activeNote.themeId} />
@@ -1784,7 +1784,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
           {/* Section content */}
           {section ? (
-            <div className="px-4 sm:px-10 py-6 sm:py-8 max-w-[808px] w-full mx-auto">
+            <div className="px-4 sm:px-10 py-6 sm:py-8 max-w-[848px] w-full mx-auto">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center rounded-[12px] shrink-0" style={{ width: 36, height: 36, background: theme.accentMuted }}>
                   <SectionHeadingIcon type={section.icon} color={theme.accentColor} />
