@@ -1260,50 +1260,15 @@ const sectionCount = activeNote.sections.length;
   useEffect(() => {
     if (!presentMode || !hasSection || isLast) return;
     const timer = setInterval(() => {
-      const next = Math.min(sectionCount - 1, activeSectionIdx + 1);
-      scrollToSection(next);
+      setActiveSectionIdx(p => Math.min(sectionCount - 1, p + 1));
     }, 5000);
     return () => clearInterval(timer);
-  }, [presentMode, hasSection, isLast, sectionCount, activeSectionIdx]);
+  }, [presentMode, hasSection, isLast, sectionCount]);
   const contentRef = useRef<HTMLDivElement>(null);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => {
-    sectionRefs.current = sectionRefs.current.slice(0, sectionCount);
-  }, [sectionCount]);
 
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activeNoteId]);
-
-  useEffect(() => {
-    if (!presentMode) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const idx = sectionRefs.current.indexOf(entry.target as HTMLDivElement);
-            if (idx !== -1) {
-              setActiveSectionIdx(idx);
-            }
-          }
-        }
-      },
-      { threshold: 0.5 }
-    );
-    for (const ref of sectionRefs.current) {
-      if (ref) observer.observe(ref);
-    }
-    return () => observer.disconnect();
-  }, [presentMode, sectionCount]);
-
-  function scrollToSection(idx: number) {
-    const el = sectionRefs.current[idx];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      setActiveSectionIdx(idx);
-    }
-  }
+  }, [activeSectionIdx, activeNoteId]);
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -1396,7 +1361,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             const isActive = i === activeSectionIdx;
             const iconColor = isActive ? theme.accentColor : "#94A3B8";
             return (
-              <button key={s.id} onClick={() => { scrollToSection(i); setSidebarOpen(false); }}
+              <button key={s.id} onClick={() => { setActiveSectionIdx(i); setSidebarOpen(false); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}
                 className="flex items-center gap-[10px] px-[10px] py-[7px] rounded-[8px] text-left w-full transition-all"
                 style={{ background: isActive ? theme.accentLight : "transparent", border: `1px solid ${isActive ? theme.accentBorder : "transparent"}` }}>
                 <SectionIcon type={s.icon} color={iconColor} />
@@ -1721,7 +1686,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         </aside>
 
         {/* Main content */}
-        <div ref={contentRef} className="flex-1 flex flex-col min-w-0 overflow-y-auto" style={{ height: "100vh", scrollSnapType: "y proximity" }}>
+        <div ref={contentRef} className="flex-1 flex flex-col min-w-0 overflow-y-auto" style={{ height: "100vh" }}>
           {/* Toolbar */}
           <div className="flex items-center justify-between px-4 sm:px-8 py-3 shrink-0"
             style={{ background: "rgba(248,250,252,0.95)", backdropFilter: "blur(8px)", borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, zIndex: 10 }}>
@@ -1770,7 +1735,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
           {/* Hero */}
           <div className="px-4 sm:px-10 pt-8 sm:pt-10 pb-[33px]" style={{ background: theme.heroGradient, borderBottom: "1px solid #e2e8f0" }}>
-            <div className="flex items-start gap-4 max-w-[768px]">
+            <div className="flex items-start gap-4 max-w-[808px] mx-auto">
               <div className="mt-1 shrink-0">
                 <div className="flex items-center justify-center rounded-[16px]" style={{ width: 48, height: 48, background: theme.iconBg }}>
                   <HeroIcon themeId={activeNote.themeId} />
@@ -1817,71 +1782,65 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             </div>
           </div>
 
-          {/* Section content — all sections with scroll-snap */}
-          {activeNote.sections.length > 0 ? activeNote.sections.map((s, idx) => {
-            const isActive = idx === activeSectionIdx;
-            return (
-              <div key={s.id} ref={el => { sectionRefs.current[idx] = el; }}
-                className="px-4 sm:px-10 py-6 sm:py-8 max-w-[768px] w-full"
-                style={{ scrollSnapAlign: "start" }}>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center rounded-[12px] shrink-0" style={{ width: 36, height: 36, background: theme.accentMuted }}>
-                    <SectionHeadingIcon type={s.icon} color={theme.accentColor} />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 min-w-0">
-                    <h2 className="font-bold text-[16px] sm:text-[16.8px] text-[#0f1729]" style={{ fontFamily: "'Montserrat',sans-serif" }}>{s.label}</h2>
-                    {s.badge && <span className="text-[10.72px] font-semibold px-[10px] py-[2px] rounded-full shrink-0" style={{ background: theme.accentPill.bg, color: theme.accentPill.text }}>{s.badge}</span>}
-                    <span className="text-[9.5px] font-medium px-2 py-0.5 rounded-full shrink-0" style={{ background: `${theme.accentColor}08`, color: theme.accentColor }}>{calcSectionReadingTime(s)}</span>
-                  </div>
+          {/* Section content */}
+          {section ? (
+            <div className="px-4 sm:px-10 py-6 sm:py-8 max-w-[808px] w-full mx-auto">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center rounded-[12px] shrink-0" style={{ width: 36, height: 36, background: theme.accentMuted }}>
+                  <SectionHeadingIcon type={section.icon} color={theme.accentColor} />
                 </div>
-                <div className="mt-5 mb-6 h-px rounded" style={{ background: `linear-gradient(to right, ${theme.dividerFrom}, transparent)` }} />
-                <div className="rounded-[16px] px-4 sm:px-[29px] py-5 sm:py-[25px]" style={{ background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0px 1px 4px rgba(0,0,0,0.04)" }}>
-                  {s.blocks && s.blocks.length > 0 ? (
-                    <RichContent blocks={s.blocks as Block[]} accent={sectionAccent} />
-                  ) : s.isHtml && s.content ? (
-                    <div className="html-content" style={{ fontFamily: "'Inter',sans-serif" }} dangerouslySetInnerHTML={{ __html: s.content }} />
-                  ) : (
-                    <p className="text-[15px] sm:text-[16px] leading-[24px] sm:leading-[26px] text-black" style={{ whiteSpace: "pre-line" }}>{s.content}</p>
-                  )}
+                <div className="flex flex-wrap items-center gap-2 min-w-0">
+                  <h2 className="font-bold text-[16px] sm:text-[16.8px] text-[#0f1729]" style={{ fontFamily: "'Montserrat',sans-serif" }}>{section.label}</h2>
+                  {section.badge && <span className="text-[10.72px] font-semibold px-[10px] py-[2px] rounded-full shrink-0" style={{ background: theme.accentPill.bg, color: theme.accentPill.text }}>{section.badge}</span>}
+                  <span className="text-[9.5px] font-medium px-2 py-0.5 rounded-full shrink-0" style={{ background: `${theme.accentColor}08`, color: theme.accentColor }}>{calcSectionReadingTime(section)}</span>
                 </div>
               </div>
-            );
-          }) : (
-            <div className="flex-1 flex items-center justify-center px-6 py-12">
-              <div className="text-center">
-                <InfoCircle24 />
-                <p className="text-[14px] text-[#94a3b8] mt-3">No sections yet. Add content through the admin workspace.</p>
+              <div className="mt-5 mb-6 h-px rounded" style={{ background: `linear-gradient(to right, ${theme.dividerFrom}, transparent)` }} />
+              <div className="rounded-[16px] px-4 sm:px-[29px] py-5 sm:py-[25px]" style={{ background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0px 1px 4px rgba(0,0,0,0.04)" }}>
+                {section.blocks && section.blocks.length > 0 ? (
+                  <RichContent blocks={section.blocks as Block[]} accent={sectionAccent} />
+                ) : section.isHtml && section.content ? (
+                  <div className="html-content" style={{ fontFamily: "'Inter',sans-serif" }} dangerouslySetInnerHTML={{ __html: section.content }} />
+                ) : (
+                  <p className="text-[15px] sm:text-[16px] leading-[24px] sm:leading-[26px] text-black" style={{ whiteSpace: "pre-line" }}>{section.content}</p>
+                )}
               </div>
-            </div>
-          )}
 
-          {/* Sticky section navigation bar at bottom */}
-          {activeNote.sections.length > 0 && (
-            <div className="sticky bottom-0 z-10 px-4 sm:px-10 py-3" style={{ background: "rgba(248,250,252,0.95)", backdropFilter: "blur(8px)", borderTop: "1px solid #e2e8f0" }}>
-              <div className="max-w-[768px] w-full mx-auto flex items-center justify-between">
-                <button onClick={() => scrollToSection(Math.max(0, activeSectionIdx - 1))} disabled={isFirst}
+              {/* Section completion checkmarks */}
+              <div className="flex items-center justify-center gap-1.5 mt-6">
+                {activeNote.sections.map((s, j) => (
+                  <button key={s.id} onClick={() => { setActiveSectionIdx(j); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    className="w-6 h-1.5 rounded-full transition-all"
+                    style={{ background: j === activeSectionIdx ? sectionAccent : viewedSections.has(s.id) ? "#10B981" : "#e2e8f0" }} />
+                ))}
+              </div>
+              {/* Prev/Next */}
+              <div className="flex items-center justify-between mt-3">
+                <button onClick={() => { setActiveSectionIdx(p => Math.max(0, p - 1)); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }} disabled={isFirst}
                   className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-[#64748b]"
                   style={{ background: "#f1f5f9", opacity: isFirst ? 0.35 : 1, cursor: isFirst ? "default" : "pointer" }}>
                   ← Previous
                 </button>
-                <div className="flex items-center gap-1.5">
-                  {activeNote.sections.map((s, j) => (
-                    <button key={s.id} onClick={() => scrollToSection(j)}
-                      className="w-6 h-1.5 rounded-full transition-all"
-                      style={{ background: j === activeSectionIdx ? sectionAccent : viewedSections.has(s.id) ? "#10B981" : "#e2e8f0" }} />
-                  ))}
-                </div>
+                <span className="text-[10.72px] text-[#94a3b8]">{activeSectionIdx + 1} of {activeNote.sections.length}</span>
                 <button onClick={() => {
                   if (isLast) {
                     setPracticeNoteId(activeNoteId);
                   } else {
-                    scrollToSection(Math.min(activeNote.sections.length - 1, activeSectionIdx + 1));
+                    setActiveSectionIdx(p => Math.min(activeNote.sections.length - 1, p + 1));
+                    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
                   }
                 }}
                   className="px-3 py-2 rounded-[8px] text-[11.68px] font-medium text-white transition-all"
                   style={{ background: isLast ? "#10B981" : sectionAccent }}>
                   {isLast ? "Practice ✓" : "Next →"}
                 </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center px-6 py-12">
+              <div className="text-center">
+                <InfoCircle24 />
+                <p className="text-[14px] text-[#94a3b8] mt-3">No sections yet. Add content through the admin workspace.</p>
               </div>
             </div>
           )}
@@ -1908,7 +1867,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               if (note) {
                 const idx = note.sections.findIndex(s => s.id === sectionId);
                 if (idx !== -1) {
-                  setTimeout(() => scrollToSection(idx), 100);
+                  setTimeout(() => { setActiveSectionIdx(idx); contentRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }, 100);
                 }
               }
             }
