@@ -4,6 +4,7 @@ import { Button } from "@/app/components/ui/button";
 
 type LandingPageProps = {
   onAuthSuccess: (email: string, name: string) => void;
+  hasAccess?: boolean;
 };
 
 const highlights = [
@@ -45,7 +46,7 @@ const previewTopics = [
   { name: "UX Strategy", desc: "Aligning design with business goals" },
 ];
 
-export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
+export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPageProps) {
   const [authOpen, setAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
 
@@ -68,12 +69,20 @@ export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
               </div>
             </div>
             <nav className="flex items-center gap-3">
-              <Button variant="ghost" onClick={openSignIn} className="text-sm font-medium text-slate-700 hover:text-blue-600">
-                Sign In
-              </Button>
-              <Button onClick={openSignUp} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
-                Get Started
-              </Button>
+              {hasAccess ? (
+                <Button onClick={() => window.location.href = "/notes"} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
+                  View Notes
+                </Button>
+              ) : (
+                <>
+                  <Button variant="ghost" onClick={openSignIn} className="text-sm font-medium text-slate-700 hover:text-blue-600">
+                    Sign In
+                  </Button>
+                  <Button onClick={openSignUp} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
+                    Get Started
+                  </Button>
+                </>
+              )}
             </nav>
           </div>
         </header>
@@ -100,12 +109,20 @@ export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
                   design thinking, and product discovery.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  <Button size="lg" onClick={openSignUp} className="h-12 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-md hover:bg-blue-700">
-                    Unlock the full library
-                  </Button>
-                  <Button size="lg" variant="outline" onClick={openSignIn} className="h-12 rounded-xl border-slate-300 px-8 text-base font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-                    I already have access
-                  </Button>
+                  {hasAccess ? (
+                    <Button size="lg" onClick={() => window.location.href = "/notes"} className="h-12 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-md hover:bg-blue-700">
+                      Go to your notes
+                    </Button>
+                  ) : (
+                    <>
+                      <Button size="lg" onClick={openSignUp} className="h-12 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-md hover:bg-blue-700">
+                        Unlock the full library
+                      </Button>
+                      <Button size="lg" variant="outline" onClick={openSignIn} className="h-12 rounded-xl border-slate-300 px-8 text-base font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
+                        I already have access
+                      </Button>
+                    </>
+                  )}
                 </div>
                 <div className="mt-8 flex flex-wrap justify-center gap-3 text-sm text-slate-500">
                   <span className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1">

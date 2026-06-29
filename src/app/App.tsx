@@ -1458,17 +1458,26 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
       navigateTo("/", setCurrentPath);
     }
     if (currentPath === "/auth/callback") {
-      const checkSession = async () => {
-        try {
-          const session = await getCurrentSession();
-          if (session) {
-            const email = session.user?.email || "";
-            const name = session.user?.user_metadata?.name || email.split("@")[0];
-            onAuthSuccess(email, name);
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("error")) {
+        navigateTo("/", setCurrentPath);
+      } else {
+        const checkSession = async () => {
+          try {
+            const session = await getCurrentSession();
+            if (session) {
+              const email = session.user?.email || "";
+              const name = session.user?.user_metadata?.name || email.split("@")[0];
+              onAuthSuccess(email, name);
+            } else {
+              navigateTo("/", setCurrentPath);
+            }
+          } catch {
+            navigateTo("/", setCurrentPath);
           }
-        } catch {}
-      };
-      checkSession();
+        };
+        checkSession();
+      }
     }
   }, []);
 
@@ -1799,5 +1808,5 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
   );
   }
 
-  return <LandingPage onAuthSuccess={handleAuthSuccess} />;
+  return <LandingPage onAuthSuccess={handleAuthSuccess} hasAccess={hasAccess} />;
 }
