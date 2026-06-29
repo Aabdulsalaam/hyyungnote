@@ -1170,8 +1170,13 @@ export default function App() {
     if (!isSupabaseConfigured) return;
     let uid: string;
     try { uid = localStorage.getItem("hyyung-user-id"); if (!uid) { uid = crypto.randomUUID(); localStorage.setItem("hyyung-user-id", uid); } } catch { uid = crypto.randomUUID(); }
+    const authData = (() => { try { const d = localStorage.getItem("hyyung-landing-auth"); return d ? JSON.parse(d) : {}; } catch { return {}; } })();
+    const phone = authData.phone || localStorage.getItem("hyyung-phone") || "";
     const stats = {
       userId: uid,
+      email: authData.email || "",
+      name: authData.name || "",
+      phone,
       sectionsRead: viewedSections.size,
       completedNotes: completedNotes.length,
       totalSections: notes.reduce((a, n) => a + n.sections.length, 0),
@@ -1268,6 +1273,7 @@ const sectionCount = activeNote.sections.length;
   function goToNotes() { navigateTo("/notes", setCurrentPath); }
   const isNotesRoute = currentPath === "/notes";
   const isAdminRoute = currentPath === "/admin" || currentPath.startsWith("/admin/");
+  const isCallbackRoute = currentPath === "/auth/callback";
 
   useEffect(() => {
     if (!isHydrated) return;
@@ -1371,12 +1377,16 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
     </>
   );
 
-  async function handleAuthSuccess(email: string, name: string) {
+  async function handleAuthSuccess(email: string, name: string, phone?: string) {
+    if (callbackTimerRef.current) clearTimeout(callbackTimerRef.current);
     setHasAccess(true);
     addActivity({ type: "login" });
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
+        const stored: Record<string, string> = { name, email, authedAt: new Date().toISOString() };
+        if (phone) stored.phone = phone;
+        localStorage.setItem("hyyung-landing-auth", JSON.stringify(stored));
+        if (phone) localStorage.setItem("hyyung-phone", phone);
       } catch {}
     }
     navigateTo("/notes", setCurrentPath);
@@ -1400,7 +1410,8 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             if (currentPath === "/auth/callback") {
               const email = session?.user?.email || "";
               const name = session?.user?.user_metadata?.name || email.split("@")[0];
-              onAuthSuccess(email, name);
+              const phone = session?.user?.user_metadata?.phone;
+              onAuthSuccess(email, name, phone);
             } else if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/admin") {
               navigateTo("/notes", setCurrentPath);
             }
@@ -1420,13 +1431,17 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
           setHasAccess(true);
           const email = session.user?.email || "";
           const name = session.user?.user_metadata?.name || email.split("@")[0];
+          const phone = session.user?.user_metadata?.phone;
           if (typeof window !== "undefined") {
             try {
-              localStorage.setItem("hyyung-landing-auth", JSON.stringify({ name, email, authedAt: new Date().toISOString() }));
+              const stored: Record<string, string> = { name, email, authedAt: new Date().toISOString() };
+              if (phone) stored.phone = phone;
+              localStorage.setItem("hyyung-landing-auth", JSON.stringify(stored));
+              if (phone) localStorage.setItem("hyyung-phone", phone);
             } catch {}
           }
           if (currentPath === "/auth/callback") {
-            onAuthSuccess(email, name);
+            onAuthSuccess(email, name, phone);
           } else if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/admin") {
             navigateTo("/notes", setCurrentPath);
           }
@@ -1438,6 +1453,8 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
       if (listener) listener.data.subscription.unsubscribe();
     };
   }, []);
+
+  const callbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle password recovery and OAuth callbacks
   const [resetPassword, setResetPassword] = useState(false);
@@ -1458,8 +1475,8 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
       navigateTo("/", setCurrentPath);
     }
     if (currentPath === "/auth/callback") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("error")) {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get("error")) {
         navigateTo("/", setCurrentPath);
       } else {
         const checkSession = async () => {
@@ -1469,14 +1486,16 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               const email = session.user?.email || "";
               const name = session.user?.user_metadata?.name || email.split("@")[0];
               onAuthSuccess(email, name);
-            } else {
-              navigateTo("/", setCurrentPath);
             }
-          } catch {
-            navigateTo("/", setCurrentPath);
-          }
+          } catch {}
         };
         checkSession();
+        callbackTimerRef.current = setTimeout(() => {
+          navigateTo("/", setCurrentPath);
+        }, 10000);
+        return () => {
+          if (callbackTimerRef.current) clearTimeout(callbackTimerRef.current);
+        };
       }
     }
   }, []);
@@ -1571,6 +1590,17 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               </form>
             </div>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  if (isCallbackRoute) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "#f8fafc" }}>
+        <div className="flex flex-col items-center gap-3">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="animate-spin" stroke="#2563EB" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="8" /></svg>
+          <span className="text-sm text-slate-500" style={{ fontFamily: "'Inter',sans-serif" }}>Confirming your email…</span>
         </div>
       </div>
     );

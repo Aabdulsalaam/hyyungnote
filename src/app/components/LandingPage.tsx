@@ -48,10 +48,10 @@ const previewTopics = [
 
 export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPageProps) {
   const [authOpen, setAuthOpen] = useState(false);
-  const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
+  const [authMode, setAuthMode] = useState<"signup" | "signin">("signup");
 
-  function openSignIn() { setAuthTab("signin"); setAuthOpen(true); }
-  function openSignUp() { setAuthTab("signup"); setAuthOpen(true); }
+  function openSignIn() { setAuthMode("signin"); setAuthOpen(true); }
+  function openSignUp() { setAuthMode("signup"); setAuthOpen(true); }
 
   return (
     <>
@@ -69,20 +69,14 @@ export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPagePro
               </div>
             </div>
             <nav className="flex items-center gap-3">
-              {hasAccess ? (
-                <Button onClick={() => window.location.href = "/notes"} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
-                  View Notes
+              {!hasAccess && (
+                <Button variant="ghost" onClick={openSignIn} className="text-sm font-medium text-slate-700 hover:text-blue-600">
+                  Sign In
                 </Button>
-              ) : (
-                <>
-                  <Button variant="ghost" onClick={openSignIn} className="text-sm font-medium text-slate-700 hover:text-blue-600">
-                    Sign In
-                  </Button>
-                  <Button onClick={openSignUp} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
-                    Get Started
-                  </Button>
-                </>
               )}
+              <Button onClick={openSignUp} className="rounded-xl bg-blue-600 text-white shadow-sm hover:bg-blue-700">
+                Get Started
+              </Button>
             </nav>
           </div>
         </header>
@@ -109,19 +103,13 @@ export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPagePro
                   design thinking, and product discovery.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                  {hasAccess ? (
-                    <Button size="lg" onClick={() => window.location.href = "/notes"} className="h-12 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-md hover:bg-blue-700">
-                      Go to your notes
+                  <Button size="lg" onClick={hasAccess ? () => window.location.href = "/notes" : openSignUp} className="h-12 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-md hover:bg-blue-700">
+                    Go to your notes
+                  </Button>
+                  {!hasAccess && (
+                    <Button size="lg" variant="outline" onClick={openSignIn} className="h-12 rounded-xl border-slate-300 px-8 text-base font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
+                      I already have access
                     </Button>
-                  ) : (
-                    <>
-                      <Button size="lg" onClick={openSignUp} className="h-12 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-md hover:bg-blue-700">
-                        Unlock the full library
-                      </Button>
-                      <Button size="lg" variant="outline" onClick={openSignIn} className="h-12 rounded-xl border-slate-300 px-8 text-base font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-                        I already have access
-                      </Button>
-                    </>
                   )}
                 </div>
                 <div className="mt-8 flex flex-wrap justify-center gap-3 text-sm text-slate-500">
@@ -301,9 +289,10 @@ export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPagePro
       <AuthModal
         open={authOpen}
         onOpenChange={setAuthOpen}
-        onAuthSuccess={(email, name) => {
+        initialMode={authMode}
+        onAuthSuccess={(email, name, phone) => {
           setAuthOpen(false);
-          onAuthSuccess(email, name);
+          onAuthSuccess(email, name, phone);
         }}
       />
     </>

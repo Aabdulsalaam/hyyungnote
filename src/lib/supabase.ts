@@ -83,6 +83,7 @@ export interface UserAnalytics {
   userId: string;
   email?: string;
   name?: string;
+  phone?: string;
   sectionsRead: number;
   completedNotes: number;
   totalSections: number;
@@ -99,6 +100,7 @@ export async function updateUserAnalytics(stats: UserAnalytics): Promise<void> {
         user_id: stats.userId,
         email: stats.email || null,
         name: stats.name || null,
+        phone: stats.phone || null,
         sections_read: stats.sectionsRead,
         completed_notes: stats.completedNotes,
         total_sections: stats.totalSections,

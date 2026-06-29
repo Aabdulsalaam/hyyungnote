@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS user_analytics (
   user_id TEXT NOT NULL UNIQUE,
   email TEXT,
   name TEXT,
+  phone TEXT,
   sections_read INT DEFAULT 0,
   completed_notes INT DEFAULT 0,
   total_sections INT DEFAULT 0,
