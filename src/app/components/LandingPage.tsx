@@ -38,12 +38,12 @@ const highlights = [
 ];
 
 const previewTopics = [
-  { name: "Design Thinking", desc: "Human-centered approach to innovation" },
-  { name: "User Research", desc: "Methods for uncovering user needs" },
-  { name: "Service Design", desc: "End-to-end experience orchestration" },
-  { name: "Product Discovery", desc: "Validating before building" },
-  { name: "Design Systems", desc: "Scalable, consistent design languages" },
-  { name: "UX Strategy", desc: "Aligning design with business goals" },
+  { name: "Competitive audit", desc: "Analyzing the competitive landscape" },
+  { name: "Who are my users?", desc: "Understanding your target audience" },
+  { name: "Laws of UX", desc: "Psychological principles for intuitive interfaces" },
+  { name: "Recognize business needs", desc: "Balancing user and business goals" },
+  { name: "User flow", desc: "Mapping paths users take through your product" },
+  { name: "Product development life cycle", desc: "From rapid ideation to launch" },
 ];
 
 export default function LandingPage({ onAuthSuccess, hasAccess }: LandingPageProps) {
