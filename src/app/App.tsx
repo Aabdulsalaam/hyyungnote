@@ -1628,7 +1628,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div className="lg:hidden fixed inset-0 z-30 flex">
-            <div className="w-[293px] flex flex-col shrink-0 overflow-hidden" style={{ background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
+            <div className="w-[280px] flex flex-col shrink-0 overflow-hidden" style={{ background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
               {sidebarContent}
             </div>
             <div className="flex-1 bg-black/40" onClick={() => setSidebarOpen(false)} />
@@ -1637,7 +1637,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
 
         {/* Desktop sticky sidebar */}
         <aside className="hidden lg:flex flex-col shrink-0"
-          style={{ width: 303, height: "100vh", position: "sticky", top: 0, background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
+          style={{ width: 320, height: "100vh", position: "sticky", top: 0, background: "#ffffff", borderRight: "1px solid #e2e8f0" }}>
           {sidebarContent}
         </aside>
 
