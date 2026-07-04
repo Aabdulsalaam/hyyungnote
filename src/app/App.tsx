@@ -126,8 +126,8 @@ function QuizBlock({ question, options, correctIndex, explanation, accent }: { q
           let border = "#e2e8f0";
           let textColor = "#334155";
           if (revealed) {
-            if (j === correctIndex) { bg = `${accent}15`; border = accent; textColor = "#0f1729"; }
-            else if (j === selected) { bg = "#fee2e2"; border = "#ef4444"; textColor = "#dc2626"; }
+            if (selected === correctIndex && j === correctIndex) { bg = `${accent}15`; border = accent; textColor = "#0f1729"; }
+            else if (j === selected && j !== correctIndex) { bg = "#fee2e2"; border = "#ef4444"; textColor = "#dc2626"; }
           } else if (j === selected) { bg = `${accent}10`; border = `${accent}50`; textColor = "#0f1729"; }
           return (
             <button key={j} onClick={() => { if (!revealed) setSelected(j); }}
