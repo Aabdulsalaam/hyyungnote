@@ -598,8 +598,8 @@ function PracticeModal({ noteTitle, questions, tasks, onClose }: {
               <div className="flex flex-col gap-1.5">
                 {q.options.map((o, j) => {
                   var isSelected = answers[i] === j;
-                  var isCorrect = submitted && j === q.correctIndex;
-                  var isWrong = submitted && isSelected && j !== q.correctIndex;
+                  var isCorrect = submitted && answers[i] === j && j === q.correctIndex;
+                  var isWrong = submitted && answers[i] === j && j !== q.correctIndex;
                   var bg = isSelected && !submitted ? "#e0f2fe" : "#fff";
                   var border = "#e2e8f0";
                   if (isCorrect) { bg = "#d1fae5"; border = "#6ee7b7"; }
