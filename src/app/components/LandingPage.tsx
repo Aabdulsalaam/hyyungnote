@@ -3,7 +3,7 @@ import AuthModal from "./AuthModal";
 import { Button } from "@/app/components/ui/button";
 
 type LandingPageProps = {
-  onAuthSuccess: (email: string, name: string) => void;
+  onAuthSuccess: (email: string, name: string, phone?: string) => void;
   hasAccess?: boolean;
 };
 

@@ -1170,7 +1170,7 @@ export default function App() {
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     let uid: string;
-    try { uid = localStorage.getItem("hyyung-user-id"); if (!uid) { uid = crypto.randomUUID(); localStorage.setItem("hyyung-user-id", uid); } } catch { uid = crypto.randomUUID(); }
+    try { uid = localStorage.getItem("hyyung-user-id") || ""; if (!uid) { uid = crypto.randomUUID(); localStorage.setItem("hyyung-user-id", uid); } } catch { uid = crypto.randomUUID(); }
     const authData = (() => { try { const d = localStorage.getItem("hyyung-landing-auth"); return d ? JSON.parse(d) : {}; } catch { return {}; } })();
     const phone = authData.phone || localStorage.getItem("hyyung-phone") || "";
     const stats = {
@@ -1425,7 +1425,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               const email = session?.user?.email || "";
               const name = session?.user?.user_metadata?.name || email.split("@")[0];
               const phone = session?.user?.user_metadata?.phone;
-              onAuthSuccess(email, name, phone);
+              handleAuthSuccess(email, name, phone);
             } else if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/admin") {
               navigateTo("/notes", setCurrentPath);
             }
@@ -1455,7 +1455,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             } catch {}
           }
           if (currentPath === "/auth/callback") {
-            onAuthSuccess(email, name, phone);
+            handleAuthSuccess(email, name, phone);
           } else if (currentPath !== "/" && currentPath !== "/notes" && currentPath !== "/admin") {
             navigateTo("/notes", setCurrentPath);
           }
@@ -1499,7 +1499,7 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
             if (session) {
               const email = session.user?.email || "";
               const name = session.user?.user_metadata?.name || email.split("@")[0];
-              onAuthSuccess(email, name);
+              handleAuthSuccess(email, name);
             }
           } catch {}
         };
