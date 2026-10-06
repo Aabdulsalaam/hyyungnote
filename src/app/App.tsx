@@ -217,12 +217,12 @@ function RichPara({ text, accent }: { text: string; accent: string }) {
 function countWordsInBlocks(blocks: Block[]): number {
   let wc = 0;
   for (const b of blocks) {
-    if (b.type === "para" || b.type === "callout" || b.type === "quote" || b.type === "subheading" || b.type === "output") wc += b.text.split(/\s+/).length;
-    else if (b.type === "bullets") b.items.forEach(i => wc += (i.term ? i.term.split(/\s+/).length : 0) + i.desc.split(/\s+/).length);
-    else if (b.type === "stat") wc += b.value.split(/\s+/).length + b.label.split(/\s+/).length + b.footnote.split(/\s+/).length;
-    else if (b.type === "table") { b.headers.forEach(h => wc += h.split(/\s+/).length); b.rows.forEach(r => r.forEach(c => wc += c.split(/\s+/).length)); }
-    else if (b.type === "quiz") { wc += b.question.split(/\s+/).length + (b.explanation ? b.explanation.split(/\s+/).length : 0); b.options.forEach(o => wc += o.split(/\s+/).length); }
-    else if (b.type === "glossary") b.terms.forEach(t => wc += t.term.split(/\s+/).length + t.definition.split(/\s+/).length);
+    if (b.type === "para" || b.type === "callout" || b.type === "quote" || b.type === "subheading" || b.type === "output") wc += (b.text ?? "").split(/\s+/).length;
+    else if (b.type === "bullets") b.items.forEach(i => wc += (i.term ? i.term.split(/\s+/).length : 0) + (i.desc ?? "").split(/\s+/).length);
+    else if (b.type === "stat") wc += (b.value ?? "").split(/\s+/).length + (b.label ?? "").split(/\s+/).length + (b.footnote ?? "").split(/\s+/).length;
+    else if (b.type === "table") { b.headers.forEach(h => wc += (h ?? "").split(/\s+/).length); b.rows.forEach(r => r.forEach(c => wc += (c ?? "").split(/\s+/).length)); }
+    else if (b.type === "quiz") { wc += (b.question ?? "").split(/\s+/).length + (b.explanation ? b.explanation.split(/\s+/).length : 0); b.options.forEach(o => wc += (o ?? "").split(/\s+/).length); }
+    else if (b.type === "glossary") b.terms.forEach(t => wc += (t.term ?? "").split(/\s+/).length + (t.definition ?? "").split(/\s+/).length);
   }
   return wc;
 }
@@ -1079,7 +1079,7 @@ function AdminPanel({ notes, onSave, onClose, onLogout, onSaved }: {
 
 const STORAGE_KEY = "hyyung-ux-notes-v6";
 const SUPABASE_TABLE = "notes";
-const NOTES_VERSION = "v7";
+const NOTES_VERSION = "v8";
 
 function navigateTo(path: string, setPath: (value: string) => void) {
   const nextPath = path === "/" ? "/" : path;
