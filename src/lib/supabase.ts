@@ -141,3 +141,36 @@ export async function fetchAggregatedAnalytics(): Promise<AggregatedAnalytics | 
     return null;
   }
 }
+
+export interface RemoteTaskSubmission {
+  user_email: string;
+  note_title: string;
+  task_title: string;
+  text: string;
+  images: string[];
+  saved_at: string;
+}
+
+export async function fetchTaskSubmissions(email: string): Promise<RemoteTaskSubmission[]> {
+  if (!supabase || !email) return [];
+  try {
+    const { data, error } = await supabase.from("task_submissions").select("*").eq("user_email", email);
+    if (error || !data) return [];
+    return data as RemoteTaskSubmission[];
+  } catch {
+    return [];
+  }
+}
+
+export async function saveTaskSubmission(email: string, noteTitle: string, taskTitle: string, text: string, images: string[]): Promise<boolean> {
+  if (!supabase || !email) return false;
+  try {
+    const { error } = await supabase.from("task_submissions").upsert(
+      [{ user_email: email, note_title: noteTitle, task_title: taskTitle, text, images, saved_at: new Date().toISOString() }],
+      { onConflict: "user_email,note_title,task_title" }
+    );
+    return !error;
+  } catch {
+    return false;
+  }
+}

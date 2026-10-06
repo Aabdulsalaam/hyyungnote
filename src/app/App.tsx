@@ -7,7 +7,7 @@ import svgDT from "@/imports/Notes/svg-d6yohho28q";
 import svgPDLC from "@/imports/Notes-1/svg-ursbprr9kn";
 import { isSupabaseConfigured, supabase, fetchAggregatedAnalytics, updateUserAnalytics, updateUserPassword } from "@/lib/supabase";
 import type { AggregatedAnalytics } from "@/lib/supabase";
-import { signInWithEmail, signOutUser, getCurrentSession } from "@/lib/supabase";
+import { signInWithEmail, signOutUser, getCurrentSession, fetchTaskSubmissions, saveTaskSubmission } from "@/lib/supabase";
 import { INITIAL_NOTES } from "@/lib/notes-data";
 import { PRACTICE_DATA } from "@/lib/practice-data";
 import LandingPage from "@/app/components/LandingPage";
@@ -533,6 +533,16 @@ interface TaskSubmission {
   savedAt: string;
 }
 
+function getCurrentEmail(): string {
+  try {
+    const d = localStorage.getItem("hyyung-landing-auth");
+    const parsed = d ? JSON.parse(d) : {};
+    return parsed.email || "";
+  } catch {
+    return "";
+  }
+}
+
 function loadSubmissions(): Record<string, TaskSubmission> {
   try {
     const raw = localStorage.getItem(TASK_SUBMISSIONS_KEY);
@@ -542,7 +552,7 @@ function loadSubmissions(): Record<string, TaskSubmission> {
   }
 }
 
-function TaskAttempt({ noteTitle, taskTitle }: { noteTitle: string; taskTitle: string }) {
+function TaskAttempt({ noteTitle, taskTitle, onSaved }: { noteTitle: string; taskTitle: string; onSaved?: () => void }) {
   const key = `${noteTitle}::${taskTitle}`;
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -552,6 +562,14 @@ function TaskAttempt({ noteTitle, taskTitle }: { noteTitle: string; taskTitle: s
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    const email = getCurrentEmail();
+    if (email && isSupabaseConfigured) {
+      fetchTaskSubmissions(email).then(rows => {
+        const row = rows.find(r => r.note_title === noteTitle && r.task_title === taskTitle);
+        if (row) { setText(row.text); setImages(row.images ?? []); setSavedAt(row.saved_at); }
+      });
+      return;
+    }
     const all = loadSubmissions();
     const existing = all[key];
     if (existing) {
@@ -559,7 +577,7 @@ function TaskAttempt({ noteTitle, taskTitle }: { noteTitle: string; taskTitle: s
       setImages(existing.images);
       setSavedAt(existing.savedAt);
     }
-  }, [key]);
+  }, [key, noteTitle, taskTitle]);
 
   function handleFiles(files: FileList | null) {
     if (!files) return;
@@ -583,14 +601,26 @@ function TaskAttempt({ noteTitle, taskTitle }: { noteTitle: string; taskTitle: s
     setImages(prev => prev.filter((_, i) => i !== idx));
   }
 
-  function save() {
+  async function save() {
+    const savedAtNow = new Date().toISOString();
+    const email = getCurrentEmail();
+    if (email && isSupabaseConfigured) {
+      const ok = await saveTaskSubmission(email, noteTitle, taskTitle, text, images);
+      if (ok) {
+        setSavedAt(savedAtNow);
+        setError(null);
+        onSaved?.();
+        return;
+      }
+      setError("Could not sync to the server — saved locally instead.");
+    }
     try {
       const all = loadSubmissions();
-      const savedAtNow = new Date().toISOString();
       all[key] = { text, images, savedAt: savedAtNow };
       localStorage.setItem(TASK_SUBMISSIONS_KEY, JSON.stringify(all));
       setSavedAt(savedAtNow);
-      setError(null);
+      onSaved?.();
+      if (!email) setError(null);
     } catch {
       setError("Could not save. Images may be too large for local storage — try fewer or smaller images.");
     }
@@ -637,6 +667,45 @@ function TaskAttempt({ noteTitle, taskTitle }: { noteTitle: string; taskTitle: s
   );
 }
 
+function SubmissionsPanel({ noteTitle, version }: { noteTitle: string; version: number }) {
+  const [items, setItems] = useState<{ taskTitle: string; text: string; images: string[]; savedAt: string }[]>([]);
+
+  useEffect(() => {
+    const email = getCurrentEmail();
+    if (email && isSupabaseConfigured) {
+      fetchTaskSubmissions(email).then(rows => {
+        setItems(rows.filter(r => r.note_title === noteTitle).map(r => ({ taskTitle: r.task_title, text: r.text, images: r.images ?? [], savedAt: r.saved_at })));
+      });
+      return;
+    }
+    const all = loadSubmissions();
+    setItems(Object.entries(all).filter(([k]) => k.startsWith(`${noteTitle}::`)).map(([k, s]) => ({ taskTitle: k.split("::")[1], text: s.text, images: s.images, savedAt: s.savedAt })));
+  }, [noteTitle, version]);
+
+  if (items.length === 0) return null;
+  return (
+    <div className="rounded-[10px] p-4" style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
+      <p className="text-[12px] font-bold mb-2" style={{ color: "#1d4ed8", fontFamily: "'Inter',sans-serif" }}>Your submissions for this note</p>
+      <div className="flex flex-col gap-2">
+        {items.map((s, i) => (
+          <div key={i} className="rounded-[8px] p-3" style={{ background: "#fff", border: "1px solid #dbeafe" }}>
+            <p className="text-[11.5px] font-semibold" style={{ color: "#0f1729" }}>{s.taskTitle}</p>
+            <p className="text-[10.5px] mb-1" style={{ color: "#94a3b8" }}>Saved {new Date(s.savedAt).toLocaleString()}</p>
+            <div className="text-[12px] prose prose-sm max-w-none" style={{ color: "#334155" }} dangerouslySetInnerHTML={{ __html: s.text }} />
+            {s.images.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {s.images.map((src, j) => (
+                  <img key={j} src={src} alt={`submission ${j + 1}`} className="w-16 h-16 object-cover rounded-[6px]" style={{ border: "1px solid #e2e8f0" }} />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function PracticeModal({ noteTitle, questions, tasks, onClose }: {
   noteTitle: string;
   questions: PracticeQuestion[];
@@ -647,6 +716,7 @@ function PracticeModal({ noteTitle, questions, tasks, onClose }: {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({});
+  const [submissionVersion, setSubmissionVersion] = useState(0);
 
   const score = submitted ? questions.filter((q, i) => answers[i] === q.correctIndex).length : 0;
 
@@ -753,6 +823,7 @@ function PracticeModal({ noteTitle, questions, tasks, onClose }: {
 
       {tab === "tasks" && (
         <div className="flex flex-col gap-4">
+          <SubmissionsPanel noteTitle={noteTitle} version={submissionVersion} />
           {tasks.map((t, i) => {
             var done = completedTasks[t.title];
             return (
@@ -782,7 +853,7 @@ function PracticeModal({ noteTitle, questions, tasks, onClose }: {
                         <span className="text-[11px]" style={{ color: "#92400e", fontFamily: "'Inter',sans-serif" }}>{t.hint}</span>
                       </div>
                     )}
-                    <TaskAttempt noteTitle={noteTitle} taskTitle={t.title} />
+                    <TaskAttempt noteTitle={noteTitle} taskTitle={t.title} onSaved={() => setSubmissionVersion(v => v + 1)} />
                   </div>
                 </div>
               </div>
