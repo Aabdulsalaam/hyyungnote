@@ -12,6 +12,7 @@ import { INITIAL_NOTES } from "@/lib/notes-data";
 import { PRACTICE_DATA } from "@/lib/practice-data";
 import LandingPage from "@/app/components/LandingPage";
 import SearchModal from "@/app/components/SearchModal";
+import ErrorBoundary from "@/app/components/ErrorBoundary";
 
 type Block =
   | { type: "para"; text: string }
@@ -256,7 +257,7 @@ function blocksToHtml(blocks: Block[]): string {
   }).join("");
 }
 
-function RichContent({ blocks, accent }: { blocks: Block[]; accent: string }) {
+export function RichContent({ blocks, accent }: { blocks: Block[]; accent: string }) {
   return (
     <div className="flex flex-col gap-5">
       {blocks.map((block, i) => {
@@ -723,7 +724,7 @@ function formatRelativeTime(iso: string): string {
 
 function computeStreak(log: ActivityEntry[]): number {
   if (log.length === 0) return 0;
-  const dates = [...new Set(log.map(e => e.timestamp.split("T")[0]))].sort().reverse();
+  const dates = [...new Set(log.map(e => (e.timestamp ?? "").split("T")[0]).filter(Boolean))].sort().reverse();
   let streak = 0;
   const today = new Date().toISOString().split("T")[0];
   let expected = today;
@@ -1290,7 +1291,7 @@ const sectionCount = activeNote.sections.length;
   const isCallbackRoute = currentPath === "/auth/callback";
 
   useEffect(() => {
-    if (!isHydrated) return;
+    if (!isHydrated || !adminAuthed) return;
 
     const persistNotes = async () => {
       if (!isSupabaseConfigured || !supabase) return;
@@ -1309,7 +1310,7 @@ const sectionCount = activeNote.sections.length;
     };
 
     persistNotes();
-  }, [notes, isHydrated]);
+  }, [notes, isHydrated, adminAuthed]);
 
   const sidebarContent = (
     <>
@@ -1800,7 +1801,9 @@ const theme = THEMES[activeNote.themeId] ?? THEMES.teal;
               <div className="mt-5 mb-6 h-px rounded" style={{ background: `linear-gradient(to right, ${theme.dividerFrom}, transparent)` }} />
               <div className="rounded-[16px] px-4 sm:px-[29px] py-5 sm:py-[25px]" style={{ background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0px 1px 4px rgba(0,0,0,0.04)" }}>
                 {section.blocks && section.blocks.length > 0 ? (
-                  <RichContent blocks={section.blocks as Block[]} accent={sectionAccent} />
+                  <ErrorBoundary key={section.id}>
+                    <RichContent blocks={section.blocks as Block[]} accent={sectionAccent} />
+                  </ErrorBoundary>
                 ) : section.isHtml && section.content ? (
                   <div className="html-content" style={{ fontFamily: "'Inter',sans-serif" }} dangerouslySetInnerHTML={{ __html: section.content }} />
                 ) : (

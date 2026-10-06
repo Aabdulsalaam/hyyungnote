@@ -12,5 +12,13 @@ create table public.notes (
 );
 ```
 
-4. Make sure Row Level Security is disabled for local development or configure it for your needs.
+4. Make sure Row Level Security is disabled for local development or configure it for your needs. If RLS is enabled, add a policy so the anon key can upsert, otherwise saves fail with 403:
+
+```sql
+alter table public.notes enable row level security;
+create policy "Allow all on notes" on public.notes for all using (true) with check (true);
+```
+
 5. Restart the Vite dev server after adding the environment variables.
+
+Note: the app only writes notes to Supabase after an admin logs in, so regular visitors will not trigger write attempts.
