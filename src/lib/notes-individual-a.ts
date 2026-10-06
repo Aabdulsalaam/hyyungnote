@@ -2895,7 +2895,7 @@ export const NOTES_A: any[] = [
           {
             "type": "callout",
             "label": "Edge Cases Are Not Excuses",
-            "desc": "It is tempting to dismiss edge cases as not worth designing for. But for the user experiencing an edge case, it is their reality. Designing for edge cases demonstrates care and thoroughness that builds trust."
+            "text": "It is tempting to dismiss edge cases as not worth designing for. But for the user experiencing an edge case, it is their reality. Designing for edge cases demonstrates care and thoroughness that builds trust."
           }
         ]
       },
