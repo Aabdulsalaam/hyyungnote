@@ -525,6 +525,118 @@ interface PracticeTask {
   hint?: string;
 }
 
+const TASK_SUBMISSIONS_KEY = "hyyung-task-submissions-v1";
+
+interface TaskSubmission {
+  text: string;
+  images: string[];
+  savedAt: string;
+}
+
+function loadSubmissions(): Record<string, TaskSubmission> {
+  try {
+    const raw = localStorage.getItem(TASK_SUBMISSIONS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function TaskAttempt({ noteTitle, taskTitle }: { noteTitle: string; taskTitle: string }) {
+  const key = `${noteTitle}::${taskTitle}`;
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const all = loadSubmissions();
+    const existing = all[key];
+    if (existing) {
+      setText(existing.text);
+      setImages(existing.images);
+      setSavedAt(existing.savedAt);
+    }
+  }, [key]);
+
+  function handleFiles(files: FileList | null) {
+    if (!files) return;
+    setError(null);
+    const MAX = 3 * 1024 * 1024;
+    const valid: string[] = [];
+    for (const f of Array.from(files)) {
+      if (!f.type.startsWith("image/")) { setError(`"${f.name}" is not an image.`); continue; }
+      if (f.size > MAX) { setError(`"${f.name}" exceeds the 3MB limit.`); continue; }
+      valid.push(f);
+    }
+    if (valid.length === 0) return;
+    valid.forEach(f => {
+      const reader = new FileReader();
+      reader.onload = () => setImages(prev => [...prev, reader.result as string]);
+      reader.readAsDataURL(f);
+    });
+  }
+
+  function removeImage(idx: number) {
+    setImages(prev => prev.filter((_, i) => i !== idx));
+  }
+
+  function save() {
+    try {
+      const all = loadSubmissions();
+      const savedAtNow = new Date().toISOString();
+      all[key] = { text, images, savedAt: savedAtNow };
+      localStorage.setItem(TASK_SUBMISSIONS_KEY, JSON.stringify(all));
+      setSavedAt(savedAtNow);
+      setError(null);
+    } catch {
+      setError("Could not save. Images may be too large for local storage — try fewer or smaller images.");
+    }
+  }
+
+  return (
+    <div className="mt-3 rounded-[8px]" style={{ border: "1px solid #e2e8f0", background: "#fff" }}>
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between px-3 py-2 text-left">
+        <span className="text-[11.5px] font-semibold" style={{ color: "#2563eb", fontFamily: "'Inter',sans-serif" }}>
+          {savedAt ? "View / edit your attempt" : "Attempt this task"}
+        </span>
+        {savedAt && <span className="text-[10px] font-semibold" style={{ color: "#059669" }}>Saved</span>}
+      </button>
+      {open && (
+        <div className="px-3 pb-3 flex flex-col gap-2">
+          <ReactQuill theme="snow" value={text} onChange={setText} modules={QUILL_MODULES} formats={QUILL_FORMATS}
+            placeholder="Write your response here..." />
+          <div>
+            <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={e => { handleFiles(e.target.files); e.target.value = ""; }} />
+            <button onClick={() => fileRef.current?.click()} className="px-3 py-1.5 rounded-[8px] text-[12px] font-semibold transition-all"
+              style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", fontFamily: "'Inter',sans-serif" }}>
+              Upload images (max 3MB each)
+            </button>
+          </div>
+          {error && <p className="text-[11.5px]" style={{ color: "#dc2626" }}>{error}</p>}
+          {images.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {images.map((src, j) => (
+                <div key={j} className="relative">
+                  <img src={src} alt={`upload ${j + 1}`} className="w-16 h-16 object-cover rounded-[6px]" style={{ border: "1px solid #e2e8f0" }} />
+                  <button onClick={() => removeImage(j)} className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] leading-none">x</button>
+                </div>
+              ))}
+            </div>
+          )}
+          <button onClick={save} className="px-4 py-2 rounded-[8px] text-[12.5px] font-semibold text-white self-start"
+            style={{ background: "#2563eb", fontFamily: "'Inter',sans-serif" }}>
+            Save attempt
+          </button>
+          {savedAt && <p className="text-[10.5px]" style={{ color: "#94a3b8" }}>Last saved: {new Date(savedAt).toLocaleString()}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PracticeModal({ noteTitle, questions, tasks, onClose }: {
   noteTitle: string;
   questions: PracticeQuestion[];
@@ -670,6 +782,7 @@ function PracticeModal({ noteTitle, questions, tasks, onClose }: {
                         <span className="text-[11px]" style={{ color: "#92400e", fontFamily: "'Inter',sans-serif" }}>{t.hint}</span>
                       </div>
                     )}
+                    <TaskAttempt noteTitle={noteTitle} taskTitle={t.title} />
                   </div>
                 </div>
               </div>
